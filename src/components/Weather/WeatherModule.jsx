@@ -1,9 +1,5 @@
 import { useWeather } from "../../hooks/useWeather";
-import {
-    CurrentWeather,
-    DailyWeather,
-    HourlyWeather,
-} from "../../services/utils/weatherCompile";
+import { CurrentWeather } from "../../services/utils/weatherCompile";
 import "./weather-module.css";
 
 import WeatherIconModule from "./WeatherIconModule";
@@ -22,7 +18,7 @@ export default function WeatherModule() {
     return (
         <div className="weather-module">
             <div className="weather-module__header">
-                <WeatherLocationModule/>
+                <WeatherLocationModule />
             </div>
             <div className="weather-module__body">
                 <div className="weather-module__primary">
