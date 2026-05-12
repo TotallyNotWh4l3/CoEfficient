@@ -1,7 +1,7 @@
 import { getWeatherIcon } from "../../services/utils/weatherConstants";
-import "./weather-icon-module.css";
+import "./weather-icon.css";
 
-export default function WeatherIconModule({weatherCode, isDay = true, isAnimated = true, isFill = true}){
+export default function WeatherIcon({weatherCode, isDay = true, isAnimated = true, isFill = true}){
     const iconUrl = getWeatherIcon(weatherCode, isDay, isAnimated, isFill);
     console.log(`[WEATHER ICON]: Code ${weatherCode} -> ${iconUrl}`);
     

@@ -1,6 +1,6 @@
-import "./weather-location-module.css";
+import "./weather-location.css";
 
-export default function WeatherLocationModule({
+export default function WeatherLocation({
     location,
     pinColor = "#ff0000",
 }) {

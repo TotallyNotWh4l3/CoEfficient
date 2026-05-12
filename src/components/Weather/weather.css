@@ -1,4 +1,4 @@
-.weather-module {
+.weather {
     padding: var(--weather-padding);
     border: 1px solid var(--color-border);
     border-radius: 8px;
@@ -6,8 +6,19 @@
     grid-column: span 1;
 }
 
-.weather-module__header {
+.weather__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.weather__primary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weather__secondary {
+    display: flex;
+    justify-content: space-between;
 }

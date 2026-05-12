@@ -1,4 +1,4 @@
-import WeatherModule from "./components/Weather/WeatherModule";
+import WeatherModule from "./components/Weather/Weather";
 import DashboardModule from "./components/Dashboard/DashboardModule";
 
 function App() {

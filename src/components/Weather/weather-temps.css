@@ -1,0 +1,104 @@
+.weather__stat {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.weather__icon {
+    display: block;
+    background: no-repeat center / contain;
+}
+
+.weather__secondary .weather__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.weather__stat--wind .weather__icon {
+    background-size: calc(100% + 0.75rem);
+}
+
+.weather__stat--humidity .weather__icon {
+    background-size: calc(100% + 1.75rem);
+}
+
+.weather__container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.weather__measurement {
+    display: flex;
+    align-items: baseline;
+    gap: 0.1em;
+    justify-content: right;
+}
+
+.weather__measurement .slash {
+    margin-right: 0.25rem;
+}
+
+.weather__value {
+    font-weight: 500;
+    text-align: left;
+}
+
+.weather__value {
+    font-size: 3rem;
+    line-height: 3rem;
+    font-weight: 500;
+}
+
+.weather__unit {
+    font-size: 1em;
+    line-height: 1em;
+    height: 1em;
+    color: var(--text-o2);
+}
+
+.weather__label {
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+    color: var(--text-o3);
+}
+
+.weather__range {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.weather__stat--temperature {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.weather__range .weather__label {
+    font-size: 0.75em;
+    line-height: 0.75em;
+    color: var(--text-o3);
+}
+
+.weather__range .weather__value {
+    font-size: 1em;
+    line-height: 1em;
+    color: var(--text-o2);
+}
+
+.weather__range .weather__unit {
+    font-size: 0.5em;
+}
+
+.weather__stat--code .weather__measurement {
+    position: relative;
+    display: flex;
+}
+
+.weather__stat--code .weather__icon {
+    height: 8rem;
+    width: 8rem;
+    background-size: calc(100% + 0.5rem);
+    background-position: center;
+}

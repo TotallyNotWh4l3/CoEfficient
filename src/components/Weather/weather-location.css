@@ -1,10 +1,12 @@
-.weather-module__city {
+
+
+.weather__city {
     font-size: 1rem;
     font-weight: 600;
     line-height: 1rem;
 }
 
-.weather-module__city::before {
+.weather__city::before {
     content: '';
     display: inline-block;
     height: 1rem;
