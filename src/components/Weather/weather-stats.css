@@ -1,3 +1,14 @@
+.weather-icon {
+    width: 8rem;
+    height: 8rem;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.weather-icon:hover {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
 .weather__stat {
     display: flex;
     gap: 0.25rem;
@@ -5,7 +16,7 @@
 
 .weather__icon {
     display: block;
-    background: no-repeat center / contain;
+    background: no-repeat center;
 }
 
 .weather__secondary .weather__icon {
@@ -13,11 +24,18 @@
     height: 2.5rem;
 }
 
-.weather__stat--wind .weather__icon {
+.weather__icon--wind {
+    background-image: url(../../../public/assets/weather-icons/line/animation/wind.svg);
     background-size: calc(100% + 0.75rem);
 }
 
-.weather__stat--humidity .weather__icon {
+.weather__icon--humidity {
+    background-image: url(../../../public/assets/weather-icons/fill/animated/humidity.svg);
+    background-size: calc(100% + 1.75rem);
+}
+
+.weather__icon--UV {
+    background-image: url(../../../public/assets/weather-icons/fill/animated/uv-index.svg);
     background-size: calc(100% + 1.75rem);
 }
 
@@ -30,8 +48,8 @@
 .weather__measurement {
     display: flex;
     align-items: baseline;
-    gap: 0.1em;
-    justify-content: right;
+    gap: 0.15rem;
+    justify-content: center;
 }
 
 .weather__measurement .slash {
@@ -43,7 +61,7 @@
     text-align: left;
 }
 
-.weather__value {
+.weather .weather__value {
     font-size: 3rem;
     line-height: 3rem;
     font-weight: 500;
@@ -96,7 +114,8 @@
     display: flex;
 }
 
-.weather__stat--code .weather__icon {
+.weather__icon--code {
+    background-image: url(../../../public/assets/weather-icons/fill/animated/thunderstorms-day-rain.svg);
     height: 8rem;
     width: 8rem;
     background-size: calc(100% + 0.5rem);
