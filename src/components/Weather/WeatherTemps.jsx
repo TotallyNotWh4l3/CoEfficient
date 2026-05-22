@@ -1,34 +1,35 @@
-import "./weather-temps.css"
+import "./weather-temps.css";
+
+function WeatherMeasurement({ label = "", value = "N/A", unit = "°C" }) {
+    return (
+        <div className="weather__measurement">
+            <span className="weather__label">{label}</span>
+            <span className="weather__value">{value}</span>
+            <span className="weather__unit">{unit}</span>
+        </div>
+    );
+}
 
 export default function WeatherTemps({
-    currentTemp = "25", 
-    maxTemp = "30", 
-    minTemp = "20", 
-    unitTemp = "°C"
+    currentTemp = "25",
+    maxTemp = "30",
+    minTemp = "20",
+    unitTemp = "°C",
 } = {}) {
     return (
         <div className="weather__stat--temperature">
-            <div className="weather__measurement">
-                <span className="weather__value" id="weatherCurrentTemp">
-                    {currentTemp}
-                </span>
-                <span className="weather__unit">{unitTemp}</span>
-            </div>
+            <WeatherMeasurement value={currentTemp} unit={unitTemp} />
             <div className="weather__range">
-                <div className="weather__measurement">
-                    <span className="weather__label">H:</span>
-                    <span className="weather__value">
-                        {maxTemp}
-                    </span>
-                    <span className="weather__unit">{unitTemp}</span>
-                </div>
-                <div className="weather__measurement">
-                    <span className="weather__label">L:</span>
-                    <span className="weather__value">
-                        {minTemp}
-                    </span>
-                    <span className="weather__unit">{unitTemp}</span>
-                </div>
+                <WeatherMeasurement
+                    label="H:"
+                    value={maxTemp}
+                    unit={unitTemp}
+                />
+                <WeatherMeasurement
+                    label="L:"
+                    value={minTemp}
+                    unit={unitTemp}
+                />
             </div>
         </div>
     );

@@ -130,7 +130,6 @@ export const WEATHER_GRADIENTS = {
 };
 
 export function getWeatherIcon(weatherCode, isDay = true, isAnimated = true, isFill = true) {
-    console.error(weatherCode);
     const dayKey = isDay ? "day" : "night";
     const fillOrLine = isFill ? "fill" : "line";
     const animOrStatic = isAnimated ? "animated" : "static";
