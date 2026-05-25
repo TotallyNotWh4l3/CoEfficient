@@ -64,8 +64,6 @@ export default function WeatherModule() {
                     <WeatherSecondaryStats {...stats.humidity}/>
                     <WeatherSecondaryStats {...stats.wind}/>
                     <WeatherSecondaryStats />
-                    <WeatherIcon weatherCode={current.weatherCode} />
-                    <WeatherTemps currentTemp={current.temperature} />
                 </div>
                 <div className="weather__secondary"></div>
             </div>
