@@ -135,7 +135,7 @@ export function getWeatherIcon(weatherCode, isDay = true, isAnimated = true, isF
     const animOrStatic = isAnimated ? "animated" : "static";
     const staticNameExtention = isAnimated ? "" : "wi-";
 
-    if (!CODE_MAP[weatherCode]) {
+    if (!CODE_MAP[weatherCode][dayKey]) {
         console.warn(`[ICON]: Weather code ${weatherCode} not found in CODE_MAP. Using default.`);
         return `${BASE_PATH}${fillOrLine}/${animOrStatic}/${staticNameExtention}${CODE_MAP[0][dayKey]}`;
     }
