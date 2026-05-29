@@ -13,11 +13,15 @@
     --color-border: #363a4f;
 
     /* Text & Content */
+    --color-text-label: rgba(115, 119, 148, 0.849);
     --color-text-item: #b2b7e0;
     --color-text-hover: #ffffff;
 
-    /* Interactive States */
-    --color-active-primary: #4b56fd;
+    --color-text-label1: #b2b7e0d3;
+    --color-text-unit1: 
+
+    /* Interactive States */ --color-active-primary:
+        #4b56fd;
     --color-active-secondary: #252a4c;
     --color-active-tertiary: #0b0d19;
 
@@ -29,6 +33,26 @@
     /* Status Colors */
     --color-success: #06c56b;
     --color-error: #d63731;
+
+    /* Order 1 — Primary / Main Focus */
+    --text-o1: #ffffff;
+    --text-o1-soft: #e6edfe;
+    --text-o1-muted: #d7dcff;
+
+    /* Order 2 — Important Supporting Text */
+    --text-o2: #b2b7e0;
+    --text-o2-soft: #9ea5d6;
+    --text-o2-muted: #8d93bf;
+
+    /* Order 3 — Labels / Secondary Info */
+    --text-o3: #737794;
+    --text-o3-soft: #666b8b;
+    --text-o3-muted: #5a5f7d;
+
+    /* Order 4 — Low Emphasis / Disabled */
+    --text-o4: rgba(115, 119, 148, 0.55);
+    --text-o4-soft: rgba(115, 119, 148, 0.4);
+    --text-o4-muted: rgba(115, 119, 148, 0.25);
 
     /* ============================================
         SPACING
@@ -43,8 +67,10 @@
     /* ============================================
         TYPOGRAPHY
        ============================================ */
-    --font-primary: 'Poppins', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'Roboto Mono', 'Courier New', monospace;
+    --font-primary:
+        "Poppins", "Noto Sans JP", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    --font-mono: "Roboto Mono", "Courier New", monospace;
 
     --font-size-xs: 12px;
     --font-size-sm: 14px;
@@ -93,5 +119,5 @@
     /* ============================================
         IMAGES
        ============================================ */
-    --location-pin: url('../../public/assets/misc/location-pin.svg');
+    --location-pin: url("../../public/assets/misc/location-pin.svg");
 }

@@ -1,15 +1,17 @@
 export function CurrentWeather(datas) {
-    const currentWeather = datas ? datas.current : null;
+    const cur = datas ? datas.current : null;
+    var dateObject = new Date(cur.time * 1000);
+    var time = `${dateObject.getHours()}:${dateObject.getMinutes()}`
     const data = {
-        time: currentWeather ? currentWeather.time : null,
-        temperature: currentWeather ? Math.round(currentWeather.temperature_2m) : null,
-        humidity: currentWeather ? Math.round(currentWeather.relative_humidity_2m) : null,
-        feelsLike: currentWeather ? Math.round(currentWeather.apparent_temperature_2m) : null,
-        windSpeed: currentWeather ? Math.round(currentWeather.wind_speed_10m) : null,
-        windGust: currentWeather ? Math.round(currentWeather.wind_gusts_10m) : null,
-        weatherCode: currentWeather ? currentWeather.weather_code : null,
-        precipitation: currentWeather ? Math.round(currentWeather.precipitation) : null,
-        isDay: currentWeather ? currentWeather.is_day : null
+        time: cur ? time : null,
+        temperature: cur ? Math.round(cur.temperature_2m) : null,
+        humidity: cur ? Math.round(cur.relative_humidity_2m) : null,
+        feelsLike: cur ? Math.round(cur.apparent_temperature_2m) : null,
+        windSpeed: cur ? Math.round(cur.wind_speed_10m) : null,
+        windGust: cur ? Math.round(cur.wind_gusts_10m) : null,
+        weatherCode: cur ? cur.weather_code : null,
+        precipitation: cur ? Math.round(cur.precipitation) : null,
+        isDay: cur ? cur.is_day : null
     };
     return data;
 }

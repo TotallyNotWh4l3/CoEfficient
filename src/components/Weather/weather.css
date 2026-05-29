@@ -16,6 +16,17 @@
     align-items: center;
 }
 
+.weather__body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.weather__footer {
+    margin-top: 0.5rem;
+}
+
 .weather__primary {
     display: flex;
     justify-content: space-between;

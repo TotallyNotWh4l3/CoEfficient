@@ -5,6 +5,7 @@ import {
 } from "../../services/utils/weatherCompile";
 import "./weather.css";
 
+import WeatherLastUpdated from "./WeatherLastUpdated";
 import WeatherLocation from "./WeatherLocation";
 import {
     WeatherPrimaryIcon,
@@ -19,7 +20,7 @@ export default function WeatherModule() {
     if (!weather) return <p>No weather data</p>;
 
     const cur = CurrentWeather(weather);
-    console.log(cur)
+    console.log(cur);
     const day = DailyWeather(weather);
 
     console.error(weather);
@@ -34,7 +35,7 @@ export default function WeatherModule() {
         temp: {
             curTemp: cur.temperature,
             maxTemp: day.tempMax[0],
-            minTemp: day.tempMin[0]
+            minTemp: day.tempMin[0],
         },
         humidity: {
             type: "humidity",
@@ -52,10 +53,9 @@ export default function WeatherModule() {
             type: "precipitation",
             label: "Precipitation",
             value: cur.precipitation,
-            unit: "mm/h"
-        }
+            unit: "mm/h",
+        },
     };
-
     return (
         <div className="weather">
             <div className="weather__header">
@@ -63,18 +63,19 @@ export default function WeatherModule() {
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
-                    <WeatherPrimaryIcon {...stats.icon}/>
-                    <WeatherPrimaryTemps {...stats.temp}/>
+                    <WeatherPrimaryIcon {...stats.icon} />
+                    <WeatherPrimaryTemps {...stats.temp} />
                 </div>
                 <div className="weather__secondary">
-                    <WeatherSecondaryStats {...stats.humidity}/>
-                    <WeatherSecondaryStats {...stats.wind}/>
-                    <WeatherSecondaryStats {...stats.precipitation}/>
+                    <WeatherSecondaryStats {...stats.humidity} />
+                    <WeatherSecondaryStats {...stats.wind} />
+                    <WeatherSecondaryStats {...stats.precipitation} />
                 </div>
-                <div className="weather__secondary"></div>
             </div>
             <div className="weather__footer">
-                <p>Last Updated:    </p>
+                <WeatherLastUpdated
+                    time={cur.time}
+                />
             </div>
         </div>
     );

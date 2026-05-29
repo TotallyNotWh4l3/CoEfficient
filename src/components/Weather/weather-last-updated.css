@@ -1,0 +1,10 @@
+.weather__time--label {
+    font-size: 0.75em;
+    color: var(--color-text-label);
+}
+
+.weather__time--value {
+    font-size: 0.75em;
+    font-weight: 700;
+    color: var(--color-text-label);
+}
