@@ -48,6 +48,12 @@ export default function WeatherModule() {
             value: cur.windSpeed,
             unit: "m/s",
         },
+        precipitation: {
+            type: "precipitation",
+            label: "Precipitation",
+            value: cur.precipitation,
+            unit: "mm/h"
+        }
     };
 
     return (
@@ -63,7 +69,7 @@ export default function WeatherModule() {
                 <div className="weather__secondary">
                     <WeatherSecondaryStats {...stats.humidity}/>
                     <WeatherSecondaryStats {...stats.wind}/>
-                    <WeatherSecondaryStats />
+                    <WeatherSecondaryStats {...stats.precipitation}/>
                 </div>
                 <div className="weather__secondary"></div>
             </div>

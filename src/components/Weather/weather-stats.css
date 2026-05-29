@@ -26,17 +26,17 @@
 
 .weather__icon--wind {
     background-image: url(../../../public/assets/weather-icons/line/animation/wind.svg);
-    background-size: calc(100% + 0.75rem);
+    background-size: calc(100% + 0.875rem);
 }
 
 .weather__icon--humidity {
     background-image: url(../../../public/assets/weather-icons/fill/animated/humidity.svg);
-    background-size: calc(100% + 1.75rem);
+    background-size: calc(100% + 1.875rem);
 }
 
-.weather__icon--UV {
-    background-image: url(../../../public/assets/weather-icons/fill/animated/uv-index.svg);
-    background-size: calc(100% + 1.75rem);
+.weather__icon--precipitation {
+    background-image: url(../../../public/assets/weather-icons/fill/animated/rain.svg);
+    background-size: calc(100% + 1rem);
 }
 
 .weather__container {

@@ -61,7 +61,7 @@ export function WeatherSecondaryStats({
     label = "Label",
     value = "N/A",
     unit = "%",
-    type = "humidity",
+    type = "NA",
 } = {}) {   
     return (
         <div className="weather__stat">
