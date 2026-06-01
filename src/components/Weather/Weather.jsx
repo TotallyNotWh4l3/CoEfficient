@@ -1,17 +1,24 @@
 import { useWeather } from "../../hooks/useWeather";
+import WeatherLastUpdated from "./WeatherLastUpdated";
+import WeatherLocation from "./WeatherLocation";
+
 import {
     CurrentWeather,
     DailyWeather,
 } from "../../services/utils/weatherCompile";
-import "./weather.css";
 
-import WeatherLastUpdated from "./WeatherLastUpdated";
-import WeatherLocation from "./WeatherLocation";
 import {
     WeatherPrimaryIcon,
     WeatherPrimaryTemps,
     WeatherSecondaryStats,
 } from "./WeatherStats";
+
+import {
+    getLocationName,
+    getLocationCoordinates,
+} from "../../services/api/geoCoding.js";
+
+import "./weather.css";
 
 export default function WeatherModule() {
     const { weather, loading, error } = useWeather();
@@ -19,47 +26,50 @@ export default function WeatherModule() {
     if (error) return <p>Error: {error}</p>;
     if (!weather) return <p>No weather data</p>;
 
-    const cur = CurrentWeather(weather);
-    console.log(cur);
-    const day = DailyWeather(weather);
+    var lat = weather.latitude;
+    var lon = weather.longitude;
 
-    console.error(weather);
+    const CUR = CurrentWeather(weather);
+    const DAY = DailyWeather(weather);
+
+    const LOCATION_NAME = getLocationName(lat, lon);
+    console.log(LOCATION_NAME)
 
     const stats = {
         icon: {
-            weatherCode: cur.weatherCode,
+            weatherCode: CUR.weatherCode,
             isDay: true,
             isAnimated: true,
             isFill: true,
         },
         temp: {
-            curTemp: cur.temperature,
-            maxTemp: day.tempMax[0],
-            minTemp: day.tempMin[0],
+            curTemp: CUR.temperature,
+            maxTemp: DAY.tempMax[0],
+            minTemp: DAY.tempMin[0],
         },
         humidity: {
             type: "humidity",
             label: "Humidity",
-            value: cur.humidity,
+            value: CUR.humidity,
             unit: "%",
         },
         wind: {
             type: "wind",
             label: "Wind",
-            value: cur.windSpeed,
+            value: CUR.windSpeed,
             unit: "m/s",
         },
         precipitation: {
             type: "precipitation",
             label: "Precipitation",
-            value: cur.precipitation,
+            value: CUR.precipitation,
             unit: "mm/h",
         },
     };
     return (
         <div className="weather">
             <div className="weather__header">
-                <WeatherLocation />
+                <WeatherLocation location={LOCATION_NAME}/>
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
@@ -73,9 +83,7 @@ export default function WeatherModule() {
                 </div>
             </div>
             <div className="weather__footer">
-                <WeatherLastUpdated
-                    time={cur.time}
-                />
+                <WeatherLastUpdated time={CUR.time} />
             </div>
         </div>
     );
