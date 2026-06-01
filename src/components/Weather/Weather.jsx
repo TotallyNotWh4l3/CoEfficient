@@ -32,8 +32,8 @@ export default function WeatherModule() {
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
 
-    const LOCATION_NAME = getLocationName(lat, lon);
-    console.log(LOCATION_NAME)
+    // const LOCATION_NAME = getLocationName(lat, lon);
+    // console.log(LOCATION_NAME)
 
     const stats = {
         icon: {
@@ -69,7 +69,7 @@ export default function WeatherModule() {
     return (
         <div className="weather">
             <div className="weather__header">
-                <WeatherLocation location={LOCATION_NAME}/>
+                <WeatherLocation />
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
