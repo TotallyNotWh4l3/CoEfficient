@@ -18,8 +18,6 @@ export function WeatherPrimaryIcon({
     isFill = true,
 }) {
     const iconUrl = getWeatherIcon(weatherCode, isDay, isAnimated, isFill);
-    console.log(`[WEATHER ICON]: Code ${weatherCode} -> ${iconUrl}`);
-
     return (
         <img
             className="weather-icon"

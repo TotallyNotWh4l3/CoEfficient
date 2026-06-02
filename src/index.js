@@ -5,7 +5,7 @@ import "../src/styles/index.css";
 import "../src/styles/global.css";
 import "../src/styles/variable.css";
 
-import App from "./App";
+import App from "./App.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);

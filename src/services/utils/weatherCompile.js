@@ -18,7 +18,6 @@ export function CurrentWeather(datas) {
 
 export function DailyWeather(datas) {
     const dailyWeather = datas ? datas.daily : null;
-    console.log(dailyWeather.apparent_temperature_max.map(Math.round))
     const data = {
         time: dailyWeather ? dailyWeather.time : null,
         weatherCode: dailyWeather ? dailyWeather.weather_code : null,   

@@ -13,10 +13,7 @@ import {
     WeatherSecondaryStats,
 } from "./WeatherStats";
 
-import {
-    getLocationName,
-    getLocationCoordinates,
-} from "../../services/api/geoCoding.js";
+import { getLocationName } from "../../services/api/geoCoding.js";
 
 import "./weather.css";
 
@@ -32,9 +29,9 @@ export default function WeatherModule() {
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
 
-    // const LOCATION_NAME = getLocationName(lat, lon);
-    // console.log(LOCATION_NAME)
-
+    const LOCATION_NAME = await getLocationName(lat, lon)
+    console.log(LOCATION_NAME);
+    
     const stats = {
         icon: {
             weatherCode: CUR.weatherCode,

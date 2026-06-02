@@ -1,5 +1,6 @@
-import WeatherModule from "./components/Weather/Weather";
-import DashboardModule from "./components/Dashboard/DashboardModule";
+import WeatherModule from "./components/Weather/Weather.jsx";
+import DashboardModule from "./components/Dashboard/DashboardModule.jsx";
+
 
 function App() {
     return (

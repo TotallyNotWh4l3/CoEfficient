@@ -30,7 +30,7 @@ export function useWeather() {
             const now = new Date();
             const currentMinute = now.getMinutes();
             const currentSeconds = now.getSeconds();
-            const nextMinutes = [0, 15, 30, 45];
+            const nextMinutes = [1, 16, 31, 46];
             let nextMinute = nextMinutes.find(m => m > currentMinute);
             if (!nextMinute) {
                 nextMinute = 0;

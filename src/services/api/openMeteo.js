@@ -1,4 +1,4 @@
-import { getCachedWeather, isCacheValid, setCachedWeather } from "../utils/weatherCache";
+import { getCachedWeather, isCacheValid, setCachedWeather } from "../utils/weatherCache.js";
 
 const cfg = {
     latitude:
