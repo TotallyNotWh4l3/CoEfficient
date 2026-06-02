@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import { useWeather } from "../../hooks/useWeather";
 import WeatherLastUpdated from "./WeatherLastUpdated";
 import WeatherLocation from "./WeatherLocation";
@@ -19,19 +21,30 @@ import "./weather.css";
 
 export default function WeatherModule() {
     const { weather, loading, error } = useWeather();
+    const [locationName, setLocationName] = useState("Loading location...");
+
+    useEffect(() => {
+        if (!weather) return;
+
+        const fetchLocation = async () => {
+            const name = await getLocationName(
+                weather.latitude,
+                weather.longitude,
+            );
+            setLocationName(name);
+        };
+
+        fetchLocation();
+    }, [weather?.latitude, weather?.longitude]);
+
+
     if (loading) return <p>Loading weather...</p>;
     if (error) return <p>Error: {error}</p>;
     if (!weather) return <p>No weather data</p>;
 
-    var lat = weather.latitude;
-    var lon = weather.longitude;
-
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
 
-    const LOCATION_NAME = await getLocationName(lat, lon)
-    console.log(LOCATION_NAME);
-    
     const stats = {
         icon: {
             weatherCode: CUR.weatherCode,
@@ -66,7 +79,7 @@ export default function WeatherModule() {
     return (
         <div className="weather">
             <div className="weather__header">
-                <WeatherLocation />
+                <WeatherLocation location={locationName} />
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
