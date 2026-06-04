@@ -16,11 +16,10 @@ export function getCachedWeather() {
     }
 }
 
-export function setCachedWeather(data, location = "N/A") {
+export function setCachedWeather(data) {
     const cacheData = {
         data: data,
-        timestamp: data.current.time,
-        location: location
+        timestamp: data.current.time
     };
     localStorage.setItem('weather_cache', JSON.stringify(cacheData));
     console.log("[CACHE]: Data, Weather Data has been set."); //
