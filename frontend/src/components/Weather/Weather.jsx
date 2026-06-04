@@ -76,7 +76,7 @@ export default function WeatherModule() {
             }}
         >
             <div className="weather__header">
-                <WeatherLocation />
+                <WeatherLocation pinColor={textColor.sub1}/>
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
