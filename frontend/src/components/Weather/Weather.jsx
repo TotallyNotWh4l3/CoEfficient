@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 import { useWeather } from "../../hooks/useWeather";
 import WeatherLastUpdated from "./WeatherLastUpdated";
 import WeatherLocation from "./WeatherLocation";
@@ -15,28 +13,10 @@ import {
     WeatherSecondaryStats,
 } from "./WeatherStats";
 
-import { getLocationName } from "../../services/api/geoCoding.js";
-
 import "./weather.css";
 
 export default function WeatherModule() {
     const { weather, loading, error } = useWeather();
-    const [locationName, setLocationName] = useState("Loading location...");
-
-    useEffect(() => {
-        if (!weather) return;
-
-        const fetchLocation = async () => {
-            const name = await getLocationName(
-                weather.latitude,
-                weather.longitude,
-            );
-            setLocationName(name);
-        };
-
-        fetchLocation();
-    }, [weather?.latitude, weather?.longitude]);
-
 
     if (loading) return <p>Loading weather...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -79,7 +59,7 @@ export default function WeatherModule() {
     return (
         <div className="weather">
             <div className="weather__header">
-                <WeatherLocation location={locationName} />
+                <WeatherLocation />
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
