@@ -14,6 +14,10 @@ import {
 } from "./WeatherStats";
 
 import "./weather.css";
+import {
+    getWeatherCodeBackground,
+    getWeatherCodeTextColor,
+} from "../../services/utils/weatherConstants";
 
 export default function WeatherModule() {
     const { weather, loading, error } = useWeather();
@@ -24,6 +28,10 @@ export default function WeatherModule() {
 
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
+
+    var background = getWeatherCodeBackground(CUR.weatherCode, CUR.isDay);
+    var textColor = getWeatherCodeTextColor(CUR.weatherCode, CUR.isDay);
+    console.log(background, textColor);
 
     const stats = {
         icon: {
@@ -57,7 +65,16 @@ export default function WeatherModule() {
         },
     };
     return (
-        <div className="weather">
+        <div
+            className="weather"
+            style={{
+                "--wc-background-gradient": background,
+                "--wc-text-color-main": textColor.main,
+                "--wc-text-color-sub1": textColor.sub1,
+                "--wc-text-color-sub2": textColor.sub2,
+                "--wc-text-color-sub3": textColor.sub3,
+            }}
+        >
             <div className="weather__header">
                 <WeatherLocation />
             </div>

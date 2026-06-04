@@ -65,20 +65,20 @@
     font-size: 3rem;
     line-height: 3rem;
     font-weight: 500;
-    color: var(--text-o1);
+    color: var(--wc-text-color-main);
 }
 
 .weather__unit {
     font-size: 1em;
     line-height: 1em;
     height: 1em;
-    color: var(--text-o2);
+    color: var(--wc-text-color-sub1);
 }
 
 .weather__label {
     font-size: 0.75rem;
     line-height: 0.75rem;
-    color: var(--text-o2);
+    color: var(--wc-text-color-sub1);
     margin-bottom: 0.25em;
 }
 
@@ -98,13 +98,13 @@
 .weather__range .weather__label {
     font-size: 0.75em;
     line-height: 0.75em;
-    color: var(--text-o2);
+    color: var(--wc-text-color-sub1);
 }
 
 .weather__range .weather__value {
     font-size: 1em;
     line-height: 1em;
-    color: var(--text-o1);
+    color: var(--wc-text-color-main);
 }
 
 .weather__range .weather__unit {

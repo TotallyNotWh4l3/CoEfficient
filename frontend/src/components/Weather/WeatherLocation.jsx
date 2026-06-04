@@ -1,16 +1,11 @@
+import LocationPin from "../../assets/LocationPin";
 import "./weather-location.css";
 
-export default function WeatherLocation({
-    location = "Tsu, Mie Pref.",
-    pinColor = "#ff0000",
-}) {
+export default function WeatherLocation({ location = "Tsu, Mie Pref.", pinColor = "#fff"}) {
     return (
-        <div className="weather-location-module">
-            <div className="weather-module__location">
-                <p className="weather-module__city" style={{ "--location-pin-color": pinColor }}>
-                    {location}
-                </p>
-            </div>
+        <div className="weather__location">
+            <LocationPin className="weather__location--pin" color={pinColor}/>
+            <p className="weather__location--name">{location}</p>
         </div>
     );
 }

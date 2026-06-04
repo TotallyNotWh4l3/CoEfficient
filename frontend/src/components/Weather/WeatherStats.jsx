@@ -18,11 +18,12 @@ export function WeatherPrimaryIcon({
     isFill = true,
 }) {
     const iconUrl = getWeatherIcon(weatherCode, isDay, isAnimated, isFill);
+    console.log("Icon URL:", iconUrl);
     return (
         <img
             className="weather-icon"
             src={iconUrl}
-            alt={`Weather code ${weatherCode}`}
+            alt={`WeatherCode ${weatherCode}`}
             onError={() =>
                 console.error(`[WEATHER ICON]: Failed to load: ${iconUrl}`)
             }

@@ -1,19 +1,23 @@
 
 
-.weather__city {
+.weather__location {
+    position: relative;
     font-size: 1rem;
     font-weight: 600;
     line-height: 1rem;
+    color: var(--wc-text-color-main);
+    display: flex;
+    flex-direction: row;
+    align-items:start;
 }
 
-.weather__city::before {
-    content: '';
-    display: inline-block;
-    height: 1rem;
-    width: 1rem;
-    background-color: var(--color-primary);
-    background-image: var(--location-pin);
-    background-repeat: no-repeat;
-    background-position: center;
-    filter: hue-rotate(var(--location-pin-hue, 0deg));
+.weather__location--pin {
+    display: block;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.weather__location--name {
+    margin-top: 0.375rem;
+    margin-left: 0.25rem;
 }

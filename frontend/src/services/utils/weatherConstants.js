@@ -2,8 +2,16 @@ export const BASE_PATH = "/assets/weather-icons/";
 export const CODE_MAP = {
     // Clear / Clouds
     0: { day: "clear-day.svg", night: "clear-night.svg", label: "Clear sky" },
-    1: { day: "partly-cloudy-day.svg", night: "partly-cloudy-night.svg", label: "Mainly clear" },
-    2: { day: "partly-cloudy-day.svg", night: "partly-cloudy-night.svg", label: "Partly cloudy" },
+    1: {
+        day: "partly-cloudy-day.svg",
+        night: "partly-cloudy-night.svg",
+        label: "Mainly clear",
+    },
+    2: {
+        day: "partly-cloudy-day.svg",
+        night: "partly-cloudy-night.svg",
+        label: "Partly cloudy",
+    },
     3: { day: "overcast.svg", night: "overcast-night.svg", label: "Overcast" },
     // Fog
     45: { day: "fog-day.svg", night: "fog-night.svg", label: "Fog" },
@@ -13,8 +21,16 @@ export const CODE_MAP = {
     53: { day: "drizzle.svg", night: "drizzle.svg", label: "Moderate drizzle" },
     55: { day: "drizzle.svg", night: "drizzle.svg", label: "Dense drizzle" },
     // Freezing Drizzle
-    56: { day: "sleet.svg", night: "sleet.svg", label: "Light freezing drizzle" },
-    57: { day: "sleet.svg", night: "sleet.svg", label: "Dense freezing drizzle" },
+    56: {
+        day: "sleet.svg",
+        night: "sleet.svg",
+        label: "Light freezing drizzle",
+    },
+    57: {
+        day: "sleet.svg",
+        night: "sleet.svg",
+        label: "Dense freezing drizzle",
+    },
     // Rain
     61: { day: "rain.svg", night: "rain.svg", label: "Slight rain" },
     63: { day: "rain.svg", night: "rain.svg", label: "Moderate rain" },
@@ -28,19 +44,47 @@ export const CODE_MAP = {
     75: { day: "snow.svg", night: "snow.svg", label: "Heavy snow fall" },
     77: { day: "snowflake.svg", night: "snowflake.svg", label: "Snow grains" },
     // Rain Showers
-    80: { day: "partly-cloudy-day-rain.svg", night: "partly-cloudy-night-rain.svg", label: "Slight rain showers" },
-    81: { day: "partly-cloudy-day-rain.svg", night: "partly-cloudy-night-rain.svg", label: "Moderate rain showers" },
-    82: { day: "partly-cloudy-day-rain.svg", night: "partly-cloudy-night-rain.svg", label: "Violent rain showers" },
+    80: {
+        day: "partly-cloudy-day-rain.svg",
+        night: "partly-cloudy-night-rain.svg",
+        label: "Slight rain showers",
+    },
+    81: {
+        day: "partly-cloudy-day-rain.svg",
+        night: "partly-cloudy-night-rain.svg",
+        label: "Moderate rain showers",
+    },
+    82: {
+        day: "partly-cloudy-day-rain.svg",
+        night: "partly-cloudy-night-rain.svg",
+        label: "Violent rain showers",
+    },
     // Snow Showers
-    85: { day: "partly-cloudy-day-snow.svg", night: "partly-cloudy-night-snow.svg", label: "Slight snow showers" },
-    86: { day: "partly-cloudy-day-snow.svg", night: "partly-cloudy-night-snow.svg", label: "Heavy snow showers" },
+    85: {
+        day: "partly-cloudy-day-snow.svg",
+        night: "partly-cloudy-night-snow.svg",
+        label: "Slight snow showers",
+    },
+    86: {
+        day: "partly-cloudy-day-snow.svg",
+        night: "partly-cloudy-night-snow.svg",
+        label: "Heavy snow showers",
+    },
     // Thunderstorms
-    95: { day: "thunderstorms.svg", night: "thunderstorms.svg", label: "Thunderstorm" },
-    96: { day: "thunderstorms-rain.svg", night: "thunderstorms-night-rain.svg", label: "Thunderstorm with slight hail" },
+    95: {
+        day: "thunderstorms.svg",
+        night: "thunderstorms.svg",
+        label: "Thunderstorm",
+    },
+    96: {
+        day: "thunderstorms-rain.svg",
+        night: "thunderstorms-night-rain.svg",
+        label: "Thunderstorm with slight hail",
+    },
     99: {
         day: "thunderstorms-snow.svg",
         night: "thunderstorms-night-snow.svg",
-        label: "Thunderstorm with heavy hail"
+        label: "Thunderstorm with heavy hail",
     },
 };
 
@@ -129,14 +173,122 @@ export const WEATHER_GRADIENTS = {
     },
 };
 
-export function getWeatherIcon(weatherCode, isDay = true, isAnimated = true, isFill = true) {
+const TEXT_DARK = {
+    main: "rgba(255,255,255,0.98)",
+    sub1: "rgba(255,255,255,0.85)",
+    sub2: "rgba(255,255,255,0.65)",
+    sub3: "rgba(255,255,255,0.45)",
+};
+
+const TEXT_MEDIUM = {
+    main: "rgba(250,250,250,0.96)",
+    sub1: "rgba(235,240,245,0.82)",
+    sub2: "rgba(210,220,230,0.65)",
+    sub3: "rgba(185,195,205,0.45)",
+};
+
+const TEXT_LIGHT = {
+    main: "rgba(10,15,25,0.95)",
+    sub1: "rgba(30,40,55,0.82)",
+    sub2: "rgba(55,65,80,0.65)",
+    sub3: "rgba(80,90,105,0.45)",
+};
+
+export const TEXT_COLOR_MAP = {
+    0: {
+        0: TEXT_DARK,
+        1: TEXT_DARK,
+        2: TEXT_DARK,
+        3: TEXT_DARK,
+
+        45: TEXT_LIGHT,
+        48: TEXT_LIGHT,
+
+        51: TEXT_DARK,
+        53: TEXT_DARK,
+        55: TEXT_DARK,
+        56: TEXT_DARK,
+        57: TEXT_DARK,
+
+        61: TEXT_DARK,
+        63: TEXT_DARK,
+        65: TEXT_DARK,
+        66: TEXT_DARK,
+        67: TEXT_DARK,
+
+        71: TEXT_LIGHT,
+        73: TEXT_LIGHT,
+        75: TEXT_LIGHT,
+        77: TEXT_MEDIUM,
+
+        80: TEXT_DARK,
+        81: TEXT_DARK,
+        82: TEXT_DARK,
+
+        85: TEXT_LIGHT,
+        86: TEXT_LIGHT,
+
+        95: TEXT_DARK,
+        96: TEXT_DARK,
+        99: TEXT_DARK,
+    },
+    1: {
+        0: TEXT_LIGHT,
+        1: TEXT_LIGHT,
+
+        2: TEXT_MEDIUM,
+        3: TEXT_MEDIUM,
+
+        45: TEXT_LIGHT,
+        48: TEXT_LIGHT,
+
+        51: TEXT_MEDIUM,
+        53: TEXT_MEDIUM,
+        55: TEXT_MEDIUM,
+
+        56: TEXT_LIGHT,
+        57: TEXT_LIGHT,
+
+        61: TEXT_MEDIUM,
+        63: TEXT_MEDIUM,
+        65: TEXT_MEDIUM,
+
+        66: TEXT_LIGHT,
+        67: TEXT_LIGHT,
+
+        71: TEXT_LIGHT,
+        73: TEXT_LIGHT,
+        75: TEXT_LIGHT,
+        77: TEXT_LIGHT,
+
+        80: TEXT_MEDIUM,
+        81: TEXT_MEDIUM,
+        82: TEXT_MEDIUM,
+
+        85: TEXT_LIGHT,
+        86: TEXT_LIGHT,
+
+        95: TEXT_DARK,
+        96: TEXT_DARK,
+        99: TEXT_DARK,
+    },
+};
+
+export function getWeatherIcon(
+    weatherCode,
+    isDay = true,
+    isAnimated = true,
+    isFill = true,
+) {
     const dayKey = isDay ? "day" : "night";
     const fillOrLine = isFill ? "fill" : "line";
     const animOrStatic = isAnimated ? "animated" : "static";
     const staticNameExtention = isAnimated ? "" : "wi-";
 
     if (!CODE_MAP[weatherCode][dayKey]) {
-        console.warn(`[ICON]: Weather code ${weatherCode} not found in CODE_MAP. Using default.`);
+        console.warn(
+            `[ICON]: Weather code ${weatherCode} not found in CODE_MAP. Using default.`,
+        );
         return `${BASE_PATH}${fillOrLine}/${animOrStatic}/${staticNameExtention}${CODE_MAP[0][dayKey]}`;
     }
 
@@ -146,24 +298,12 @@ export function getWeatherIcon(weatherCode, isDay = true, isAnimated = true, isF
     return `${BASE_PATH}${iconPath}`;
 }
 
-export function getWeatherGradient(weatherCode, isDay) {
+export function getWeatherCodeBackground(weatherCode, isDay) {
     const dayKey = isDay ? 1 : 0;
     return WEATHER_GRADIENTS[dayKey][weatherCode];
 }
 
-// Is there a to annotate function that returns a string as a path to an icon? Yes, but it would be more of a comment than a type annotation, since the return value is a string. You could add a JSDoc comment like this:
-/**
- * Returns the file path to the appropriate weather icon based on the provided weather code and conditions.
- * @param {number} weatherCode - The weather code corresponding to the current weather condition.
- * @param {boolean} isDay - Indicates whether it is currently day (true) or night (false).
- * @param {boolean} isAnimated - Indicates whether to return the path for an animated icon (true) or a static icon (false).
- * @param {boolean} isFill - Indicates whether to return the path for a filled icon (true) or a line icon (false).
- * @return {string} The file path to the appropriate weather icon.
- *  
- * Example usage:
- * const iconPath = getWeatherIcon(0, true, true, true);
- *  * This would return the path to the animated, filled icon for clear day conditions.
- *  * Note: The weatherCode should correspond to the codes defined in the CODE_MAP constant.
- * * The function constructs the file path based on the weather code and the specified conditions (day/night, animated/static, fill/line) and returns it as a string.
- * * The returned string can then be used to set the source of an image element in a web application to display the appropriate weather icon.
- */
+export function getWeatherCodeTextColor(weatherCode, isDay) {
+    const dayKey = isDay ? 1 : 0;
+    return TEXT_COLOR_MAP[dayKey][weatherCode];
+}
