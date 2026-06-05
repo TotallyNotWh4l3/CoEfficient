@@ -12,13 +12,15 @@ import { DailyForecastCompiled } from "../../services/utils/weatherCompile";
 
 export function ForecastDayCard({ data = null }) {
     let bgColor = getWeatherCodeBackground(data.weatherCode)
-    console.log(data.weatherCode)
 
     let timeObject = new Date(data.timeStamp)
+    let month = timeObject.getMonth() + 1
+    let date = timeObject.getDate()
+    let formattedDate = `${month}/${date}`
     return (
         <div className="card card--forecast" style={{ "--wc-forecast-bg-gradient": bgColor}}>
             <div className="card__header">
-                <p> 12/25 </p>
+                <p> {formattedDate} </p>
             </div>
 
             <div className="card__body">

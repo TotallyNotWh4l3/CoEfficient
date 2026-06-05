@@ -14,7 +14,6 @@ export default function Forecast() {
     if (!weather) return <p>No forecast data</p>;
 
     const DATA = DailyForecastCompiled(DailyWeather(weather));
-    console.log(DATA);
 
     var forecastDay = {
         1: {

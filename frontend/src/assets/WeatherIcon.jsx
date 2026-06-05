@@ -8,7 +8,6 @@ export default function WeatherIcon({
     isFill = true,
 }) {
     const iconUrl = getWeatherIcon(weatherCode, isDay, isAnimated, isFill);
-    console.log("Icon URL:", iconUrl);
     return (
         <img
             className={className}

@@ -40,8 +40,8 @@ export function useWeather() {
                 : 60 - currentMinute + nextMinute;
             const secondsToWait = 60 - currentSeconds;
             const timeUntilNextUpdate = (minutesToWait * 60 + secondsToWait) * 1000;
-            console.log(`[WEATHER HOOK]: 
-                Next Update: ${Math.round(timeUntilNextUpdate / 1000 / 60)} minutes at XX:${String(nextMinute).padStart(2, '0')}`);
+            // console.log(`[WEATHER HOOK]: 
+            //     Next Update: ${Math.round(timeUntilNextUpdate / 1000 / 60)} minutes at XX:${String(nextMinute).padStart(2, '0')}`);
 
             const timeout = setTimeout(() => {
                 refresh(true);

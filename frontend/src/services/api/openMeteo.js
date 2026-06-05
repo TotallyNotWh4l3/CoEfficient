@@ -62,7 +62,7 @@ function buildApiUrl() {
 export async function fetchWeatherData(forceRefresh = false) {
 
     if (!forceRefresh && isCacheValid()) {
-        console.log('[WEATHER API]: Using cached data');
+        // console.log('[WEATHER API]: Using cached data');
         const cached = getCachedWeather();
         return cached.data;
     }

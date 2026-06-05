@@ -7,7 +7,7 @@ export function getCachedWeather() {
 
     try {
         const cache = JSON.parse(cached);
-        console.log("[CACHE]: Data, gotten.") // 
+        // console.log("[CACHE]: Data, gotten.") // 
         return cache
     } catch (err) {
         console.error('Cache parse error: ', err); //
@@ -34,9 +34,9 @@ export function isCacheValid(maxAgeMs = 15 * 60 * 1000) {
     const seconds = Math.floor((age / 1000) % 60);
     const minutes = Math.floor(age / (1000 * 60));
     var bool = age < maxAgeMs;
-    console.warn(`[CACHE]: 
-        Data Validity: ${bool ? "VALID" : "INVALID"} 
-        Data      Age: ${minutes}m${seconds.toString().padStart(2, '0')}s`); //
+    // console.log(`[CACHE]: 
+    //     Data Validity: ${bool ? "VALID" : "INVALID"} 
+    //     Data      Age: ${minutes}m${seconds.toString().padStart(2, '0')}s`); //
     return bool;
 }
 

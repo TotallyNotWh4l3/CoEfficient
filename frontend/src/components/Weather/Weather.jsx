@@ -32,7 +32,6 @@ export default function Weather() {
 
     var background = getWeatherCodeBackground(CUR.weatherCode, CUR.isDay);
     var textColor = getWeatherCodeTextColor(CUR.weatherCode, CUR.isDay);
-    console.log(background, textColor);
 
     const stats = {
         icon: {
