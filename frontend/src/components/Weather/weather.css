@@ -4,7 +4,7 @@
     padding: var(--weather-padding);
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    background: var(--wc-background-gradient);
+    background: var(--wc-weather-bg-gradient);
     height: 100%;
     width: 100%;
     display: flex;

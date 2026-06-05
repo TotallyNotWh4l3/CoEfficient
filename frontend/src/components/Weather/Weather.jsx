@@ -69,7 +69,7 @@ export default function Weather() {
         <div
             className="weather module"
             style={{
-                "--wc-background-gradient": background,
+                "--wc-weather-bg-gradient": background,
                 "--wc-text-color-main": textColor.main,
                 "--wc-text-color-sub1": textColor.sub1,
                 "--wc-text-color-sub2": textColor.sub2,

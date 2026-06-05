@@ -113,3 +113,47 @@ export function HourlyWeather(datas) {
     };
     return data;
 }
+
+// weatherCompile.js or weatherUtils.js
+
+export function DailyForecastCompiled(data) {
+    if (!data || !data.time) {
+        console.warn("[FORECAST] No daily data available");
+        return [];
+    }
+
+    const forecastArray = data.time.map((timestamp, index) => ({
+        id: index,
+        date: new Date(timestamp * 1000),
+        timestamp: timestamp,
+
+        // Temperature
+        tempMax: data.tempMax[index],
+        tempMin: data.tempMin[index],
+        feelsLikeMax: data.feelsLikeMax[index],
+        feelsLikeMin: data.feelsLikeMin[index],
+
+        // Weather
+        weatherCode: data.weatherCode[index],
+
+        // Precipitation
+        precipitationSum: data.precipitationSum[index],
+        precipitationProbabilityMax: data.precipitationProbabilityMax[index],
+        precipitationHours: data.precipitationHours[index],
+
+        // Wind
+        windSpeedMax: data.windSpeedMax[index],
+        windGustMax: data.windGustMax[index],
+        windDirectionDominant: data.windDirectionDominant[index],
+
+        // UV
+        uvIndexMax: data.uvIndexMax[index],
+
+        // Sun
+        sunrise: data.sunrise[index],
+        sunset: data.sunset[index],
+        daylightDuration: data.daylightDuration[index],
+    }));
+
+    return forecastArray;
+}

@@ -4,18 +4,25 @@ import "./forecast-card.css"
 import {
     getWeatherIcon,
     CODE_MAP,
+    getWeatherCodeBackground,
 } from "../../services/utils/weatherConstants";
 
+import WeatherIcon from './../../assets/WeatherIcon';
+import { DailyForecastCompiled } from "../../services/utils/weatherCompile";
+
 export function ForecastDayCard({ data = null }) {
-    console.log(data);
+    let bgColor = getWeatherCodeBackground(data.weatherCode)
+    console.log(data.weatherCode)
+
+    let timeObject = new Date(data.timeStamp)
     return (
-        <div className="card care--forecast">
+        <div className="card card--forecast" style={{ "--wc-forecast-bg-gradient": bgColor}}>
             <div className="card__header">
-                <p> Header </p>
+                <p> 12/25 </p>
             </div>
 
             <div className="card__body">
-                <p> Body </p>
+                <WeatherIcon weatherCode={data.weatherCode}/>
             </div>
 
             <div className="card__footer">

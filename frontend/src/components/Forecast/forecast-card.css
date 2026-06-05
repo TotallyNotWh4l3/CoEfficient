@@ -1,16 +1,19 @@
 .card {
-    background-color: white;
     border-radius: 0.5rem;
     padding: 0.5rem;
 }
 
 .card__header {
-
 }
 
 .card__body {
-    height: 2rem;
+
 }
 .card__footer {
     
+}
+
+.card--forecast {
+    background: var(--wc-forecast-bg-gradient);
+    color: white;
 }

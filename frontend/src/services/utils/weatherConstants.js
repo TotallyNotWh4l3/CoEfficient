@@ -275,7 +275,7 @@ export const TEXT_COLOR_MAP = {
 };
 
 export function getWeatherIcon(
-    weatherCode,
+    weatherCode = 1,
     isDay = true,
     isAnimated = true,
     isFill = true,
@@ -298,7 +298,7 @@ export function getWeatherIcon(
     return `${BASE_PATH}${iconPath}`;
 }
 
-export function getWeatherCodeBackground(weatherCode, isDay) {
+export function getWeatherCodeBackground(weatherCode, isDay = 1) {
     const dayKey = isDay ? 1 : 0;
     return WEATHER_GRADIENTS[dayKey][weatherCode];
 }

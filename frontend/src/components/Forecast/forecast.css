@@ -1,5 +1,5 @@
 .forecast {
-    background: gray;
+    background: rgb(27, 20, 57);
     grid-column: 3 span;
     grid-row: 2 span;
     padding: 1rem;
@@ -9,8 +9,10 @@
     justify-content: space-between;
 }
 
-.forecast__cards{
+.forecast__cards {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    text-align: center;
 }

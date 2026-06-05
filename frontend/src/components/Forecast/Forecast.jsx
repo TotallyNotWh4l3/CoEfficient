@@ -1,6 +1,6 @@
 import { useWeather } from "../../hooks/useWeather";
 
-import { DailyWeather } from "../../services/utils/weatherCompile";
+import { DailyForecastCompiled, DailyWeather } from "../../services/utils/weatherCompile";
 
 import { ForecastDayCard } from "./ForecastCards";
 
@@ -13,11 +13,13 @@ export default function Forecast() {
     if (error) return <p>Error: {error}</p>;
     if (!weather) return <p>No forecast data</p>;
 
-    const DAY = DailyWeather(weather);
-    console.log(DAY);
+    const DATA = DailyForecastCompiled(DailyWeather(weather));
+    console.log(DATA);
 
     var forecastDay = {
-        1: {},
+        1: {
+
+        },
     };
 
     return (
@@ -36,13 +38,7 @@ export default function Forecast() {
 
             <div className="forecast__body">
                 <div className="forecast__cards">
-                    <ForecastDayCard />
-                    <ForecastDayCard />
-                    <ForecastDayCard />
-                    <ForecastDayCard />
-                    <ForecastDayCard />
-                    <ForecastDayCard />
-                    <ForecastDayCard />
+                    <ForecastDayCard data={DATA[0]}/>
                 </div>
             </div>
 
