@@ -188,10 +188,10 @@ const TEXT_MEDIUM = {
 };
 
 const TEXT_LIGHT = {
-    main: "rgba(10,15,25,0.95)",
-    sub1: "rgba(30,40,55,0.82)",
-    sub2: "rgba(55,65,80,0.65)",
-    sub3: "rgba(80,90,105,0.45)",
+    main: "rgba(250,250,250,0.96)",
+    sub1: "rgba(235,240,245,0.82)",
+    sub2: "rgba(210,220,230,0.65)",
+    sub3: "rgba(185,195,205,0.45)",
 };
 
 export const TEXT_COLOR_MAP = {

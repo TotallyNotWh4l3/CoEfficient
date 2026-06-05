@@ -109,7 +109,7 @@
     --transition-slow: 500ms ease-in-out;
 
     /* DASHBOARD */
-    --dashboard-padding: 1rem;
+    --dashboard-padding: 2rem;
     --dashboard-gap: 1.5rem;
     --dashboard-min-column: 30rem;
 

@@ -1,0 +1,16 @@
+.forecast {
+    background: gray;
+    grid-column: 3 span;
+    grid-row: 2 span;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.forecast__cards{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

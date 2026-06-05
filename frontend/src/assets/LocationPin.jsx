@@ -1,4 +1,4 @@
-export default function LocationPin({className, color}) {
+export default function LocationPin({className = null, color}) {
     return (
         <svg
             viewBox="0 0 24 24"

@@ -1,22 +1,15 @@
-.weather-icon {
+.weather__icon {
     width: 8rem;
     height: 8rem;
     object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.weather-icon:hover {
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    display: block;
+    background: no-repeat center;
 }
 
 .weather__stat {
     display: flex;
     gap: 0.25rem;
-}
-
-.weather__icon {
-    display: block;
-    background: no-repeat center;
 }
 
 .weather__secondary .weather__icon {

@@ -11,26 +11,6 @@ function WeatherMeasurement({ label = "", value = "N/A", unit = "°C" }) {
     );
 }
 
-export function WeatherPrimaryIcon({
-    weatherCode,
-    isDay = true,
-    isAnimated = true,
-    isFill = true,
-}) {
-    const iconUrl = getWeatherIcon(weatherCode, isDay, isAnimated, isFill);
-    console.log("Icon URL:", iconUrl);
-    return (
-        <img
-            className="weather-icon"
-            src={iconUrl}
-            alt={`WeatherCode ${weatherCode}`}
-            onError={() =>
-                console.error(`[WEATHER ICON]: Failed to load: ${iconUrl}`)
-            }
-        />
-    );
-}
-
 export function WeatherPrimaryTemps({
     curTemp = "N/A",
     maxTemp = "N/A",

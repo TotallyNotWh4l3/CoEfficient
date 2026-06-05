@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Comfortaa', 'Courier New', Courier, monospace;
+    font-family: "Comfortaa", "Courier New", Courier, monospace;
 }
 
 html,
@@ -19,4 +19,11 @@ body,
 
 body {
     overflow-x: hidden;
+}
+
+.module {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
 }

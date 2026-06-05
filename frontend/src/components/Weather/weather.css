@@ -1,4 +1,6 @@
 .weather {
+    grid-column: span 2;
+    grid-row: span 2;
     padding: var(--weather-padding);
     border: 1px solid var(--color-border);
     border-radius: 8px;
@@ -8,7 +10,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Offset-X Offset-Y Blur Color */
+    /* text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);  */
 }
 
 .weather__header {

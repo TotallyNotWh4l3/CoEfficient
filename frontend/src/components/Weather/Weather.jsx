@@ -7,19 +7,20 @@ import {
     DailyWeather,
 } from "../../services/utils/weatherCompile";
 
+
 import {
-    WeatherPrimaryIcon,
     WeatherPrimaryTemps,
     WeatherSecondaryStats,
 } from "./WeatherStats";
 
 import "./weather.css";
+import WeatherIcon from './../../assets/WeatherIcon';
 import {
     getWeatherCodeBackground,
     getWeatherCodeTextColor,
 } from "../../services/utils/weatherConstants";
 
-export default function WeatherModule() {
+export default function Weather() {
     const { weather, loading, error } = useWeather();
 
     if (loading) return <p>Loading weather...</p>;
@@ -66,7 +67,7 @@ export default function WeatherModule() {
     };
     return (
         <div
-            className="weather"
+            className="weather module"
             style={{
                 "--wc-background-gradient": background,
                 "--wc-text-color-main": textColor.main,
@@ -80,7 +81,7 @@ export default function WeatherModule() {
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
-                    <WeatherPrimaryIcon {...stats.icon} />
+                    <WeatherIcon className="weather__icon" {...stats.icon} />
                     <WeatherPrimaryTemps {...stats.temp} />
                 </div>
                 <div className="weather__secondary">
