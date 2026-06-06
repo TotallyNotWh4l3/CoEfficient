@@ -12,7 +12,22 @@
 .forecast__cards {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 1rem;
     align-items: center;
     text-align: center;
+    justify-content: center;
+}
+
+.forecast__icon {
+
+}
+
+.forecast__temp {
+    font-size: 0.75em;
+    text-align: center;
+}
+
+.forecast__temp --unit {
+    font-size: 0.5em;
+    color: var(--wc-text-color-sub1);
 }

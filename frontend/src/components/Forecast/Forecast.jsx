@@ -1,6 +1,9 @@
 import { useWeather } from "../../hooks/useWeather";
 
-import { DailyForecastCompiled, DailyWeather } from "../../services/utils/weatherCompile";
+import {
+    DailyForecastCompiled,
+    DailyWeather,
+} from "../../services/utils/weatherCompile";
 
 import { ForecastDayCard } from "./ForecastCards";
 
@@ -16,28 +19,28 @@ export default function Forecast() {
     const DATA = DailyForecastCompiled(DailyWeather(weather));
 
     var forecastDay = {
-        1: {
-
-        },
+        1: {},
     };
 
     return (
         <div className="forecast module">
-            <div className="forecast__header">
+            {/* <div className="forecast__header">
                 <p className="forecast__title"> Header </p>
-                {/* <div className="forecast__controls">
+                <div className="forecast__controls">
                     <button className="forecast__btn forecast__btn--chart">
                         <i className="ti ti-chart-line"></i>
                     </button>
                     <button className="forecast__btn forecast__btn--settings">
                         <i className="ti ti-settings"></i>
                     </button>
-                </div> */}
-            </div>
+                </div>
+            </div> */}
 
             <div className="forecast__body">
                 <div className="forecast__cards">
-                    <ForecastDayCard data={DATA[0]}/>
+                    {DATA.map((day) => (
+                        <ForecastDayCard data={day} />
+                    ))}
                 </div>
             </div>
 
@@ -47,9 +50,9 @@ export default function Forecast() {
                 </p>
             </div>
 
-            <div className="forecast__footer">
+            {/* <div className="forecast__footer">
                 <p> Footer </p>
-            </div>
+            </div> */}
         </div>
     );
 }
