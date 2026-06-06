@@ -7,7 +7,6 @@ import {
     DailyWeather,
 } from "../../services/utils/weatherCompile";
 
-
 import {
     WeatherPrimaryTemps,
     WeatherSecondaryStats,
@@ -20,12 +19,23 @@ import {
     getWeatherCodeTextColor,
 } from "../../services/utils/weatherConstants";
 
+import Holding from "../../assets/Holding";
+
 export default function Weather() {
     const { weather, loading, error } = useWeather();
 
-    if (loading) return <p>Loading weather...</p>;
-    if (error) return <p>Error: {error}</p>;
-    if (!weather) return <p>No weather data</p>;
+    if (!loading || !weather || !weather) {
+        var message = "Loading weather...";
+        if (loading) message = "Loading weather...";
+        if (error) message = `Error: ${error}`;
+        if (!weather) message = "No weather data available";
+
+        return (
+            <div className="weather module">
+                <Holding message={message} />
+            </div>
+        );
+    }
 
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
