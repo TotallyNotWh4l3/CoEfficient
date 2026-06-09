@@ -15,11 +15,11 @@
     gap: 1rem;
     align-items: center;
     text-align: center;
-    justify-content: center;
+    justify-content: center ;
 }
 
 .forecast__icon {
-
+    
 }
 
 .forecast__temp {

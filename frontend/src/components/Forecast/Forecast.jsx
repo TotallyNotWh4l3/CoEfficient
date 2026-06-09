@@ -18,10 +18,6 @@ export default function Forecast() {
 
     const DATA = DailyForecastCompiled(DailyWeather(weather));
 
-    var forecastDay = {
-        1: {},
-    };
-
     return (
         <div className="forecast module">
             {/* <div className="forecast__header">
@@ -39,7 +35,7 @@ export default function Forecast() {
             <div className="forecast__body">
                 <div className="forecast__cards">
                     {DATA.map((day) => (
-                        <ForecastDayCard data={day} />
+                        <ForecastDayCard key={day.id} data={day} />
                     ))}
                 </div>
             </div>
