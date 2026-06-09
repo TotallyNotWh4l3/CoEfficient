@@ -1,6 +1,6 @@
 .forecast {
     background: rgb(27, 20, 57);
-    grid-column: 3 span;
+    grid-column: 2 span;
     grid-row: 2 span;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -15,11 +15,12 @@
     gap: 1rem;
     align-items: center;
     text-align: center;
-    justify-content: center;
+    justify-content: center ;
+    overflow-x: scroll;
 }
 
 .forecast__icon {
-
+    
 }
 
 .forecast__temp {

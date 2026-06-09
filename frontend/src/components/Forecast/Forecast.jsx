@@ -8,26 +8,52 @@ import {
 import { ForecastDayCard } from "./ForecastCards";
 
 import "./forecast.css";
-
-import Holding from "../../assets/Holding";
+import Placeholder from "../../assets/Placeholder";
+import renderPlaceholder from "../../assets/Placeholder";
 
 export default function Forecast() {
     const { weather, loading, error } = useWeather();
 
-    if (loading || !weather || !weather) {
-        var message = "Loading weather...";
-        if (loading) message = "Loading weather...";
-        if (error) message = `Error: ${error}`;
-        if (!weather) message = "No weather data available";
-
-        return (
-            <div className="forecast module">
-                <Holding message={message} />
-            </div>
-        );
-    }
-
     const DATA = DailyForecastCompiled(DailyWeather(weather));
+    if (loading || error || !weather) {
+        let moduleName, message, className;
+        moduleName = "Weather Module";
+        className = "weather ";
+        if (loading) {
+            message = "Loading..";
+            className += "placeholder--loading";
+            return (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                />
+            );
+        }
+        if (error) {
+            message = "Error Occoured..";
+            className += "placeholder--error";
+            return (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                    errMessage={error}
+                />
+            );
+        }
+        if (!weather) {
+            message = "Data Not Found";
+            className += "placeholder--data-not-found";
+            return (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                />
+            );
+        }
+    }
 
     return (
         <div className="forecast module">
@@ -46,7 +72,7 @@ export default function Forecast() {
             <div className="forecast__body">
                 <div className="forecast__cards">
                     {DATA.map((day) => (
-                        <ForecastDayCard data={day} />
+                        <ForecastDayCard key={day.id} data={day} />
                     ))}
                 </div>
             </div>

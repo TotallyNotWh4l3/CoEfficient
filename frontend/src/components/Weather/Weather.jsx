@@ -7,34 +7,57 @@ import {
     DailyWeather,
 } from "../../services/utils/weatherCompile";
 
-import {
-    WeatherPrimaryTemps,
-    WeatherSecondaryStats,
-} from "./WeatherStats";
+import { WeatherPrimaryTemps, WeatherSecondaryStats } from "./WeatherStats";
 
 import "./weather.css";
-import WeatherIcon from './../../assets/WeatherIcon';
+import WeatherIcon from "./../../assets/WeatherIcon";
 import {
     getWeatherCodeBackground,
     getWeatherCodeTextColor,
 } from "../../services/utils/weatherConstants";
-
-import Holding from "../../assets/Holding";
+import Placeholder from "../../assets/Placeholder";
 
 export default function Weather() {
     const { weather, loading, error } = useWeather();
 
-    if (!loading || !weather || !weather) {
-        var message = "Loading weather...";
-        if (loading) message = "Loading weather...";
-        if (error) message = `Error: ${error}`;
-        if (!weather) message = "No weather data available";
-
-        return (
-            <div className="weather module">
-                <Holding message={message} />
-            </div>
-        );
+    if (loading || error || !weather) {
+        let moduleName, message, className;
+        moduleName = "Weather Module";
+        className = "weather ";
+        if (loading) {
+            message = "Loading..";
+            className += "placeholder--loading";
+            return (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                />
+            );
+        }
+        if (error) {
+            message = "Error Occoured..";
+            className += "placeholder--error";
+            return (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                    errMessage={error}
+                />
+            );
+        }
+        if (!weather) {
+            message = "Data Not Found";
+            className += "placeholder--data-not-found";
+            return (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                />
+            );
+        }
     }
 
     const CUR = CurrentWeather(weather);
@@ -86,7 +109,7 @@ export default function Weather() {
             }}
         >
             <div className="weather__header">
-                <WeatherLocation pinColor={textColor.sub1}/>
+                <WeatherLocation pinColor={textColor.sub1} />
             </div>
             <div className="weather__body">
                 <div className="weather__primary">
