@@ -20,7 +20,7 @@ import Placeholder from "../../assets/Placeholder";
 export default function Weather() {
     const { weather, loading, error } = useWeather();
 
-    if (loading || error || weather) {
+    if (loading || error || !weather) {
         let moduleName, message, className;
         moduleName = "Weather Module";
         className = "weather ";
@@ -47,7 +47,7 @@ export default function Weather() {
                 />
             );
         }
-        if (weather) {
+        if (!weather) {
             message = "Data Not Found";
             className += "placeholder--data-not-found";
             return (
