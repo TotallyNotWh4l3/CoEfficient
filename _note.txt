@@ -1,0 +1,24 @@
+Shorten Directory...
+
+function prompt {
+    $parent = split-path (split-path $pwd -parent) -leaf
+    $current = split-path $pwd -leaf
+
+    if ($parent) {
+        "PS ...\$parent\$current> "
+    } else {
+        "PS $current> "
+    }
+}
+
+
+
+
+Push Github Repo
+
+git add .; git commit -m ""; git push
+
+
+Pull Github Repo
+
+git pull
