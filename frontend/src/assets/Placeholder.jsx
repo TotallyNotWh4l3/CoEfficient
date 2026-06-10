@@ -1,16 +1,12 @@
 import "./placeholder.css";
 
-export default function Placeholder({
-    moduleName = null,
-    className = "placeholder--loading",
-    message = "Loading...",
-    errMessage = null,
-}) {
-    let class_name = "module placeholder " + className;
+export default function Placeholder(props) {
+    const { moduleName, className, message, errMessage } = props;
     return (
-        <div className={class_name}>
+        <div className={className}>
             <h1>{moduleName}</h1>
             <p>{message}</p>
+            {errMessage && <p className="placeholder__error">{errMessage}</p>}
         </div>
     );
 }

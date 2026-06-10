@@ -34,7 +34,7 @@ export function ForecastDayCard({ data = null }) {
             </div>
 
             <div className="card__footer">
-                <p>
+                <p className="forecast__temps">
                     <span className="forecast__temp forecast__temp--max">
                         {data.tempMax}
                     </span>

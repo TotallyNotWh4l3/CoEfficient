@@ -1,4 +1,15 @@
-import { getCachedWeather, isCacheValid, setCachedWeather } from "../utils/weatherCache.js";
+import {
+    getCachedWeather,
+    isCacheValid,
+    setCachedWeather,
+} from "../utils/weatherCache.js";
+
+// openMeteo.js
+import {
+    getWeatherFromDB,
+    saveWeatherToDB,
+    isWeatherValid,
+} from "../utils/weatherCache.js";
 
 const cfg = {
     latitude:
@@ -54,33 +65,65 @@ function buildApiUrl() {
         past_days: 0,
         forecast_days: 8,
         timeformat: "unixtime",
-        wind_speed_unit: "ms"
+        wind_speed_unit: "ms",
     });
     return `https://api.open-meteo.com/v1/forecast?${params}`;
 }
 
 export async function fetchWeatherData(forceRefresh = false) {
-
-    if (!forceRefresh && isCacheValid()) {
-        // console.log('[WEATHER API]: Using cached data');
-        const cached = getCachedWeather();
-        return cached.data;
-    }
-
-    console.log("[WEATHER API]: Fetching from Open-Meteo")
-    const url = buildApiUrl();
-
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
-        }
-        const data = await response.json();
+        // 1. Try to get from database
+        const dbData = await getWeatherFromDB();
 
-        setCachedWeather(data);
-        return data;
+        // 2. If no data in DB, fetch from API
+        if (!dbData) {
+            console.log(
+                "[WEATHER API]: No data in DB. Fetching from Open-Meteo...",
+            );
+            const apiData = await fetchFromAPI();
+            await saveWeatherToDB(apiData);
+            return apiData;
+        }
+
+        // 3. Check if data is valid (≤16 minutes old)
+        const isValid = isWeatherValid(dbData.timestamp);
+
+        // 4. If data is stale, fetch new data
+        if (!isValid) {
+            console.log(
+                "[WEATHER API]: Data is stale. Fetching from Open-Meteo...",
+            );
+            const apiData = await fetchFromAPI();
+            await saveWeatherToDB(apiData);
+            return apiData;
+        }
+
+        // 5. If force refresh (sync time), fetch new data
+        if (forceRefresh) {
+            console.log(
+                "[WEATHER API]: Force refresh. Fetching from Open-Meteo...",
+            );
+            const apiData = await fetchFromAPI();
+            await saveWeatherToDB(apiData);
+            return apiData;
+        }
+
+        // 6. Data is fresh, use from DB
+        console.log("[WEATHER API]: Using fresh data from DB...");
+        return dbData;
     } catch (err) {
-        console.error("[WEATHER API]: Fetch error: ", err);
+        console.error("[WEATHER API]: Error:", err);
         throw err;
     }
+}
+
+async function fetchFromAPI() {
+    const url = buildApiUrl();
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("[WEATHER API]: Fetched from Open-Meteo");
+    return data;
 }

@@ -1,42 +1,44 @@
-import Placeholder from "../Placeholder/Placeholder";
+import Placeholder from "./Placeholder";
 
-function capitalizeFirstLetter(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
+export default function useErrorPlaceholder(mainClassName, loading, error, data) {
+    if (loading || error || !data) {
+        let message,
+            errorMsg = null;
 
-export function renderPlaceholder({ mainClassName, loading, error, data }) {
-    const moduleName = `${capitalizeFirstLetter(mainClassName)} Module`;
+        // Create module name from mainClassName
+        const moduleName =
+            mainClassName.charAt(0).toUpperCase() +
+            mainClassName.slice(1) +
+            " Module";
 
-    if (loading) {
-        return (
-            <Placeholder
-                moduleName={moduleName}
-                className={`${mainClassName} placeholder--loading`}
-                message="Loading..."
-            />
-        );
+        if (loading) {
+            message = "Loading..";
+        } else if (error) {
+            message = "Error Occurred..";
+            errorMsg = error;
+        } else {
+            message = "Data Not Found";
+        }
+
+        const stateClass = loading
+            ? "loading"
+            : error
+              ? "error"
+              : "data-not-found";
+        const className = `${mainClassName} placeholder placeholder--${stateClass}`;
+        console.log(`${moduleName}: ${stateClass}, ${className}`)
+        return {
+            isError: true,
+            component: (
+                <Placeholder
+                    moduleName={moduleName}
+                    className={className}
+                    message={message}
+                    errMessage={errorMsg}
+                />
+            ),
+        };
     }
 
-    if (error) {
-        return (
-            <Placeholder
-                moduleName={moduleName}
-                className={`${mainClassName} placeholder--error`}
-                message="Error Occurred..."
-                errMessage={error}
-            />
-        );
-    }
-
-    if (!data) {
-        return (
-            <Placeholder
-                moduleName={moduleName}
-                className={`${mainClassName} placeholder--data-not-found`}
-                message="Data Not Found"
-            />
-        );
-    }
-
-    return null;
+    return { isError: false };
 }

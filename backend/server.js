@@ -1,29 +1,23 @@
 import express from "express";
-import cors from "cors";
-import db from "./database/database.js";
+import weatherRouter from "./routes/weather.js";
+import { initDatabase } from "./database/database.js";
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Initialize database
+await initDatabase();
+
 app.use(express.json());
 
-// Test route with database
-app.get("/api/test", (req, res) => {
-    res.json({ message: "Backend API is working!" });
-});
+// Routes
+app.use("/api/weather", weatherRouter);
 
-// Example: Get data from database
-app.get("/api/data", (req, res) => {
-    db.all("SELECT * FROM users", (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-        } else {
-            res.json(rows);
-        }
-    });
+// Health check
+app.get("/health", (req, res) => {
+    res.json({ status: "OK" });
 });
 
 app.listen(PORT, () => {
-    console.log(`Backend running at http://localhost:${PORT}`);
+    console.log(`Backend running on http://localhost:${PORT}`);
 });

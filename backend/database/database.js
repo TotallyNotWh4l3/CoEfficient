@@ -1,25 +1,34 @@
 import sqlite3 from "sqlite3";
+import { open } from "sqlite";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = path.join(__dirname, "database.db");
 
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error("Database connection error:", err);
-    } else {
-        console.log("Connected to SQLite database");
-    }
-});
+let db;
 
-db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-`);
+export async function initDatabase() {
+    db = await open({
+        filename: path.join(__dirname, "database.db"),
+        driver: sqlite3.Database,
+    });
 
-export default db;
+    // Create table if not exists
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS weather_data (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            location_id INTEGER NOT NULL,
+            timestamp INTEGER NOT NULL,
+            data JSON NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    return db;
+}
+
+export default {
+    get: (query, params) => db.get(query, params),
+    run: (query, params) => db.run(query, params),
+    all: (query, params) => db.all(query, params),
+};

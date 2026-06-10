@@ -40,7 +40,7 @@ export function DailyWeather(datas) {
         daylightDuration: dailyWeather ? dailyWeather.daylight_duration : null,
         uvIndexMax: dailyWeather ? dailyWeather.uv_index_max : null,
         precipitationSum: dailyWeather
-            ? dailyWeather.precipitation_sum.map(Math.round)
+            ? dailyWeather.precipitation_sum.map(Math.round)    
             : null,
         precipitationProbabilityMax: dailyWeather
             ? dailyWeather.precipitation_probability_max.map(Math.round)

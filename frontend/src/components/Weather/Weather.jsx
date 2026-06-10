@@ -1,64 +1,38 @@
+// Hooks
 import { useWeather } from "../../hooks/useWeather";
+
+// Components
 import WeatherLastUpdated from "./WeatherLastUpdated";
 import WeatherLocation from "./WeatherLocation";
+import { WeatherPrimaryTemps, WeatherSecondaryStats } from "./WeatherStats";
 
+// Services / Utils
 import {
     CurrentWeather,
     DailyWeather,
 } from "../../services/utils/weatherCompile";
 
-import { WeatherPrimaryTemps, WeatherSecondaryStats } from "./WeatherStats";
-
-import "./weather.css";
-import WeatherIcon from "./../../assets/WeatherIcon";
 import {
     getWeatherCodeBackground,
     getWeatherCodeTextColor,
 } from "../../services/utils/weatherConstants";
-import Placeholder from "../../assets/Placeholder";
+
+// Assets
+import WeatherIcon from "../../assets/WeatherIcon";
+import useErrorPlaceholder from "../../assets/PlaceholderUtils";
+
+// Styles
+import "./weather.css";
 
 export default function Weather() {
-    const { weather, loading, error } = useWeather();
-
-    if (loading || error || !weather) {
-        let moduleName, message, className;
-        moduleName = "Weather Module";
-        className = "weather ";
-        if (loading) {
-            message = "Loading..";
-            className += "placeholder--loading";
-            return (
-                <Placeholder
-                    moduleName={moduleName}
-                    className={className}
-                    message={message}
-                />
-            );
-        }
-        if (error) {
-            message = "Error Occoured..";
-            className += "placeholder--error";
-            return (
-                <Placeholder
-                    moduleName={moduleName}
-                    className={className}
-                    message={message}
-                    errMessage={error}
-                />
-            );
-        }
-        if (!weather) {
-            message = "Data Not Found";
-            className += "placeholder--data-not-found";
-            return (
-                <Placeholder
-                    moduleName={moduleName}
-                    className={className}
-                    message={message}
-                />
-            );
-        }
-    }
+    var { weather, loading, error } = useWeather();
+    const { isError, component } = useErrorPlaceholder(
+        "weather",
+        loading,
+        error,
+        weather,
+    );
+    if (isError) return component;
 
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
