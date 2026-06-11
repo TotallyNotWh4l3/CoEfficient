@@ -19,7 +19,10 @@
         "dev:frontend": "cd frontend && npm start",
         "dev:backend": "cd backend && npm dev",
         "dev:all": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-        "install:all": "cd frontend && npm install && cd ../backend && npm install"
+        "install:all": "cd frontend && npm install && cd ../backend && npm install",
+        "server": "npm start --prefix backend",
+        "client": "npm start --prefix frontend",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
     },
     "eslintConfig": {
         "extends": [
@@ -41,6 +44,6 @@
     },
     "description": "Dashboard for facilities",
     "devDependencies": {
-        "concurrently": "^8.0.0"
+        "concurrently": "^8.2.2"
     }
 }
