@@ -5,14 +5,15 @@ import {
     DailyWeather,
 } from "../../services/utils/weatherCompile";
 
-import { ForecastDayCard } from "./ForecastCards";
+import { ForecastDayCard } from "./DailyForecastCards";
 
-import "./forecast.css";
+import "./daily-forecast.css";
 
 import useErrorPlaceholder from "../../assets/PlaceholderUtils";
 
-export default function Forecast() {
+export default function DailyForecast() {
     var { weather, loading, error } = useWeather();
+    
     const { isError, component } = useErrorPlaceholder(
         "forecast",
         loading,

@@ -26,6 +26,7 @@ import "./weather.css";
 
 export default function Weather() {
     var { weather, loading, error } = useWeather();
+
     const { isError, component } = useErrorPlaceholder(
         "weather",
         loading,

@@ -1,5 +1,5 @@
 // ForecastCards.jsx
-import "./forecast-card.css";
+import "./daily-forecast-card.css";
 
 import {
     getWeatherIcon,
@@ -7,7 +7,7 @@ import {
     getWeatherCodeBackground,
 } from "../../services/utils/weatherConstants";
 
-import WeatherIcon from "./../../assets/WeatherIcon";
+import WeatherIcon from "../../assets/WeatherIcon";
 import { DailyForecastCompiled } from "../../services/utils/weatherCompile";
 
 export function ForecastDayCard({ data = null }) {
