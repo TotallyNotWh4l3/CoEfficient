@@ -1,3 +1,4 @@
+// useWeather.js
 import { useState, useEffect } from "react";
 import { fetchWeatherData } from "../services/api/openMeteo.js";
 
@@ -15,7 +16,7 @@ export function useWeather() {
             setWeather(data);
         } catch (err) {
             setError(err.message);
-            console.error('[WEATHER HOOK]: Error:', err);
+            console.error("[WEATHER HOOK]: Error:", err);
         } finally {
             setLoading(false);
         }
@@ -25,33 +26,53 @@ export function useWeather() {
         // Fetch immediately on mount
         refresh(false);
 
-        // Calculate time until next 15-minute mark (00, 15, 30, 45)
+        // Calculate time until next sync minute (1, 16, 31, 46)
         function scheduleNextUpdate() {
             const now = new Date();
             const currentMinute = now.getMinutes();
             const currentSeconds = now.getSeconds();
             const nextMinutes = [1, 16, 31, 46];
-            let nextMinute = nextMinutes.find(m => m > currentMinute);
+
+            let nextMinute = nextMinutes.find((m) => m > currentMinute);
             if (!nextMinute) {
-                nextMinute = 0;
+                nextMinute = nextMinutes[0]; // Wrap to first minute of next hour
             }
-            const minutesToWait = nextMinute > currentMinute
-                ? nextMinute - currentMinute
-                : 60 - currentMinute + nextMinute;
+
+            const minutesToWait =
+                nextMinute > currentMinute
+                    ? nextMinute - currentMinute
+                    : 60 - currentMinute + nextMinute;
             const secondsToWait = 60 - currentSeconds;
-            const timeUntilNextUpdate = (minutesToWait * 60 + secondsToWait) * 1000;
-            // console.log(`[WEATHER HOOK]: 
-            //     Next Update: ${Math.round(timeUntilNextUpdate / 1000 / 60)} minutes at XX:${String(nextMinute).padStart(2, '0')}`);
+            const timeUntilNextUpdate =
+                (minutesToWait * 60 + secondsToWait) * 1000;
+
+            console.log(
+                `[WEATHER HOOK]: Next update in ${minutesToWait}m${secondsToWait}s at XX:${String(nextMinute).padStart(2, "0")}`,
+            );
 
             const timeout = setTimeout(() => {
+                console.log(
+                    "[WEATHER HOOK]: Sync time reached. Force refreshing...",
+                );
                 refresh(true);
-                const interval = setInterval(() => {
-                    refresh(true);
-                }, 15 * 60 * 1000);
+
+                // After first sync, set interval for every 15 minutes
+                const interval = setInterval(
+                    () => {
+                        console.log(
+                            "[WEATHER HOOK]: 15-minute sync triggered. Force refreshing...",
+                        );
+                        refresh(true);
+                    },
+                    15 * 60 * 1000,
+                );
+
                 return () => clearInterval(interval);
             }, timeUntilNextUpdate);
+
             return timeout;
         }
+
         const timeout = scheduleNextUpdate();
         return () => clearTimeout(timeout);
     }, []);
