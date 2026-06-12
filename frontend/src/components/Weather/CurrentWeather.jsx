@@ -22,7 +22,7 @@ import WeatherIcon from "../../assets/WeatherIcon";
 import useErrorPlaceholder from "../../assets/PlaceholderUtils";
 
 // Styles
-import "./weather.css";
+import "./current-weather.css";
 
 export default function Weather() {
     var { weather, loading, error } = useWeather();
