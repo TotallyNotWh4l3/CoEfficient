@@ -12,13 +12,17 @@ body,
 #root {
     width: 100%;
     height: 100%;
-    background-color: var(--color-bg-primary);
     color: var(--color-text-item);
     font-family: var(--font-primary);
 }
 
 body {
     overflow-x: hidden;
+}
+
+.App {
+    height: 100%;
+    width: 100%;
 }
 
 .module {

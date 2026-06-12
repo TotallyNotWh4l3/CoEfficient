@@ -1,0 +1,7 @@
+.weather {
+    grid-column: span 2;
+    grid-row: span 2;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+}
