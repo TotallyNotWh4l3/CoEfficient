@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import weatherRouter from "./routes/weather.js";
 import { initDatabase } from "./database/database.js";
 
@@ -8,6 +9,7 @@ const PORT = process.env.PORT || 5000;
 // Initialize database
 await initDatabase();
 
+app.use(cors());
 app.use(express.json());
 
 // Routes
