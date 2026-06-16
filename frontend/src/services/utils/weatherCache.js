@@ -20,10 +20,12 @@ export function getCachedWeather() {
 }
 
 export function setCachedWeather(data) {
+    console.log(data);
     try {
+        let dataTime = new Date(data.current.time);
         const cacheData = {
             data: data,
-            timestamp: Date.now(),
+            timestamp: dataTime,
         };
         localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
         console.log("[WEATHER CACHE]: Data saved to cache");
@@ -35,7 +37,9 @@ export function setCachedWeather(data) {
 export function isWeatherValid(timestamp, maxAgeMs = 16 * 60 * 1000) {
     if (!timestamp) return false;
 
-    const age = Date.now() - timestamp;
+    const CURRENT_TIME = new Date();
+    const TIMESTAMP = new Date(timestamp);
+    const age = CURRENT_TIME - TIMESTAMP;
     const minutes = Math.floor(age / (1000 * 60));
     const seconds = Math.floor((age / 1000) % 60);
 

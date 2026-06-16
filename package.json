@@ -15,14 +15,15 @@
         "react-scripts": "5.0.1",
         "web-vitals": "^2.1.4"
     },
+    "homepage": "https://github.io",
     "scripts": {
         "dev:frontend": "cd frontend && npm start",
         "dev:backend": "cd backend && npm dev",
         "dev:all": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
         "install:all": "cd frontend && npm install && cd ../backend && npm install",
-        "server": "npm start --prefix backend",
-        "client": "npm start --prefix frontend",
-        "dev": "concurrently \"npm run server\" \"npm run client\""
+        "build": "react-scripts build",
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build"
     },
     "eslintConfig": {
         "extends": [
@@ -44,6 +45,7 @@
     },
     "description": "Dashboard for facilities",
     "devDependencies": {
-        "concurrently": "^8.2.2"
+        "concurrently": "^8.2.2",
+        "gh-pages": "^6.3.0"
     }
 }

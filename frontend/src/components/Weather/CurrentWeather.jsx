@@ -37,6 +37,8 @@ export default function Weather() {
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
 
+    console.log("[WEATHER DEBUG]", { weather, CUR, DAY });
+
     var background = getWeatherCodeBackground(CUR.weatherCode, CUR.isDay);
     var textColor = getWeatherCodeTextColor(CUR.weatherCode, CUR.isDay);
 

@@ -13,7 +13,7 @@ import { DailyForecastCompiled } from "../../services/utils/weatherCompile";
 export function ForecastDayCard({ data = null }) {
     let bgColor = getWeatherCodeBackground(data.weatherCode);
 
-    let timeObject = new Date(data.timestamp * 1000);
+    let timeObject = new Date(data.timestamp);
     let month = timeObject.getMonth() + 1;
     let date = timeObject.getDate();
     let formattedDate = `${month}/${date}`;

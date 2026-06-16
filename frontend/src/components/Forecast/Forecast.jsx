@@ -27,8 +27,8 @@ export default function Forecast() {
         <div className="forecast module">
             <div className="forecast__body">
                 <div className="forecast__cards">
-                    {DATA.map((day) => (
-                        <ForecastDayCard key={day.id} data={day} />
+                    {DATA.slice(0, 7).map((dayData, index) => (
+                        <ForecastDayCard key={index} data={dayData} />
                     ))}
                 </div>
             </div>
@@ -40,24 +40,4 @@ export default function Forecast() {
             </div>
         </div>
     );
-}
-
-{
-    /* <div className="forecast__header">
-                <p className="forecast__title"> Header </p>
-                <div className="forecast__controls">
-                    <button className="forecast__btn forecast__btn--chart">
-                        <i className="ti ti-chart-line"></i>
-                    </button>
-                    <button className="forecast__btn forecast__btn--settings">
-                        <i className="ti ti-settings"></i>
-                    </button>
-                </div>
-            </div> */
-}
-
-{
-    /* <div className="forecast__footer">
-                <p> Footer </p>
-            </div> */
 }
