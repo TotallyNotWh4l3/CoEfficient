@@ -17,6 +17,7 @@ export function ForecastDayCard({ data = null }) {
     let month = timeObject.getMonth() + 1;
     let date = timeObject.getDate();
     let formattedDate = `${month}/${date}`;
+    console.warn(formattedDate)
     return (
         <div
             className="card card--forecast"
