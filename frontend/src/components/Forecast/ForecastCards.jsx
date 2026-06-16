@@ -2,13 +2,10 @@
 import "./forecast-card.css";
 
 import {
-    getWeatherIcon,
-    CODE_MAP,
     getWeatherCodeBackground,
 } from "../../services/utils/weatherConstants";
 
 import WeatherIcon from "./../../assets/WeatherIcon";
-import { DailyForecastCompiled } from "../../services/utils/weatherCompile";
 
 export function ForecastDayCard({ data = null }) {
     let bgColor = getWeatherCodeBackground(data.weatherCode);
