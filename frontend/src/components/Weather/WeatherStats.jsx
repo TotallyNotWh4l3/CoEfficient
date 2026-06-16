@@ -1,4 +1,3 @@
-import { getWeatherIcon } from "../../services/utils/weatherConstants";
 import "./weather-stats.css";
 
 function WeatherMeasurement({ label = "", value = "N/A", unit = "°C" }) {
