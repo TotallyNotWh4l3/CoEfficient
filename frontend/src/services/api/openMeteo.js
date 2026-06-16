@@ -13,6 +13,9 @@ const cfg = {
     timezone: "Asia/Tokyo",
 };
 
+const BACKEND_URL =
+    process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 function buildApiUrl() {
     const params = new URLSearchParams({
         latitude: cfg.latitude,
@@ -27,20 +30,77 @@ function buildApiUrl() {
     return `https://api.open-meteo.com/v1/forecast?${params}`;
 }
 
-async function fetchFromAPI() {
+// Try direct API first
+async function fetchFromDirectAPI() {
     const url = buildApiUrl();
-    const response = await fetch(url);
+    console.log("[WEATHER API]: Trying direct API call...");
 
-    if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("[WEATHER API]: Direct API call successful");
+        return { success: true, data };
+    } catch (err) {
+        console.warn("[WEATHER API]: Direct API call failed:", err.message);
+        return { success: false, error: err };
     }
-
-    const data = await response.json();
-    console.log("[WEATHER API]: Fetched from Open-Meteo");
-    return data;
 }
 
-export async function fetchWeatherData(forceRefresh = false) {
+// Fallback to backend proxy
+async function fetchFromBackendProxy() {
+    const proxyUrl = `${BACKEND_URL}/api/weather/proxy?latitude=${cfg.latitude}&longitude=${cfg.longitude}`;
+    console.log("[WEATHER API]: Trying backend proxy...");
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`Backend Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("[WEATHER API]: Backend proxy call successful");
+        return { success: true, data };
+    } catch (err) {
+        console.warn("[WEATHER API]: Backend proxy call failed:", err.message);
+        return { success: false, error: err };
+    }
+}
+
+async function fetchFromAPI() {
+    // Try direct API first
+    const directResult = await fetchFromDirectAPI();
+    if (directResult.success) {
+        return directResult.data;
+    }
+
+    // If direct fails, try backend proxy
+    console.log(
+        "[WEATHER API]: Direct API failed, falling back to backend proxy...",
+    );
+    const backendResult = await fetchFromBackendProxy();
+    if (backendResult.success) {
+        return backendResult.data;
+    }
+
+    // Both failed
+    throw new Error("Both direct API and backend proxy failed");
+}
+
+export async function fetchWeatherData() {
     try {
         // 1. Check if there's data in cache
         const cachedData = getCachedWeather();
