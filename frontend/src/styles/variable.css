@@ -116,6 +116,10 @@
     /* WEATHER MODULE */
     --weather-padding: 1rem;
 
+    /* TEMP COLORS */
+    --temp-high-color: #ff8a8a;
+    --temp-low-color: #8ab8ff;
+
     /* ============================================
         IMAGES
        ============================================ */

@@ -3,13 +3,16 @@ import { useWeather } from "../../hooks/useWeather";
 import {
     DailyForecastCompiled,
     DailyWeather,
+    HourlyWeather,
 } from "../../services/utils/weatherCompile";
 
 import { ForecastDayCard } from "./ForecastCards";
+import ForecastGraph from "./ForecastGraph";
 
 import "./forecast.css";
 
 import useErrorPlaceholder from "../../assets/PlaceholderUtils";
+import { DEFAULT_GRAPH_SETTINGS } from "./graphSettings";
 
 export default function Forecast() {
     var { weather, loading, error } = useWeather();
@@ -33,11 +36,10 @@ export default function Forecast() {
                 </div>
             </div>
 
-            <div className="forecast__graph">
-                <p className="forecast__graph-placeholder">
-                    [ Temperature Trend Graph ]
-                </p>
-            </div>
+            <ForecastGraph
+                data={HourlyWeather(weather)}
+                settings={DEFAULT_GRAPH_SETTINGS}
+            />
         </div>
     );
 }

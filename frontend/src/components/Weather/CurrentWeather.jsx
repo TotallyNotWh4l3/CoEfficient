@@ -10,6 +10,7 @@ import { WeatherPrimaryTemps, WeatherSecondaryStats } from "./WeatherStats";
 import {
     CurrentWeather,
     DailyWeather,
+    HourlyWeather,
 } from "../../services/utils/weatherCompile";
 
 import {
@@ -36,6 +37,9 @@ export default function Weather() {
 
     const CUR = CurrentWeather(weather);
     const DAY = DailyWeather(weather);
+    const HOUR = HourlyWeather(weather);
+
+    console.log(HOUR)
 
     console.log("[WEATHER DEBUG]", { weather, CUR, DAY });
 

@@ -17,3 +17,31 @@
     background: var(--wc-forecast-bg-gradient);
     color: white;
 }
+
+.forecast__temps {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.4rem;
+
+    margin: 0;
+    font-size: 1rem;
+}
+
+.forecast__temp {
+    font-size: 0.9em;
+}
+
+.forecast__temp--max {
+    font-weight: 600;
+    color: var(--temp-high-color);
+}
+
+.forecast__temp--min {
+    opacity: 0.75;
+    color: var(--temp-low-color);
+}
+
+.forecast__temp-separator {
+    opacity: 0.5;
+}

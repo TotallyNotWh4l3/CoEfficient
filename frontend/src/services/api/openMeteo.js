@@ -37,10 +37,10 @@ async function fetchFromDirectAPI() {
 
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         const response = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId); // Clear timeout BEFORE checking response
 
         if (!response.ok) {
             throw new Error(`API Error: ${response.status}`);
@@ -50,11 +50,14 @@ async function fetchFromDirectAPI() {
         console.log("[WEATHER API]: Direct API call successful");
         return { success: true, data };
     } catch (err) {
-        console.warn("[WEATHER API]: Direct API call failed:", err.message);
+        if (err.name === "AbortError") {
+            console.warn("[WEATHER API]: Direct API call timed out (5s)");
+        } else {
+            console.warn("[WEATHER API]: Direct API call failed:", err.message);
+        }
         return { success: false, error: err };
     }
 }
-
 // Fallback to backend proxy
 async function fetchFromBackendProxy() {
     const proxyUrl = `${BACKEND_URL}/api/weather/proxy?latitude=${cfg.latitude}&longitude=${cfg.longitude}`;
@@ -65,7 +68,7 @@ async function fetchFromBackendProxy() {
         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         const response = await fetch(proxyUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId); // Clear timeout BEFORE checking response
 
         if (!response.ok) {
             throw new Error(`Backend Error: ${response.status}`);
@@ -75,7 +78,15 @@ async function fetchFromBackendProxy() {
         console.log("[WEATHER API]: Backend proxy call successful");
         return { success: true, data };
     } catch (err) {
-        console.warn("[WEATHER API]: Backend proxy call failed:", err.message);
+        // Check if it's a timeout error
+        if (err.name === "AbortError") {
+            console.warn("[WEATHER API]: Backend proxy call timed out (5s)");
+        } else {
+            console.warn(
+                "[WEATHER API]: Backend proxy call failed:",
+                err.message,
+            );
+        }
         return { success: false, error: err };
     }
 }

@@ -7,9 +7,13 @@
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    height: 100%;
 }
 
+.forecast__body {
+    flex-shrink: 0;
+}
 .forecast__cards {
     display: flex;
     flex-direction: row;
@@ -19,21 +23,10 @@
     justify-content: center;
 }
 
+.forecast__graph {
+    flex: 1;
+    min-height: 0;
+}
 /* .forecast__icon {
     
 } */
-
-.forecast__temps {
-    align-items: baseline;
-}
-
-.forecast__temp {
-    font-size: 0.75em;
-    text-align: center;
-}
-
-.forecast__temp--unit {
-    font-size: 0.5em;
-    color: var(--wc-text-color-sub1);
-    color: white;
-}

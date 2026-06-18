@@ -5,6 +5,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Comfortaa", "Courier New", Courier, monospace;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
 html,
