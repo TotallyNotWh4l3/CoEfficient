@@ -5,21 +5,21 @@ import { getWeatherCodeBackground } from "../../services/utils/weatherConstants"
 
 import WeatherIcon from "./../../assets/WeatherIcon";
 
-export function ForecastDayCard({ data = null }) {
+export function ForecastDayCard({ data = null, isFirst = false }) {
     let bgColor = getWeatherCodeBackground(data.weatherCode);
 
     let timeObject = new Date(data.timestamp);
     let month = timeObject.getMonth() + 1;
     let date = timeObject.getDate();
-    let formattedDate = `${month}/${date}`;
-    console.warn(formattedDate);
+    let formattedDate = isFirst ? "Today" : `${month}/${date}`;
+
     return (
         <div
             className="card card--forecast"
             style={{ "--wc-forecast-bg-gradient": bgColor }}
         >
             <div className="card__header">
-                <p> {formattedDate} </p>
+                <p>{formattedDate}</p>
             </div>
 
             <div className="card__body">
@@ -37,7 +37,6 @@ export function ForecastDayCard({ data = null }) {
                         </span>
                         <span className="forecast__temp-unit">°</span>
                     </div>
-
                     <div className="forecast__temp forecast__temp--min">
                         <span className="forecast__temp-value">
                             {data.tempMin}

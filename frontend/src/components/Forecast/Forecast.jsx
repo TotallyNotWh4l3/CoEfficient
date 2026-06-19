@@ -31,7 +31,11 @@ export default function Forecast() {
             <div className="forecast__body">
                 <div className="forecast__cards">
                     {DATA.slice(0, 7).map((dayData, index) => (
-                        <ForecastDayCard key={index} data={dayData} />
+                        <ForecastDayCard
+                            key={index}
+                            data={dayData}
+                            isFirst={index === 0}
+                        />
                     ))}
                 </div>
             </div>
