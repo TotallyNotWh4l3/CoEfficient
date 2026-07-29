@@ -1,4 +1,5 @@
 import { useDashboard } from "../../../hooks/useDashboard";
+import { useSettings } from "../../../hooks/useSettings";
 
 const AVAILABLE_MODULES = [
     {
@@ -17,13 +18,19 @@ const AVAILABLE_MODULES = [
 
 export default function ModuleManager() {
     const { dashboard, addModule, removeModule } = useDashboard();
+    const { settings } = useSettings();
 
     return (
         <div>
             <h3>Add Module</h3>
 
             {AVAILABLE_MODULES.map((module) => (
-                <button key={module.type} onClick={() => addModule(module.type)}>
+                <button
+                    key={module.type}
+                    onClick={() =>
+                        addModule(module.type, settings.moduleDefaults[module.type] ?? {})
+                    }
+                >
                     Add {module.name}
                 </button>
             ))}

@@ -1,22 +1,16 @@
 import API from "./apiClient";
 
 export async function login(username, password) {
-    return API.request("/api/auth/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username,
-            password,
-        }),
+    const { data } = await API.post("/auth/login", {
+        username,
+        password,
     });
+
+    return data;
 }
 
-export async function getCurrentUser(token) {
-    return API.request("/api/auth/me", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+export async function getCurrentUser() {
+    const { data } = await API.get("/auth/me");
+
+    return data;
 }

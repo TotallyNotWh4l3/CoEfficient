@@ -5,6 +5,9 @@ import cors from "cors";
 import "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
+import weatherRoutes from "./routes/weatherRoutes.js";
+
+console.log("weatherRoutes loaded");
 
 dotenv.config();
 
@@ -15,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/weather", weatherRoutes);
 
 app.get("/", (req, res) => {
     res.json({

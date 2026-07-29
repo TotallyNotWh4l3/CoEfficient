@@ -7,9 +7,7 @@ export const DEFAULT_SETTINGS = {
     preferences: {
         language: "en",
 
-        preferences: {
-            locationId: "default-location",
-        },
+        locationId: "default-location",
 
         appearance: {
             currentTheme: "dark-default",
@@ -25,6 +23,7 @@ export const DEFAULT_SETTINGS = {
             name: "Tokyo, Shibuya",
             latitude: 35.661991,
             longitude: 139.704138,
+            timezone: "Asia/Tokyo",
             builtIn: true,
         },
     ],
