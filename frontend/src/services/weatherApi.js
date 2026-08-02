@@ -1,11 +1,6 @@
 import apiClient from "./apiClient";
 
-export async function getWeather(token) {
-    const { data } = await apiClient.get("/weather", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
+export async function getWeather() {
+    const { data } = await apiClient.get("/weather");
     return data;
 }

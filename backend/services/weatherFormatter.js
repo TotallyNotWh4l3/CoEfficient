@@ -1,4 +1,4 @@
-import { WEATHER_CODES, DEFAULT_WEATHER } from "../utils/weatherCodes.js";
+import { WEATHER_CODES, DEFAULT_WEATHER } from "../../shared/constants/weather/weatherCodes.js";
 
 function getWeatherInfo(code, isDay) {
     const weather = WEATHER_CODES[code] ?? DEFAULT_WEATHER;

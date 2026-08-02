@@ -6,12 +6,14 @@ function toKebabCase(value) {
 }
 
 export function useTheme() {
-    const { settings } = useSettings();
+    const { settings, loading } = useSettings();
 
     useEffect(() => {
-        const themeId = settings.preferences.appearance.currentTheme;
+        if (loading || !settings) return;
 
-        const theme = settings.themes.find((theme) => theme.id === themeId);
+        const themeId = settings?.preferences?.appearance?.currentTheme;
+
+        const theme = settings?.themes?.find((theme) => theme.id === themeId);
 
         if (!theme) {
             console.warn("[Theme] Theme not found:", themeId);
@@ -33,5 +35,5 @@ export function useTheme() {
         applyGroup("shadow", theme.appearance.shadows);
 
         console.log("[Theme] Applied:", theme.name);
-    }, [settings]);
+    }, [settings, loading]);
 }

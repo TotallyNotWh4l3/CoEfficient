@@ -13,14 +13,18 @@ import { LANGUAGE_OPTIONS } from "../../../constants/interface";
 import { Computer } from "lucide-react";
 
 export default function InterfaceSettings() {
-    const { settings, updatePreference, applyTheme, applyLocation } = useSettings();
+    const { loading, settings, updatePreference, applyTheme, applyLocation } = useSettings();
+
+    if (loading || !settings) {
+        return null;
+    }
 
     const { locationOptions } = useLocation();
     const { openDialog } = useDialog();
 
     const T = useLanguage();
 
-    const themeOptions = settings.themes.map((theme) => ({
+    const themeOptions = (settings.themes ?? []).map((theme) => ({
         id: theme.id,
         label: theme.name,
     }));

@@ -1,0 +1,285 @@
+import React, { useState } from "react";
+import "../weather.css";
+
+/**
+ * Props:
+ * - dataset: [{ label, value, valueMax?, valueMin? }]
+ * - metricInfo: { id, labelEn, labelJa, color, unit }
+ * - isJapanese: boolean
+ * - isHourly: boolean — dual max/min lines are only shown for the 7-day temp view
+ */
+export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly }) {
+    const [hoveredIdx, setHoveredIdx] = useState(null);
+
+    if (!dataset || dataset.length === 0) return null;
+
+    const width = 500;
+    const height = 110;
+    const paddingX = 35;
+    const paddingY = 15;
+
+    const isDual = metricInfo.id === "temp" && !isHourly;
+
+    let minVal, maxVal;
+    if (isDual) {
+        const allVals = dataset.flatMap((d) => [d.valueMax ?? d.value, d.valueMin ?? d.value]);
+        minVal = Math.min(...allVals);
+        maxVal = Math.max(...allVals);
+    } else {
+        const allVals = dataset.map((d) => d.value);
+        minVal = Math.min(...allVals);
+        maxVal = Math.max(...allVals);
+    }
+    const valRange = maxVal - minVal === 0 ? 1 : maxVal - minVal;
+
+    const toPoints = (pickValue) =>
+        dataset.map((d, idx) => {
+            const x = paddingX + (idx / (dataset.length - 1)) * (width - 2 * paddingX);
+            const y =
+                height - paddingY - ((pickValue(d) - minVal) / valRange) * (height - 2 * paddingY);
+            return { x, y, value: pickValue(d), label: d.label };
+        });
+
+    const pointsMax = isDual ? toPoints((d) => d.valueMax ?? d.value) : [];
+    const pointsMin = isDual ? toPoints((d) => d.valueMin ?? d.value) : [];
+    const pointsSingle = !isDual ? toPoints((d) => d.value) : [];
+
+    const getBezierPath = (pts) => {
+        if (pts.length === 0) return "";
+        let pathD = `M ${pts[0].x} ${pts[0].y}`;
+        for (let i = 1; i < pts.length; i++) {
+            const prev = pts[i - 1];
+            const curr = pts[i];
+            const cpX1 = prev.x + (curr.x - prev.x) / 3;
+            const cpY1 = prev.y;
+            const cpX2 = prev.x + (2 * (curr.x - prev.x)) / 3;
+            const cpY2 = curr.y;
+            pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
+        }
+        return pathD;
+    };
+
+    const getAreaPath = (pts, pathD) => {
+        if (pts.length === 0) return "";
+        return `${pathD} L ${pts[pts.length - 1].x} ${height - paddingY} L ${pts[0].x} ${height - paddingY} Z`;
+    };
+
+    const pathMaxD = getBezierPath(pointsMax);
+    const areaMaxD = getAreaPath(pointsMax, pathMaxD);
+    const pathMinD = getBezierPath(pointsMin);
+    const areaMinD = getAreaPath(pointsMin, pathMinD);
+    const pathSingleD = getBezierPath(pointsSingle);
+    const areaSingleD = getAreaPath(pointsSingle, pathSingleD);
+
+    const renderPoints = isDual
+        ? [
+              ...pointsMax.map((p, i) => ({ ...p, color: "#f87171", isMax: true, origIdx: i })),
+              ...pointsMin.map((p, i) => ({ ...p, color: "#60a5fa", isMin: true, origIdx: i })),
+          ]
+        : pointsSingle.map((p, i) => ({
+              ...p,
+              color: metricInfo.color,
+              isSingle: true,
+              origIdx: i,
+          }));
+
+    return (
+        <div className="weather-chart">
+            <div className="weather-chart__header">
+                <span className="weather-chart__title">
+                    <span
+                        className="weather-chart__dot"
+                        style={{
+                            backgroundColor: metricInfo.color,
+                            boxShadow: `0 0 8px ${metricInfo.color}`,
+                        }}
+                    ></span>
+                    {isJapanese ? metricInfo.labelJa : metricInfo.labelEn} ({metricInfo.unit})
+                </span>
+                <span className="weather-chart__range">
+                    Range: {minVal}-{maxVal} {metricInfo.unit}
+                </span>
+            </div>
+
+            <div className="weather-chart__svg-wrap">
+                <svg viewBox={`0 0 ${width} ${height}`} className="weather-chart__svg">
+                    <defs>
+                        <linearGradient id="grad-temp-max" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#f87171" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="#f87171" stopOpacity="0.0" />
+                        </linearGradient>
+                        <linearGradient id="grad-temp-min" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.25" />
+                            <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.0" />
+                        </linearGradient>
+                        <linearGradient id={`grad-${metricInfo.id}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={metricInfo.color} stopOpacity="0.4" />
+                            <stop offset="100%" stopColor={metricInfo.color} stopOpacity="0.0" />
+                        </linearGradient>
+                    </defs>
+
+                    <line
+                        x1={paddingX}
+                        y1={paddingY}
+                        x2={width - paddingX}
+                        y2={paddingY}
+                        stroke="rgba(255,255,255,0.05)"
+                        strokeDasharray="2 2"
+                    />
+                    <line
+                        x1={paddingX}
+                        y1={height - paddingY}
+                        x2={width - paddingX}
+                        y2={height - paddingY}
+                        stroke="rgba(255,255,255,0.12)"
+                    />
+
+                    {isDual ? (
+                        <>
+                            {areaMinD && <path d={areaMinD} fill="url(#grad-temp-min)" />}
+                            {areaMaxD && <path d={areaMaxD} fill="url(#grad-temp-max)" />}
+                        </>
+                    ) : (
+                        areaSingleD && <path d={areaSingleD} fill={`url(#grad-${metricInfo.id})`} />
+                    )}
+
+                    {isDual ? (
+                        <>
+                            {pathMinD && (
+                                <path
+                                    d={pathMinD}
+                                    fill="none"
+                                    stroke="#60a5fa"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    style={{
+                                        filter: "drop-shadow(0 1px 4px rgba(96, 165, 250, 0.2))",
+                                    }}
+                                />
+                            )}
+                            {pathMaxD && (
+                                <path
+                                    d={pathMaxD}
+                                    fill="none"
+                                    stroke="#f87171"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    style={{
+                                        filter: "drop-shadow(0 1px 4px rgba(248, 113, 113, 0.2))",
+                                    }}
+                                />
+                            )}
+                        </>
+                    ) : (
+                        pathSingleD && (
+                            <path
+                                d={pathSingleD}
+                                fill="none"
+                                stroke={metricInfo.color}
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                style={{ filter: `drop-shadow(0 1px 4px ${metricInfo.color}30)` }}
+                            />
+                        )
+                    )}
+
+                    {renderPoints.map((pt, idx) => {
+                        const isHovered = hoveredIdx === pt.origIdx;
+                        return (
+                            <g key={idx}>
+                                {isHovered && (
+                                    <line
+                                        x1={pt.x}
+                                        y1={paddingY}
+                                        x2={pt.x}
+                                        y2={height - paddingY}
+                                        stroke="rgba(255,255,255,0.15)"
+                                        strokeDasharray="2 2"
+                                    />
+                                )}
+                                {isHovered && (
+                                    <circle
+                                        cx={pt.x}
+                                        cy={pt.y}
+                                        r="6"
+                                        fill={pt.color}
+                                        opacity="0.3"
+                                    />
+                                )}
+                                <circle
+                                    cx={pt.x}
+                                    cy={pt.y}
+                                    r={isHovered ? "4" : "2.5"}
+                                    fill={isHovered ? "#fff" : pt.color}
+                                    stroke={isHovered ? pt.color : "rgba(0,0,0,0.4)"}
+                                    strokeWidth="1.2"
+                                    style={{ cursor: "pointer", transition: "all 0.1s ease" }}
+                                    onMouseEnter={() => setHoveredIdx(pt.origIdx)}
+                                    onMouseLeave={() => setHoveredIdx(null)}
+                                />
+                                {(pt.isMax || pt.isSingle) && (
+                                    <text
+                                        x={pt.x}
+                                        y={height - 3}
+                                        fill="rgba(255,255,255,0.4)"
+                                        fontFamily="JetBrains Mono, monospace"
+                                        fontSize="8px"
+                                        textAnchor="middle"
+                                    >
+                                        {pt.label}
+                                    </text>
+                                )}
+                            </g>
+                        );
+                    })}
+                </svg>
+
+                {hoveredIdx !== null && dataset[hoveredIdx] && (
+                    <div
+                        className="weather-chart__tooltip"
+                        style={{
+                            left: `${Math.min(85, Math.max(3, ((pointsMax.length > 0 ? pointsMax[hoveredIdx].x : pointsSingle[hoveredIdx].x) / width) * 100 - 8))}%`,
+                            top: `${Math.min(65, Math.max(2, ((isDual ? (pointsMax[hoveredIdx].y + pointsMin[hoveredIdx].y) / 2 : pointsSingle[hoveredIdx].y) / height) * 100 - 32))}%`,
+                        }}
+                    >
+                        <div className="weather-chart__tooltip-label">
+                            {dataset[hoveredIdx].label}
+                        </div>
+                        {isDual ? (
+                            <div className="weather-chart__tooltip-dual">
+                                <div className="weather-chart__tooltip-row">
+                                    <span className="weather-chart__tooltip-swatch weather-chart__tooltip-swatch--max"></span>
+                                    <span className="weather-chart__tooltip-name">
+                                        {isJapanese ? "最高" : "Max"}:
+                                    </span>
+                                    <span className="weather-chart__tooltip-num">
+                                        {dataset[hoveredIdx].valueMax}°C
+                                    </span>
+                                </div>
+                                <div className="weather-chart__tooltip-row">
+                                    <span className="weather-chart__tooltip-swatch weather-chart__tooltip-swatch--min"></span>
+                                    <span className="weather-chart__tooltip-name">
+                                        {isJapanese ? "最低" : "Min"}:
+                                    </span>
+                                    <span className="weather-chart__tooltip-num">
+                                        {dataset[hoveredIdx].valueMin}°C
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="weather-chart__tooltip-single">
+                                <span className="weather-chart__tooltip-num">
+                                    {dataset[hoveredIdx].value}
+                                    {metricInfo.unit}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

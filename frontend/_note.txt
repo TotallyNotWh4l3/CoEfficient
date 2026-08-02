@@ -1,406 +1,94 @@
-// ModuleEditor.jsx
-import { useDashboard } from "../../../hooks/useDashboard";
-
-export default function ModuleEditor({ module }) {
-    const { updateModuleSettings } = useDashboard();
-
-    return (
-        <div>
-            <label>Title</label>
-
-            <input
-                value={module.settings.title ?? ""}
-                onChange={(e) => updateModuleSettings(module.id, "title", e.target.value)}
-            />
-
-            {module.type === "weather" && (
-                <>
-                    <label>City</label>
-
-                    <input
-                        value={module.settings.city ?? ""}
-                        onChange={(e) => updateModuleSettings(module.id, "city", e.target.value)}
-                    />
-                </>
-            )}
-        </div>
-    );
-}
-
-
-// ModuleFrame.jsx
-import "./module-frame.css";
-
-export default function ModuleFrame({ title, children }) {
-    return (
-        <section className="module-frame">
-            <header className="module-frame__header">{title}</header>
-
-            <div className="module-frame__content">{children}</div>
-        </section>
-    );
-}
-
-
-// ModuleManager.jsx
-import { useDashboard } from "../../../hooks/useDashboard";
-
-const AVAILABLE_MODULES = [
-    {
-        type: "weather",
-        name: "Weather",
-    },
-    {
-        type: "schedule",
-        name: "Schedule",
-    },
-    {
-        type: "announcement",
-        name: "Announcements",
-    },
-];
-
-export default function ModuleManager() {
-    const { dashboard, addModule, removeModule } = useDashboard();
-
-    return (
-        <div>
-            <h3>Add Module</h3>
-
-            {AVAILABLE_MODULES.map((module) => (
-                <button key={module.type} onClick={() => addModule(module.type)}>
-                    Add {module.name}
-                </button>
-            ))}
-
-            <h3>Current Modules</h3>
-
-            {dashboard.modules.map((module) => (
-                <div key={module.id}>
-                    {module.type}
-
-                    <button onClick={() => removeModule(module.id)}>Remove</button>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-
-
-// ModuleRenderer.jsx
-import WeatherModule from "../Weather/WeatherModule";
-
-const MODULE_COMPONENTS = {
-    weather: WeatherModule,
-    // schedule: ScheduleModule,
-    // announcement: AnnouncementModule,
-};
-
-export default function ModuleRenderer({ module, onSelect }) {
-    const Component = MODULE_COMPONENTS[module.type];
-
-    if (!Component) {
-        return null;
-    }
-
-    return (
-        <div onClick={() => onSelect(module.id)}>
-            <Component module={module} />
-        </div>
-    );
-}
-
-
-// Dashboard.jsx
-import { useState } from "react";
-
-import DashboardHeader from "./DashboardHeader";
-import DashboardWorkspace from "./DashboardWorkspace";
-
-import Settings from "../Settings/Settings";
-
-import "./dashboard.css";
-import { useLocation } from "../../hooks/useLocation";
-
-export default function Dashboard() {
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [isSettingsClosing, setIsSettingsClosing] = useState(false);
-
-    const closeSettings = () => {
-        setIsSettingsClosing(true);
-
-        setTimeout(() => {
-            setIsSettingsOpen(false);
-            setIsSettingsClosing(false);
-        }, 180);
-    };
-
-    const { requestCurrentLocation } = useLocation();
-
-    async function handleUseCurrentLocation() {
-        try {
-            const coords = await requestCurrentLocation();
-
-            console.log(coords.latitude);
-            console.log(coords.longitude);
-
-            // Later:
-            // reverse geocode
-            // save location
-            // select as default
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    return (
-        <div className="dashboard">
-            <DashboardHeader setIsSettingsOpen={setIsSettingsOpen} />
-
-            <DashboardWorkspace />
-
-            {isSettingsOpen && (
-                <>
-                    <div
-                        className={`dashboard__overlay ${
-                            isSettingsClosing ? "dashboard__overlay--closing" : ""
-                        }`}
-                        onClick={closeSettings}
-                    />
-
-                    <Settings onClose={closeSettings} closing={isSettingsClosing} />
-                </>
-            )}
-        </div>
-    );
-}
-
-
-
-// DashboardHeader.jsx
-import React, { useState } from "react";
-import { Layers } from "lucide-react";
-import { LinearGradient } from "react-text-gradients";
-
-// Components
-import SettingsButton from "./Buttons/SettingsButton";
-import UserButton from "./Buttons/UserButton";
-
-// JS
-import { useLanguage } from "../../hooks/useLanguage";
-
-// CSS
-import "./dashboard-header.css";
-
-function Workmark() {
-    const T = useLanguage();
-    const titleGradient = ["to right", "#4c00ff, #9c31ff"];
-
-    return (
-        <div className="dashboard-header__wordmark">
-            <Layers />
-            <div className="dashboard-header__titles">
-                <span className="dashboard-header__title">
-                    <LinearGradient gradient={titleGradient}>
-                        {T.dashboard.header.title.toUpperCase()}
-                    </LinearGradient>
-                </span>
-                <span className="dashboard-header__subtitle">
-                    <LinearGradient gradient={titleGradient}>
-                        {T.dashboard.header.subTitle.toUpperCase()}
-                    </LinearGradient>
-                </span>
-            </div>
-        </div>
-    );
-}
-
-export default function DashboardHeader({ setIsSettingsOpen }) {
-    return (
-        <header className="dashboard-header">
-            <Workmark />
-
-            <div className="dashboard-header__buttons">
-                <SettingsButton setIsOpen={setIsSettingsOpen} />
-                <UserButton />
-            </div>
-        </header>
-    );
-}
-
-
-// DashboardWorkspace
-import { useDashboard } from "../../hooks/useDashboard";
-import ModuleRenderer from "../Modules/core/ModuleRenderer";
-import "./dashboard-workspace.css"
-
-export default function DashboardWorkspace() {
-    const { dashboard, selectModule } = useDashboard();
-
-    return (
-        <main
-            className="dashboard__workspace"
-            style={{
-                "--workspace-columns": dashboard.layout.columns,
-                "--workspace-gap": `${dashboard.layout.gap}px`,
-                "--workspace-padding": `${dashboard.layout.padding}px`,
-            }}
-        >
-            {dashboard.modules.map((module) => (
-                <ModuleRenderer key={module.id} module={module} onSelect={selectModule} />
-            ))}
-        </main>
-    );
-}
-
-
-// useDashboard.jsx
-import { useState, useEffect, useCallback } from "react";
-import { useDashboardContext } from "../context/DashboardContext";
-import { DEFAULT_DASHBOARD } from "../constants/defaults/defaultDashboard";
-
-/**
- * useDashboard Hook
- * Manages the current dashboard with localStorage persistence.
- */
-export function useDashboardState() {
-    const [dashboard, setDashboard] = useState(() => {
-        try {
-            const stored = localStorage.getItem("co-efficient-dashboard");
-
-            if (!stored) {
-                return structuredClone(DEFAULT_DASHBOARD);
-            }
-
-            const parsed = JSON.parse(stored);
-
-            return {
-                ...structuredClone(DEFAULT_DASHBOARD),
-                ...parsed,
-
-                layout: {
-                    ...DEFAULT_DASHBOARD.layout,
-                    ...parsed.layout,
-                },
-
-                modules: parsed.modules ?? DEFAULT_DASHBOARD.modules,
-            };
-        } catch (e) {
-            console.error("Failed to load dashboard:", e);
-            return structuredClone(DEFAULT_DASHBOARD);
-        }
-    });
-    const [selectedModuleId, setSelectedModuleId] = useState(null);
-    useEffect(() => {
-        try {
-            localStorage.setItem("co-efficient-dashboard", JSON.stringify(dashboard));
-        } catch (e) {
-            console.error("Failed to save dashboard:", e);
-        }
-    }, [dashboard]);
-
-    // =====================================================
-    // Layout
-    // =====================================================
-
-    const updateLayout = useCallback((key, value) => {
-        setDashboard((prev) => ({
-            ...prev,
-            layout: {
-                ...prev.layout,
-                [key]: value,
-            },
-        }));
-    }, []);
-
-    // =====================================================
-    // Dashboard
-    // =====================================================
-
-    const updateDashboard = useCallback((updater) => {
-        setDashboard((prev) => (typeof updater === "function" ? updater(prev) : updater));
-    }, []);
-
-    const addModule = useCallback((type, settings = {}) => {
-        setDashboard((prev) => ({
-            ...prev,
-            modules: [
-                ...prev.modules,
-                {
-                    id: crypto.randomUUID(),
-                    type,
-                    settings,
-                    layout: {
-                        w: 1,
-                        h: 1,
-                    },
-                },
-            ],
-        }));
-    }, []);
-
-    const removeModule = useCallback((moduleId) => {
-        setDashboard((prev) => ({
-            ...prev,
-            modules: prev.modules.filter((module) => module.id !== moduleId),
-        }));
-    }, []);
-
-    const updateModuleSettings = useCallback((moduleId, key, value) => {
-        setDashboard((prev) => ({
-            ...prev,
-            modules: prev.modules.map((module) =>
-                module.id === moduleId
-                    ? {
-                          ...module,
-                          settings: {
-                              ...module.settings,
-                              [key]: value,
-                          },
-                      }
-                    : module,
-            ),
-        }));
-    }, []);
-
-    const selectModule = useCallback((moduleId) => {
-        setSelectedModuleId(moduleId);
-    }, []);
-
-    return {
-        dashboard,
-
-        updateLayout,
-        updateDashboard,
-
-        addModule,
-        removeModule,
-        updateModuleSettings,
-
-        selectedModuleId,
-        selectModule,
-
-        setDashboard,
-    };
-}
-
-export function useDashboard() {
-    return useDashboardContext();
-}
-
-
-// WeatherModule.jsx
-import ModuleFrame from "../core/ModuleFrame";
-import ModuleEditor from "../core/ModuleEditor";
-
-export default function WeatherModule({ module }) {
-    return (
-        <ModuleFrame title={module.settings.title}>
-            <p>Weather module placeholder</p>
-            <p>Location: {module.settings.city}</p>
-
-            <ModuleEditor module={module} />
-        </ModuleFrame>
-    );
-}
+Sandbox
+├── README.md
+├── backend
+│   ├── config
+│   │   └── database.js
+│   ├── constants
+│   │   └── defaultSettings.js
+│   ├── controllers
+│   │   ├── authController.js
+│   │   ├── settingsController.js
+│   │   └── weatherController.js
+│   ├── database
+│   │   ├── init.js
+│   │   ├── schema
+│   │   │   ├── userSettings.js
+│   │   │   └── users.js
+│   │   └── seed.js
+│   ├── middleware
+│   │   └── authMiddleware.js
+│   ├── migration
+│   │   ├── 001_create_users.js
+│   │   ├── 002_create_user_settings.js
+│   │   └── migrate.js
+│   ├── models
+│   │   ├── User.js
+│   │   └── UserSettings.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── routes
+│   │   ├── authRoutes.js
+│   │   ├── settingsRoutes.js
+│   │   └── weatherRoutes.js
+│   ├── server.js
+│   ├── services
+│   │   ├── authService.js
+│   │   ├── openMeteoService.js
+│   │   ├── weatherCache.js
+│   │   ├── weatherFormatter.js
+│   │   └── weatherService.js
+│   └── utils
+│       ├── jwt.js
+│       ├── password.js
+│       └── weatherCodes.js
+└── frontend
+    ├── index.html
+    ├── package-lock.json
+    ├── package.json
+    ├── public
+    │   ├── favicon.svg
+    │   └── icons.svg
+    ├── src
+    │   ├── App.jsx
+    │   ├── components
+    │   │   ├── Dashboard
+    │   │   ├── Login
+    │   │   ├── Modules
+    │   │   ├── Settings
+    │   │   └── common
+    │   ├── constants
+    │   │   ├── dashboard
+    │   │   ├── defaults
+    │   │   ├── dialog
+    │   │   ├── i18n
+    │   │   ├── interface
+    │   │   ├── modules
+    │   │   └── themes
+    │   ├── context
+    │   │   ├── AuthContext.jsx
+    │   │   ├── DashboardContext.jsx
+    │   │   ├── DialogContext.jsx
+    │   │   └── SettingsContext.jsx
+    │   ├── hooks
+    │   │   ├── useAuth.js
+    │   │   ├── useDashboard.js
+    │   │   ├── useDialog.js
+    │   │   ├── useLanguage.js
+    │   │   ├── useLocation.js
+    │   │   ├── useSettings.js
+    │   │   ├── useTheme.js
+    │   │   └── useWeather.js
+    │   ├── main.jsx
+    │   ├── services
+    │   │   ├── apiClient.js
+    │   │   ├── authService.js
+    │   │   ├── weatherApi.js
+    │   │   ├── weatherFormatter.js
+    │   │   └── weatherService.js
+    │   ├── styles
+    │   │   ├── global.css
+    │   │   └── variable.css
+    │   └── utils
+    │       ├── weatherCodes.js
+    │       └── weatherGradients.js
+    └── vite.config.js

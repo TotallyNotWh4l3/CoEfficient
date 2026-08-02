@@ -1,79 +1,181 @@
-import "./weather-module.css";
+import React, { useState, useEffect } from 'react';
+import WeatherHeader from './components/WeatherHeader';
+import WeatherCurrentSummary from './components/WeatherCurrentSummary';
+import WeatherStatsRow from './components/WeatherStatsRow';
+import WeatherForecastSection from './components/WeatherForecastSection';
+import WeatherSettingsPanel from './components/WeatherSettingsPanel';
+import { getWeatherGradient } from './utils/weatherHelpers';
+import './weather.css';
 
-import WeatherHeader from "./WeatherHeader";
-import WeatherCurrent from "./WeatherCurrent";
-import WeatherDetails from "./WeatherDetails";
-import WeatherChart from "./WeatherChart";
-import WeatherForecast from "./WeatherForecast";
+/**
+ * WeatherModule — pure UI shell, no data-fetching or mock generation.
+ * All weather data comes in as props from the parent/backend integration.
+ *
+ * Props:
+ * - facilities: [{ id, nameEn, nameJa }]
+ * - facilityId: string
+ * - onFacilityChange: (id) => void
+ *
+ * - current: {
+ *     temperature: number,
+ *     humidity: number,
+ *     windSpeed: number,
+ *     precipChance: number,
+ *     weatherCode: number,
+ *     isDay: 0 | 1,
+ *     highTemp: number,
+ *     lowTemp: number,
+ *     time: string,          // e.g. "14:00"
+ *   }
+ *
+ * - dailyList: [{
+ *     dayLabel: string,
+ *     maxTemp: number,
+ *     minTemp: number,
+ *     weatherCode: number,
+ *     humidity: number,
+ *     precipChance: number,
+ *     precipSum: number,
+ *     windSpeed: number,
+ *   }]
+ *
+ * - hourlyByDay: {
+ *     [dayIndex]: [{
+ *       time: string,
+ *       temp: number,
+ *       maxTemp: number,
+ *       minTemp: number,
+ *       humidity: number,
+ *       precipChance: number,
+ *       precipSum: number,
+ *       windSpeed: number,
+ *     }]
+ *   }
+ *
+ * - isJapanese: boolean
+ * - userRole: string ('manager' | 'admin' | ...)
+ * - layoutMode: 'combined' | 'current' | 'forecast'
+ * - onLayoutModeChange: (mode) => void
+ * - onRemove: () => void
+ */
+export default function WeatherModule({
+  facilities = [],
+  facilityId,
+  onFacilityChange,
+  current = {},
+  dailyList = [],
+  hourlyByDay = {},
+  isJapanese = false,
+  userRole,
+  layoutMode = 'combined',
+  onLayoutModeChange,
+  onRemove,
+}) {
+  const [activeTab, setActiveTab] = useState('hourly');
+  const [activeMetric, setActiveMetric] = useState('temp');
+  const [selectedDayIdx, setSelectedDayIdx] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
+  const [localLayoutMode, setLocalLayoutMode] = useState(layoutMode);
 
-import useWeather from "../../../hooks/useWeather";
-import { getWeatherGradient } from "../../../utils/weatherGradients";
+  useEffect(() => {
+    setLocalLayoutMode(layoutMode);
+  }, [layoutMode]);
 
-const WeatherModule = () => {
-    const { weather, loading, error } = useWeather();
+  const isManagerOrAbove = userRole && ['manager', 'admin'].includes(userRole.toLowerCase());
 
-    if (loading) {
-        return <section className="weather-module">Loading weather...</section>;
-    }
+  const {
+    temperature = 0,
+    humidity = 0,
+    windSpeed = 0,
+    precipChance = 0,
+    weatherCode = 3,
+    isDay = 1,
+    highTemp = 0,
+    lowTemp = 0,
+    time = '--:--',
+  } = current;
 
-    if (error) {
-        return <section className="weather-module">Failed to load weather.</section>;
-    }
+  const gradient = getWeatherGradient(weatherCode, isDay);
 
-    if (!weather) {
-        return null;
-    }
+  const chartDataset =
+    activeTab === 'hourly'
+      ? (hourlyByDay[selectedDayIdx] || []).map((item) => ({
+          label: item.time,
+          value: item[activeMetric],
+          valueMax: item.maxTemp,
+          valueMin: item.minTemp,
+        }))
+      : dailyList.map((item) => ({
+          label: item.dayLabel,
+          value: item[activeMetric],
+          valueMax: item.maxTemp,
+          valueMin: item.minTemp,
+        }));
 
-    const current = {
-        location: weather.location.name ?? "Current Location",
+  const handleLayoutModeChange = (mode) => {
+    setLocalLayoutMode(mode);
+    onLayoutModeChange && onLayoutModeChange(mode);
+  };
 
-        temperature: weather.current.temperature,
+  return (
+    <div className="weather-card" style={{ background: gradient }}>
+      <WeatherHeader
+        facilities={facilities}
+        facilityId={facilityId}
+        onFacilityChange={onFacilityChange}
+        isJapanese={isJapanese}
+        isManagerOrAbove={isManagerOrAbove}
+        showSettings={showSettings}
+        onToggleSettings={() => setShowSettings((s) => !s)}
+        onRemove={onRemove}
+      />
 
-        condition: weather.current.description,
+      {localLayoutMode !== 'forecast' && (
+        <WeatherCurrentSummary
+          weatherCode={weatherCode}
+          isDay={isDay}
+          temp={temperature}
+          highTemp={highTemp}
+          lowTemp={lowTemp}
+          isJapanese={isJapanese}
+        />
+      )}
 
-        high: weather.daily[0].high,
+      {localLayoutMode !== 'forecast' && (
+        <WeatherStatsRow
+          humidity={humidity}
+          windSpeed={windSpeed}
+          precipChance={precipChance}
+          isJapanese={isJapanese}
+        />
+      )}
 
-        low: weather.daily[0].low,
+      {localLayoutMode !== 'current' && (
+        <WeatherForecastSection
+          isJapanese={isJapanese}
+          activeMetric={activeMetric}
+          onSelectMetric={setActiveMetric}
+          dailyList={dailyList}
+          activeTab={activeTab}
+          onChangeTab={setActiveTab}
+          selectedDayIdx={selectedDayIdx}
+          onSelectDay={setSelectedDayIdx}
+          chartDataset={chartDataset}
+          timeString={time}
+        />
+      )}
 
-        humidity: weather.current.humidity,
+      {showSettings && (
+        <WeatherSettingsPanel
+          isJapanese={isJapanese}
+          layoutMode={localLayoutMode}
+          onLayoutModeChange={handleLayoutModeChange}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
 
-        wind: weather.current.windSpeed,
-
-        icon: weather.current.icon,
-    };
-
-    const forecast = weather.daily.map((day) => ({
-        day: new Date(day.date).toLocaleDateString("en-US", {
-            weekday: "short",
-        }),
-
-        icon: day.icon,
-
-        high: day.high,
-
-        low: day.low,
-    }));
-
-    const background = getWeatherGradient(weather.current.weatherCode, weather.current.isDay);
-
-    return (
-        <section
-            className="weather-module"
-            style={{
-                background,
-            }}
-        >
-            <WeatherHeader location={current.location} />
-
-            <WeatherCurrent weather={current} />
-
-            <WeatherDetails weather={current} />
-
-            <WeatherChart hourly={weather.hourly} />
-
-            <WeatherForecast forecast={forecast} />
-        </section>
-    );
-};
-
-export default WeatherModule;
+      <div className="weather-card__flare-top" />
+      <div className="weather-card__flare-bottom" />
+    </div>
+  );
+}

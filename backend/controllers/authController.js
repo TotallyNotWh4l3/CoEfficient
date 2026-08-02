@@ -1,6 +1,10 @@
 import User from "../models/User.js";
+import UserSettings from "../models/UserSettings.js";
+
 import Password from "../utils/password.js";
 import JWT from "../utils/jwt.js";
+
+import { DEFAULT_SETTINGS } from "../constants/defaultSettings.js";
 
 async function login(req, res) {
     try {
@@ -26,6 +30,18 @@ async function login(req, res) {
             return res.status(401).json({
                 message: "Invalid username or password.",
             });
+        }
+
+        // -------------------------------------------------
+        // Ensure the user always has a settings record
+        // -------------------------------------------------
+
+        const existingSettings = await UserSettings.findByUserId(user.id);
+
+        if (!existingSettings) {
+            console.log(`[Auth] Creating default settings for user ${user.username}`);
+
+            await UserSettings.upsert(user.id, DEFAULT_SETTINGS);
         }
 
         const token = JWT.generateToken(user);

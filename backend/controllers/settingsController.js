@@ -2,15 +2,15 @@ import UserSettings from "../models/UserSettings.js";
 
 async function getSettings(req, res) {
     try {
-        const userId = req.user.id;
+        const settings = await UserSettings.findByUserId(req.user.id);
 
-        const userSettings = await UserSettings.findByUserId(userId);
-
-        if (!userSettings) {
-            return res.json(null);
+        if (!settings) {
+            return res.status(404).json({
+                message: "User settings not found.",
+            });
         }
 
-        res.json(userSettings.settings);
+        res.json(settings.settings);
     } catch (error) {
         console.error(error);
 
@@ -22,14 +22,10 @@ async function getSettings(req, res) {
 
 async function updateSettings(req, res) {
     try {
-        const userId = req.user.id;
-
-        const settings = req.body;
-
-        await UserSettings.upsert(userId, settings);
+        await UserSettings.upsert(req.user.id, req.body);
 
         res.json({
-            message: "Settings saved.",
+            success: true,
         });
     } catch (error) {
         console.error(error);

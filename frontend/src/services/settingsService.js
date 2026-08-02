@@ -1,0 +1,11 @@
+import apiClient from "./apiClient";
+
+export async function getSettings() {
+    const { data } = await apiClient.get("/settings");
+    return data;
+}
+
+export async function saveSettings(settings) {
+    const { data } = await apiClient.put("/settings", settings);
+    return data;
+}

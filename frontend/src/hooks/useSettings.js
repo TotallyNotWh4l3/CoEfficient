@@ -1,72 +1,68 @@
 import { useState, useEffect, useCallback } from "react";
+
 import { useSettingsContext } from "../context/SettingsContext";
-import { DEFAULT_SETTINGS } from "../constants/defaults/defaultSettings";
+import * as SettingsService from "../services/settingsService";
 
-/**
- * useSettings Hook
- * Manages application settings with localStorage persistence.
- */
-export function useSettingsState() {
-    const [settings, setSettings] = useState(() => {
-        try {
-            console.log("[Settings] Loading settings...");
+export function useSettingsState(user) {
+    const [settings, setSettings] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-            const stored = localStorage.getItem("co-efficient-settings");
-
-            if (!stored) {
-                console.log("[Settings] No saved settings found. Using defaults.");
-                return structuredClone(DEFAULT_SETTINGS);
-            }
-
-            console.log("[Settings] Saved settings found.");
-
-            const parsed = JSON.parse(stored);
-
-            const merged = {
-                ...structuredClone(DEFAULT_SETTINGS),
-                ...parsed,
-
-                preferences: {
-                    ...DEFAULT_SETTINGS.preferences,
-                    ...parsed.preferences,
-                },
-
-                themes: [
-                    ...DEFAULT_SETTINGS.themes,
-                    ...(parsed.themes ?? []).filter(
-                        (saved) => !DEFAULT_SETTINGS.themes.some((def) => def.id === saved.id),
-                    ),
-                ],
-
-                moduleDefaults: parsed.moduleDefaults ?? DEFAULT_SETTINGS.moduleDefaults,
-            };
-
-            console.log("[Settings] Settings loaded:", merged);
-
-            return merged;
-        } catch (e) {
-            console.error("[Settings] Failed to load settings:", e);
-            return structuredClone(DEFAULT_SETTINGS);
-        }
-    });
+    // =====================================================
+    // Load Settings
+    // =====================================================
 
     useEffect(() => {
-        try {
-            console.log("[Settings] Saving settings:", settings);
-
-            localStorage.setItem("co-efficient-settings", JSON.stringify(settings));
-        } catch (e) {
-            console.error("[Settings] Failed to save settings:", e);
+        // Wait until authentication has completed.
+        if (!user) {
+            setLoading(false);
+            return;
         }
+
+        async function loadSettings() {
+            try {
+                setLoading(true);
+
+                console.log("[Settings] Loading...");
+
+                const data = await SettingsService.getSettings();
+
+                setSettings(data);
+
+                console.log("[Settings] Loaded.");
+            } catch (error) {
+                console.error("[Settings] Failed to load.", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadSettings();
+    }, [user]);
+
+    // =====================================================
+    // Auto Save
+    // =====================================================
+
+    useEffect(() => {
+        if (!settings) return;
+
+        SettingsService.saveSettings(settings).catch((error) =>
+            console.error("[Settings] Save failed.", error),
+        );
     }, [settings]);
 
-    const updateSetting = useCallback((path, value) => {
-        console.log("[Settings] Updating:", path, "=>", value);
+    // =====================================================
+    // Generic Update
+    // =====================================================
 
-        setSettings((prev) => {
-            const updated = structuredClone(prev);
+    const updateSetting = useCallback((path, value) => {
+        setSettings((previous) => {
+            if (!previous) return previous;
+
+            const updated = structuredClone(previous);
 
             const keys = path.split(".");
+
             let current = updated;
 
             for (let i = 0; i < keys.length - 1; i++) {
@@ -74,8 +70,6 @@ export function useSettingsState() {
             }
 
             current[keys[keys.length - 1]] = value;
-
-            console.log("[Settings] Updated settings:", updated);
 
             return updated;
         });
@@ -87,8 +81,6 @@ export function useSettingsState() {
 
     const updatePreference = useCallback(
         (path, value) => {
-            console.log("[Preferences] Updating:", path, "=>", value);
-
             updateSetting(`preferences.${path}`, value);
         },
         [updateSetting],
@@ -99,10 +91,8 @@ export function useSettingsState() {
     // =====================================================
 
     const updateModuleDefault = useCallback(
-        (moduleType, key, value) => {
-            console.log("[Module Default] Updating:", moduleType, key, "=>", value);
-
-            updateSetting(`moduleDefaults.${moduleType}.${key}`, value);
+        (module, key, value) => {
+            updateSetting(`moduleDefaults.${module}.${key}`, value);
         },
         [updateSetting],
     );
@@ -113,39 +103,31 @@ export function useSettingsState() {
 
     const applyTheme = useCallback(
         (themeId) => {
-            console.log("[Theme] Applying theme:", themeId);
-
             updateSetting("preferences.appearance.currentTheme", themeId);
         },
         [updateSetting],
     );
 
     const saveTheme = useCallback((theme) => {
-        console.log("[Theme] Saving new theme:", theme);
-
-        setSettings((prev) => ({
-            ...prev,
-            themes: [...prev.themes, theme],
+        setSettings((previous) => ({
+            ...previous,
+            themes: [...previous.themes, theme],
         }));
     }, []);
 
     const updateTheme = useCallback((id, updates) => {
-        console.log("[Theme] Updating theme:", id, updates);
-
-        setSettings((prev) => ({
-            ...prev,
-            themes: prev.themes.map((theme) =>
+        setSettings((previous) => ({
+            ...previous,
+            themes: previous.themes.map((theme) =>
                 theme.id === id ? { ...theme, ...updates } : theme,
             ),
         }));
     }, []);
 
     const deleteTheme = useCallback((id) => {
-        console.log("[Theme] Deleting theme:", id);
-
-        setSettings((prev) => ({
-            ...prev,
-            themes: prev.themes.filter((theme) => theme.id !== id),
+        setSettings((previous) => ({
+            ...previous,
+            themes: previous.themes.filter((theme) => theme.id !== id),
         }));
     }, []);
 
@@ -161,35 +143,38 @@ export function useSettingsState() {
     );
 
     const saveLocation = useCallback((location) => {
-        setSettings((prev) => ({
-            ...prev,
-            locations: [...prev.locations, location],
+        setSettings((previous) => ({
+            ...previous,
+            locations: [...previous.locations, location],
         }));
     }, []);
 
     const updateLocation = useCallback((id, updates) => {
-        setSettings((prev) => ({
-            ...prev,
-            locations: prev.locations.map((location) =>
+        setSettings((previous) => ({
+            ...previous,
+            locations: previous.locations.map((location) =>
                 location.id === id ? { ...location, ...updates } : location,
             ),
         }));
     }, []);
 
     const deleteLocation = useCallback((id) => {
-        setSettings((prev) => ({
-            ...prev,
-            locations: prev.locations.filter((location) => location.id !== id),
+        setSettings((previous) => ({
+            ...previous,
 
-            // If the deleted location was the current default,
-            // fall back to the built-in default.
+            locations: previous.locations.filter((location) => location.id !== id),
+
             preferences:
-                prev.preferences.locationId === id
+                previous.preferences.locationId === id
                     ? {
-                          ...prev.preferences,
-                          locationId: "default-location",
+                          ...previous.preferences,
+
+                          preferences: {
+                              ...previous.preferences.preferences,
+                              locationId: "default-location",
+                          },
                       }
-                    : prev.preferences,
+                    : previous.preferences,
         }));
     }, []);
 
@@ -197,25 +182,32 @@ export function useSettingsState() {
     // Reset
     // =====================================================
 
-    const resetToDefaults = useCallback(() => {
-        console.log("[Settings] Resetting to defaults.");
+    const resetToDefaults = useCallback(async () => {
+        try {
+            const defaults = await SettingsService.getSettings();
 
-        setSettings(structuredClone(DEFAULT_SETTINGS));
+            setSettings(defaults);
+        } catch (error) {
+            console.error(error);
+        }
     }, []);
+
+    // =====================================================
+    // Getter
+    // =====================================================
 
     const getSetting = useCallback(
         (path) => {
-            const value = path.split(".").reduce((obj, key) => obj?.[key], settings);
+            if (!settings) return undefined;
 
-            console.log("[Settings] Get:", path, "=>", value);
-
-            return value;
+            return path.split(".").reduce((object, key) => object?.[key], settings);
         },
         [settings],
     );
 
     return {
         settings,
+        loading,
 
         updateSetting,
 
