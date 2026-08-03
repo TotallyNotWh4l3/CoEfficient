@@ -12,6 +12,8 @@ export function useTheme() {
         if (loading || !settings) return;
 
         const themeId = settings?.preferences?.appearance?.currentTheme;
+        console.log("themeId:", themeId);
+        console.log("themes:", settings.themes);
 
         const theme = settings?.themes?.find((theme) => theme.id === themeId);
 

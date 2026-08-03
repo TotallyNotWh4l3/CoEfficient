@@ -45,8 +45,7 @@ function AppContent() {
 export default function App() {
     const authState = useAuthState();
 
-    // Wait for auth before loading user settings
-    const settingsState = useSettingsState(authState);
+    const settingsState = useSettingsState(authState.user);
 
     const dashboardState = useDashboardState();
     const dialogState = useDialogState();

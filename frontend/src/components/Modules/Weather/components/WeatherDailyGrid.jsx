@@ -1,5 +1,5 @@
 import React from "react";
-import { WeatherVisualIcon } from "../utils/weatherHelpers";
+import { WeatherVisualIcon } from "../utils/weatherHelpers.jsx";
 import "../weather.css";
 
 /**

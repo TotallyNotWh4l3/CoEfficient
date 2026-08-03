@@ -4,7 +4,7 @@ import WeatherMetricSelector from "./WeatherMetricSelector";
 import WeatherDailyGrid from "./WeatherDailyGrid";
 import WeatherTabsBar from "./WeatherTabsBar";
 import WeatherChart from "./WeatherChart";
-import { METRIC_DEFS } from "../utils/weatherHelpers";
+import { METRIC_DEFS } from "../utils/weatherHelpers.jsx";
 import "../weather.css";
 
 /**

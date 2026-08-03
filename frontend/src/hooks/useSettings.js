@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import { useSettingsContext } from "../context/SettingsContext";
 import * as SettingsService from "../services/settingsService";
@@ -7,27 +7,32 @@ export function useSettingsState(user) {
     const [settings, setSettings] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Ref to skip auto-save on initial fetch
+    const isInitialMount = useRef(true);
+
     // =====================================================
     // Load Settings
     // =====================================================
 
     useEffect(() => {
-        // Wait until authentication has completed.
-        if (!user) {
+        const token = localStorage.getItem("co-efficient-token");
+
+        // Check for user existence (supports user.id, user._id, or user.email)
+        const hasUser = user && (user.id || user._id || user.email || Object.keys(user).length > 0);
+
+        if (!hasUser || !token) {
             setLoading(false);
+            setSettings(null);
             return;
         }
 
         async function loadSettings() {
             try {
                 setLoading(true);
-
                 console.log("[Settings] Loading...");
-
                 const data = await SettingsService.getSettings();
-
+                console.log("Settings response:", data);
                 setSettings(data);
-
                 console.log("[Settings] Loaded.");
             } catch (error) {
                 console.error("[Settings] Failed to load.", error);
@@ -38,13 +43,18 @@ export function useSettingsState(user) {
 
         loadSettings();
     }, [user]);
-
     // =====================================================
     // Auto Save
     // =====================================================
 
     useEffect(() => {
         if (!settings) return;
+
+        // 2. Prevent auto-save from immediately firing right after initial fetch
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
 
         SettingsService.saveSettings(settings).catch((error) =>
             console.error("[Settings] Save failed.", error),

@@ -1,22 +1,17 @@
-import { DEFAULT_THEMES } from "../themes";
+import { DARK_DEFAULT_THEME } from "../themes/darkDefault.js";
+import { LIGHT_DEFAULT_THEME } from "../themes/lightDefault.js";
+
+const DEFAULT_THEMES = [DARK_DEFAULT_THEME, LIGHT_DEFAULT_THEME];
 
 export const DEFAULT_SETTINGS = {
-    // =====================================================
-    // Preferences
-    // =====================================================
     preferences: {
         language: "en",
-
         locationId: "default-location",
-
         appearance: {
             currentTheme: "dark-default",
         },
     },
 
-    // =====================================================
-    // Locations
-    // =====================================================
     locations: [
         {
             id: "default-location",
@@ -28,14 +23,8 @@ export const DEFAULT_SETTINGS = {
         },
     ],
 
-    // =====================================================
-    // THEMES
-    // =====================================================
     themes: DEFAULT_THEMES,
 
-    // =====================================================
-    // Module Defaults
-    // =====================================================
     moduleDefaults: {
         weather: {
             title: "Weather",

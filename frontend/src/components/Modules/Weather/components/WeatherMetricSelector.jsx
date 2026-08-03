@@ -1,5 +1,5 @@
 import React from "react";
-import { METRIC_DEFS } from "../utils/weatherHelpers";
+import { METRIC_DEFS } from "../utils/weatherHelpers.jsx";
 import "../weather.css";
 
 /**
@@ -28,11 +28,11 @@ export default function WeatherMetricSelector({ activeMetric, onSelectMetric, is
                                 filter: isActive ? `drop-shadow(0 0 4px ${metric.color})` : "none",
                             }}
                         />
-                        <span
+                        {/* <span
                             className={`weather-metrics__label${isActive ? " weather-metrics__label--active" : ""}`}
                         >
                             {isJapanese ? metric.labelJa : metric.labelEn}
-                        </span>
+                        </span> */}
                     </button>
                 );
             })}

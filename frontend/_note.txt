@@ -39,56 +39,66 @@ Sandbox
 │   │   └── weatherService.js
 │   └── utils
 │       ├── jwt.js
-│       ├── password.js
-│       └── weatherCodes.js
-└── frontend
-    ├── index.html
-    ├── package-lock.json
-    ├── package.json
-    ├── public
-    │   ├── favicon.svg
-    │   └── icons.svg
-    ├── src
-    │   ├── App.jsx
-    │   ├── components
-    │   │   ├── Dashboard
-    │   │   ├── Login
-    │   │   ├── Modules
-    │   │   ├── Settings
-    │   │   └── common
-    │   ├── constants
-    │   │   ├── dashboard
-    │   │   ├── defaults
-    │   │   ├── dialog
-    │   │   ├── i18n
-    │   │   ├── interface
-    │   │   ├── modules
-    │   │   └── themes
-    │   ├── context
-    │   │   ├── AuthContext.jsx
-    │   │   ├── DashboardContext.jsx
-    │   │   ├── DialogContext.jsx
-    │   │   └── SettingsContext.jsx
-    │   ├── hooks
-    │   │   ├── useAuth.js
-    │   │   ├── useDashboard.js
-    │   │   ├── useDialog.js
-    │   │   ├── useLanguage.js
-    │   │   ├── useLocation.js
-    │   │   ├── useSettings.js
-    │   │   ├── useTheme.js
-    │   │   └── useWeather.js
-    │   ├── main.jsx
-    │   ├── services
-    │   │   ├── apiClient.js
-    │   │   ├── authService.js
-    │   │   ├── weatherApi.js
-    │   │   ├── weatherFormatter.js
-    │   │   └── weatherService.js
-    │   ├── styles
-    │   │   ├── global.css
-    │   │   └── variable.css
-    │   └── utils
-    │       ├── weatherCodes.js
-    │       └── weatherGradients.js
-    └── vite.config.js
+│       └── password.js
+├── frontend
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── src
+│   │   ├── App.jsx
+│   │   ├── components
+│   │   │   ├── Dashboard
+│   │   │   ├── Login
+│   │   │   ├── Modules
+│   │   │   ├── Settings
+│   │   │   └── common
+│   │   ├── constants
+│   │   │   ├── dashboard
+│   │   │   ├── defaults
+│   │   │   ├── dialog
+│   │   │   ├── i18n
+│   │   │   ├── interface
+│   │   │   └── modules
+│   │   ├── context
+│   │   │   ├── AuthContext.jsx
+│   │   │   ├── DashboardContext.jsx
+│   │   │   ├── DialogContext.jsx
+│   │   │   └── SettingsContext.jsx
+│   │   ├── hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useDashboard.js
+│   │   │   ├── useDialog.js
+│   │   │   ├── useLanguage.js
+│   │   │   ├── useLocation.js
+│   │   │   ├── useSettings.js
+│   │   │   ├── useTheme.js
+│   │   │   └── useWeather.js
+│   │   ├── main.jsx
+│   │   ├── services
+│   │   │   ├── apiClient.js
+│   │   │   ├── authService.js
+│   │   │   ├── settingsService.js
+│   │   │   ├── weatherApi.js
+│   │   │   ├── weatherFormatter.js
+│   │   │   └── weatherService.js
+│   │   ├── styles
+│   │   │   ├── global.css
+│   │   │   └── variable.css
+│   │   └── utils
+│   │       ├── weatherCodes.js
+│   │       └── weatherGradients.js
+│   └── vite.config.js
+└── shared
+    └── constants
+        ├── defaults
+        │   ├── defaultSettings.js
+        │   └── index.js
+        ├── themes
+        │   ├── darkDefault.js
+        │   ├── index.js
+        │   └── lightDefault.js
+        └── weather
+            └── weatherCodes.js

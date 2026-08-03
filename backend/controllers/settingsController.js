@@ -2,6 +2,8 @@ import UserSettings from "../models/UserSettings.js";
 
 async function getSettings(req, res) {
     try {
+        console.log("GET /settings hit");
+
         const settings = await UserSettings.findByUserId(req.user.id);
 
         if (!settings) {
@@ -10,11 +12,13 @@ async function getSettings(req, res) {
             });
         }
 
-        res.json(settings.settings);
+        console.log(JSON.stringify(settings.settings, null, 2));
+
+        return res.json(settings.settings);
     } catch (error) {
         console.error(error);
 
-        res.status(500).json({
+        return res.status(500).json({
             message: "Failed to load settings.",
         });
     }

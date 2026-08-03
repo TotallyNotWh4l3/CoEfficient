@@ -8,15 +8,20 @@ import { useDialog } from "../../../hooks/useDialog";
 import Settings from "../Components/SettingsComponents";
 import LocationList from "../Components/LocationList";
 
-import { LANGUAGE_OPTIONS } from "../../../constants/interface";
+import { LANGUAGE_OPTIONS } from "../../../constants/interface/languageOptions";
 
 import { Computer } from "lucide-react";
 
 export default function InterfaceSettings() {
     const { loading, settings, updatePreference, applyTheme, applyLocation } = useSettings();
 
-    if (loading || !settings) {
-        return null;
+    if (loading) {
+        return <div className="interface-settings">Loading settings...</div>;
+    }
+
+    if (!settings) {
+        console.log(settings)
+        return <div className="interface-settings">Unable to load settings.</div>;
     }
 
     const { locationOptions } = useLocation();

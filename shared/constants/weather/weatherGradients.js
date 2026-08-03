@@ -1,5 +1,3 @@
-// src/utils/weatherGradients.js
-
 const opacity = 0.85;
 
 const rgba = (r, g, b) => `rgba(${r}, ${g}, ${b}, ${opacity})`;

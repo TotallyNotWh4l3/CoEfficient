@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDashboardContext } from "../context/DashboardContext";
-import { DEFAULT_DASHBOARD } from "../constants/defaults/defaultDashboard";
-
+import { DEFAULT_DASHBOARD } from "../../../shared/constants/defaults/defaultDashboard.js"
 /**
  * useDashboard Hook
  * Manages the current dashboard with localStorage persistence.

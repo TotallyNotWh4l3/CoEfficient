@@ -15,7 +15,7 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
 
     const width = 500;
     const height = 110;
-    const paddingX = 35;
+    const paddingX = 0;
     const paddingY = 15;
 
     const isDual = metricInfo.id === "temp" && !isHourly;
@@ -37,7 +37,13 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
             const x = paddingX + (idx / (dataset.length - 1)) * (width - 2 * paddingX);
             const y =
                 height - paddingY - ((pickValue(d) - minVal) / valRange) * (height - 2 * paddingY);
-            return { x, y, value: pickValue(d), label: d.label };
+            const hour = d.label.slice(0, 2);
+            return {
+                x,
+                y,
+                value: pickValue(d),
+                label: hour,
+            };
         });
 
     const pointsMax = isDual ? toPoints((d) => d.valueMax ?? d.value) : [];

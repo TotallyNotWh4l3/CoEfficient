@@ -4,7 +4,7 @@ import UserSettings from "../models/UserSettings.js";
 import Password from "../utils/password.js";
 import JWT from "../utils/jwt.js";
 
-import { DEFAULT_SETTINGS } from "../constants/defaultSettings.js";
+import { DEFAULT_SETTINGS } from "../../shared/constants/defaults/defaultSettings.js";
 
 async function login(req, res) {
     try {
@@ -36,11 +36,14 @@ async function login(req, res) {
         // Ensure the user always has a settings record
         // -------------------------------------------------
 
+        console.log("DEFAULT_SETTINGS before save:", JSON.stringify(DEFAULT_SETTINGS, null, 2));
+
         const existingSettings = await UserSettings.findByUserId(user.id);
 
         if (!existingSettings) {
             console.log(`[Auth] Creating default settings for user ${user.username}`);
-
+            console.log(DEFAULT_SETTINGS);
+            console.log(DEFAULT_SETTINGS.themes);
             await UserSettings.upsert(user.id, DEFAULT_SETTINGS);
         }
 
