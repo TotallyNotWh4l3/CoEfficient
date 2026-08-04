@@ -4,41 +4,29 @@ import usersTable from "./schema/users.js";
 import userSettingsTable from "./schema/userSettings.js";
 import locations from "./schema/locations.js";
 import weatherData from "./schema/weatherData.js";
+import announcements from "./schema/announcements.js";
+import announcementLogs from "./schema/announcementLogs.js";
+
+const tables = [
+    { name: "Users", sql: usersTable },
+    { name: "UserSettings", sql: userSettingsTable },
+    { name: "Locations", sql: locations },
+    { name: "WeatherData", sql: weatherData },
+    { name: "Announcements", sql: announcements },
+    { name: "AnnouncementLogs", sql: announcementLogs}
+];
 
 db.serialize(() => {
-    db.run(usersTable, (error) => {
-        if (error) {
-            console.error("Failed to create users table:", error.message);
-        } else {
-            console.log("Users table created.");
-        }
-    });
-
-    db.run(userSettingsTable, (error) => {
-        if (error) {
-            console.error("Failed to create userSettings table:", error.message);
-        } else {
-            console.log("UserSettings table created.");
-        }
-    });
-
-    db.run(locations, (error) => {
-        if (error) {
-            console.error("Failed to create locations table:", error.message);
-        } else {
-            console.log("locations table created.");
-        }
-    });
-
-    db.run(weatherData, (error) => {
-        if (error) {
-            console.error("Failed to create weatherData table:", error.message);
-        } else {
-            console.log("weatherData table created.");
-        }
+    tables.forEach(({ name, sql }) => {
+        db.run(sql, (error) => {
+            if (error) {
+                console.error(`Failed to create ${name} table:`, error.message);
+            } else {
+                console.log(`${name} table created.`);
+            }
+        });
     });
 });
-
 db.close((error) => {
     if (error) {
         console.error("Failed to close database:", error.message);

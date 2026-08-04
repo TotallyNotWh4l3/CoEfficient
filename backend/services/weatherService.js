@@ -15,8 +15,31 @@ export async function getWeather(location) {
     const latitude = Number(location.latitude);
     const longitude = Number(location.longitude);
 
-    if (!locationId) {
-        throw new Error("Location id is required for weather caching.");
+    // Still nothing — fall back to the user's built-in default, then
+    // to whatever's first. If the table is empty, sync from settings.
+    if (!location) {
+        let locations = await Location.findAllByUserId(req.user.id);
+
+        if (locations.length === 0) {
+            const userSettings = await UserSettings.findByUserId(req.user.id);
+            const settingsLocations = userSettings?.settings?.locations ?? [];
+
+            for (const loc of settingsLocations) {
+                await Location.create({
+                    id: loc.id,
+                    userId: req.user.id,
+                    name: loc.name,
+                    latitude: loc.latitude,
+                    longitude: loc.longitude,
+                    timezone: loc.timezone ?? "Asia/Tokyo",
+                    builtIn: Boolean(loc.builtIn),
+                });
+            }
+
+            locations = await Location.findAllByUserId(req.user.id);
+        }
+
+        location = locations.find((l) => l.builtIn) ?? locations[0] ?? null;
     }
 
     if (Number.isNaN(latitude) || Number.isNaN(longitude)) {

@@ -1,8 +1,9 @@
 import WeatherModuleContainer from "../Weather/WeatherModuleContainer";
+import AnnouncementCard from "../Announcement/AnnouncementCard";
 
 const MODULE_COMPONENTS = {
     weather: WeatherModuleContainer,
-    // schedule: ScheduleModule,
+    announcement: AnnouncementCard,
     // announcement: AnnouncementModule,
 };
 

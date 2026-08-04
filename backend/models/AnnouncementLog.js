@@ -1,0 +1,41 @@
+// backend/models/AnnouncementLog.js
+import { run, all } from "../utils/dbHelpers.js";
+
+const AnnouncementLog = {
+    async record({ announcementId, action, actor, before, after }) {
+        await run(
+            `INSERT INTO announcement_logs
+         (announcement_id, action, actor_id, actor_name, actor_role, before_json, after_json)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [
+                announcementId,
+                action,
+                actor.id,
+                actor.name,
+                actor.role,
+                before ? JSON.stringify(before) : null,
+                after ? JSON.stringify(after) : null,
+            ],
+        );
+    },
+
+    /** Full history for one announcement — admin-only view. */
+    async listForAnnouncement(announcementId) {
+        const rows = await all(
+            `SELECT * FROM announcement_logs WHERE announcement_id = ? ORDER BY created_at ASC`,
+            [announcementId],
+        );
+
+        return rows.map((row) => ({
+            id: row.id,
+            announcementId: row.announcement_id,
+            action: row.action,
+            actor: { id: row.actor_id, name: row.actor_name, role: row.actor_role },
+            before: row.before_json ? JSON.parse(row.before_json) : null,
+            after: row.after_json ? JSON.parse(row.after_json) : null,
+            createdAt: row.created_at,
+        }));
+    },
+};
+
+export default AnnouncementLog;
