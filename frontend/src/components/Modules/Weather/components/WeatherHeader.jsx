@@ -1,48 +1,67 @@
 import React from "react";
-import { MapPin, Settings } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { MapPin, Settings, ChevronDown, Check } from "lucide-react";
 import "../weather.css";
 
 /**
- * Top row: facility (location) dropdown on the left,
- * settings + remove actions on the right.
+ * Top row: location dropdown on the left, settings + remove actions
+ * on the right.
  *
  * Props:
- * - facilities: [{ id, nameEn, nameJa }]
- * - facilityId: string (currently selected)
- * - onFacilityChange: (id) => void
- * - isJapanese: boolean
+ * - locationOptions: [{ id, label }]   // from useLocation()
+ * - selectedLocationId: string
+ * - onLocationChange: (id) => void
  * - isManagerOrAbove: boolean — gates the settings button
  * - showSettings: boolean
  * - onToggleSettings: () => void
  * - onRemove: () => void
  */
 export default function WeatherHeader({
-    facilities = [],
-    facilityId,
-    onFacilityChange,
-    isJapanese,
+    locationOptions = [],
+    selectedLocationId,
+    onLocationChange,
     isManagerOrAbove,
     showSettings,
     onToggleSettings,
     onRemove,
 }) {
+    const selectedLabel =
+        locationOptions.find((loc) => loc.id === selectedLocationId)?.label ?? "Select location";
+
     return (
         <div className="weather-header">
-            <div className="weather-header__location">
-                <MapPin className="weather-header__pin-icon" />
-                <select
-                    value={facilityId}
-                    onChange={(e) => onFacilityChange && onFacilityChange(e.target.value)}
-                    className="weather-header__select"
-                >
-                    {facilities.map((fac) => (
-                        <option key={fac.id} value={fac.id}>
-                            {isJapanese ? fac.nameJa : fac.nameEn}
-                        </option>
-                    ))}
-                </select>
-                <span className="weather-header__select-arrow">▼</span>
-            </div>
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                    <button className="weather-header__location" type="button">
+                        <MapPin className="weather-header__pin-icon" />
+                        <span className="weather-header__select-label">{selectedLabel}</span>
+                        <ChevronDown className="weather-header__select-chevron" />
+                    </button>
+                </DropdownMenu.Trigger>
+
+                <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                        className="weather-header__dropdown-content"
+                        sideOffset={6}
+                        align="start"
+                    >
+                        {locationOptions.map((loc) => (
+                            <DropdownMenu.Item
+                                key={loc.id}
+                                className="weather-header__dropdown-item"
+                                onSelect={() => onLocationChange && onLocationChange(loc.id)}
+                            >
+                                <span className="weather-header__dropdown-item-label">
+                                    {loc.label}
+                                </span>
+                                {loc.id === selectedLocationId && (
+                                    <Check className="weather-header__dropdown-item-check" />
+                                )}
+                            </DropdownMenu.Item>
+                        ))}
+                    </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+            </DropdownMenu.Root>
 
             <div className="weather-header__actions">
                 {isManagerOrAbove && (

@@ -1,19 +1,30 @@
 import { fetchWeather } from "./openMeteoService.js";
-
-import { getCachedWeather, setCachedWeather } from "./weatherCache.js";
-
+import {
+    getCachedWeather,
+    setCachedWeather,
+    getLatestWeatherTimestamp,
+} from "./weatherDataStore.js";
 import { formatWeather } from "./weatherFormatter.js";
 
-export async function getWeather(latitude, longitude, timezone = "Asia/Tokyo") {
-    latitude = Number(latitude);
-    longitude = Number(longitude);
+/**
+ * @param {{ id: string, latitude: number, longitude: number, timezone?: string }} location
+ */
+export async function getWeather(location) {
+    const { id: locationId, timezone = "Asia/Tokyo" } = location;
+
+    const latitude = Number(location.latitude);
+    const longitude = Number(location.longitude);
+
+    if (!locationId) {
+        throw new Error("Location id is required for weather caching.");
+    }
 
     if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
         throw new Error("Invalid coordinates.");
     }
 
     // 1. Check cache
-    const cached = getCachedWeather(latitude, longitude);
+    const cached = await getCachedWeather(locationId);
 
     if (cached) {
         console.log("[Weather] Cache hit.");
@@ -30,7 +41,7 @@ export async function getWeather(latitude, longitude, timezone = "Asia/Tokyo") {
     const formatted = formatWeather(raw);
 
     // 4. Store cache
-    setCachedWeather(latitude, longitude, raw.current.time, formatted);
+    await setCachedWeather(locationId, getLatestWeatherTimestamp(), formatted);
 
     // 5. Return formatted weather
     return formatted;

@@ -1,25 +1,76 @@
-import React, { useEffect, useMemo, useState } from "react";
-
-import useWeather from "../../../hooks/useWeather";
-
+import React, { useState, useEffect } from "react";
 import WeatherHeader from "./components/WeatherHeader";
 import WeatherCurrentSummary from "./components/WeatherCurrentSummary";
 import WeatherStatsRow from "./components/WeatherStatsRow";
 import WeatherForecastSection from "./components/WeatherForecastSection";
 import WeatherSettingsPanel from "./components/WeatherSettingsPanel";
-
-import { getWeatherGradient } from "../../../../../shared/constants/weather/weatherGradients";
-
+import { getWeatherGradient } from "./utils/weatherHelpers";
 import "./weather.css";
 
+/**
+ * WeatherModule — pure UI shell, no data-fetching or mock generation.
+ * All weather data comes in as props from the parent/backend integration.
+ *
+ * Props:
+ * - locationOptions: [{ id, label }]
+ * - selectedLocationId: string
+ * - onLocationChange: (id) => void
+ *
+ * - current: {
+ *     temperature: number,
+ *     humidity: number,
+ *     windSpeed: number,
+ *     precipChance: number,
+ *     weatherCode: number,
+ *     isDay: 0 | 1,
+ *     highTemp: number,
+ *     lowTemp: number,
+ *     time: string,          // e.g. "14:00"
+ *   }
+ *
+ * - dailyList: [{
+ *     dayLabel: string,
+ *     maxTemp: number,
+ *     minTemp: number,
+ *     weatherCode: number,
+ *     humidity: number,
+ *     precipChance: number,
+ *     precipSum: number,
+ *     windSpeed: number,
+ *   }]
+ *
+ * - hourlyByDay: {
+ *     [dayIndex]: [{
+ *       time: string,
+ *       temp: number,
+ *       maxTemp: number,
+ *       minTemp: number,
+ *       humidity: number,
+ *       precipChance: number,
+ *       precipSum: number,
+ *       windSpeed: number,
+ *     }]
+ *   }
+ *
+ * - isJapanese: boolean
+ * - userRole: string ('manager' | 'admin' | ...)
+ * - layoutMode: 'combined' | 'current' | 'forecast'
+ * - onLayoutModeChange: (mode) => void
+ * - onRemove: () => void
+ */
 export default function WeatherModule({
+    locationOptions = [],
+    selectedLocationId,
+    onLocationChange,
+    current = {},
+    dailyList = [],
+    hourlyByDay = {},
     isJapanese = false,
     userRole,
     layoutMode = "combined",
     onLayoutModeChange,
     onRemove,
 }) {
-    const { weather, loading, error } = useWeather();
     const [activeTab, setActiveTab] = useState("hourly");
     const [activeMetric, setActiveMetric] = useState("temp");
     const [selectedDayIdx, setSelectedDayIdx] = useState(0);
@@ -32,118 +83,68 @@ export default function WeatherModule({
 
     const isManagerOrAbove = userRole && ["manager", "admin"].includes(userRole.toLowerCase());
 
-    if (loading) {
-        return <div className="weather-card">Loading weather...</div>;
-    }
+    const {
+        temperature = 0,
+        humidity = 0,
+        windSpeed = 0,
+        precipChance = 0,
+        weatherCode = 3,
+        isDay = 1,
+        highTemp = 0,
+        lowTemp = 0,
+        time = "--:--",
+    } = current;
 
-    if (error) {
-        return <div className="weather-card">Failed to load weather.</div>;
-    }
+    const gradient = getWeatherGradient(weatherCode, isDay);
 
-    if (!weather) {
-        return null;
-    }
+    const chartDataset =
+        activeTab === "hourly"
+            ? (hourlyByDay[selectedDayIdx] || []).map((item) => ({
+                  label: item.time,
+                  value: item[activeMetric],
+                  valueMax: item.maxTemp,
+                  valueMin: item.minTemp,
+              }))
+            : dailyList.map((item) => ({
+                  label: item.dayLabel,
+                  value: item[activeMetric],
+                  valueMax: item.maxTemp,
+                  valueMin: item.minTemp,
+              }));
 
-    const current = weather.current;
-    const daily = weather.daily;
-    const hourly = weather.hourly;
-
-    const facilities = [
-        {
-            id: "default",
-            nameEn: weather.location.name,
-            nameJa: weather.location.name,
-        },
-    ];
-
-    const dailyList = daily.map((day) => ({
-        dayLabel: new Date(day.date).toLocaleDateString(isJapanese ? "ja-JP" : "en-US", {
-            weekday: "short",
-        }),
-        maxTemp: day.high,
-        minTemp: day.low,
-        weatherCode: day.weatherCode,
-        humidity: null,
-        precipChance: day.precipitation,
-        precipSum: day.precipitationSum,
-        windSpeed: day.windSpeed,
-    }));
-
-    const hourlyByDay = useMemo(() => {
-        const grouped = {};
-
-        daily.forEach((day, dayIndex) => {
-            grouped[dayIndex] = hourly
-                .filter((hour) => hour.time.startsWith(day.date))
-                .map((hour) => ({
-                    time: hour.time.slice(11, 16),
-                    temp: hour.temperature,
-                    maxTemp: null,
-                    minTemp: null,
-                    humidity: hour.humidity,
-                    precipChance: hour.precipitation,
-                    precipSum: hour.precipitationSum,
-                    windSpeed: hour.windSpeed,
-                }));
-        });
-
-        return grouped;
-    }, [daily, hourly]);
-
-    const chartDataset = useMemo(() => {
-        if (activeTab === "hourly") {
-            return (hourlyByDay[selectedDayIdx] ?? []).map((item) => ({
-                label: item.time,
-                value: item[activeMetric],
-                valueMax: item.maxTemp,
-                valueMin: item.minTemp,
-            }));
-        }
-
-        return dailyList.map((item) => ({
-            label: item.dayLabel,
-            value: item[activeMetric],
-            valueMax: item.maxTemp,
-            valueMin: item.minTemp,
-        }));
-    }, [activeMetric, activeTab, selectedDayIdx, dailyList, hourlyByDay]);
-
-    const gradient = getWeatherGradient(current.weatherCode, current.isDay);
-
-    function handleLayoutModeChange(mode) {
+    const handleLayoutModeChange = (mode) => {
         setLocalLayoutMode(mode);
-        onLayoutModeChange?.(mode);
-    }
+        onLayoutModeChange && onLayoutModeChange(mode);
+    };
 
     return (
         <div className="weather-card" style={{ background: gradient }}>
             <WeatherHeader
-                facilities={facilities}
-                facilityId="default"
-                onFacilityChange={() => {}}
-                isJapanese={isJapanese}
+                locationOptions={locationOptions}
+                selectedLocationId={selectedLocationId}
+                onLocationChange={onLocationChange}
                 isManagerOrAbove={isManagerOrAbove}
                 showSettings={showSettings}
-                onToggleSettings={() => setShowSettings((prev) => !prev)}
+                onToggleSettings={() => setShowSettings((s) => !s)}
                 onRemove={onRemove}
             />
 
             {localLayoutMode !== "forecast" && (
                 <WeatherCurrentSummary
-                    weatherCode={current.weatherCode}
-                    isDay={current.isDay}
-                    temp={current.temperature}
-                    highTemp={daily[0]?.high ?? 0}
-                    lowTemp={daily[0]?.low ?? 0}
+                    weatherCode={weatherCode}
+                    isDay={isDay}
+                    temp={temperature}
+                    highTemp={highTemp}
+                    lowTemp={lowTemp}
                     isJapanese={isJapanese}
                 />
             )}
 
             {localLayoutMode !== "forecast" && (
                 <WeatherStatsRow
-                    humidity={current.humidity}
-                    windSpeed={current.windSpeed}
-                    precipChance={daily[0]?.precipitation ?? 0}
+                    humidity={humidity}
+                    windSpeed={windSpeed}
+                    precipChance={precipChance}
                     isJapanese={isJapanese}
                 />
             )}
@@ -159,7 +160,7 @@ export default function WeatherModule({
                     selectedDayIdx={selectedDayIdx}
                     onSelectDay={setSelectedDayIdx}
                     chartDataset={chartDataset}
-                    timeString={current.time}
+                    timeString={time}
                 />
             )}
 

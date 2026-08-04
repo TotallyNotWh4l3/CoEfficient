@@ -1,7 +1,7 @@
-import WeatherModule from "../Weather/WeatherModule";
+import WeatherModuleContainer from "../Weather/WeatherModuleContainer";
 
 const MODULE_COMPONENTS = {
-    weather: WeatherModule,
+    weather: WeatherModuleContainer,
     // schedule: ScheduleModule,
     // announcement: AnnouncementModule,
 };

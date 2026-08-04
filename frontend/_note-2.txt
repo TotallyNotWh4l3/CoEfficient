@@ -1,314 +1,202 @@
-// settingsController.js
-import UserSettings from "../models/UserSettings.js";
+Let's start on announcement module. I used Google AI Studio to create the module I wanted.
 
-async function getSettings(req, res) {
-    try {
-        const userId = req.user.id;
+I don't wanna use tailwind css, I only want normal CSS
+I wanna seperate file with their each respondibility, look at the file structure.
+Use the variable.css 
 
-        const userSettings = await UserSettings.findByUserId(userId);
+:root {
+    /* Brand */
+    --color-accent: #7c3aed;
+    --color-accent-hover: #8b5cf6;
+    --color-accent-active: #6d28d9;
+    --color-accent-muted: rgba(124, 58, 237, 0.15);
+    --color-accent-border: rgba(124, 58, 237, 0.35);
 
-        if (!userSettings) {
-            return res.json(null);
-        }
+    /* Background */
+    --color-bg: #090b13;
+    --color-bg-elevated: #0e1220;
+    --color-surface: #151a2d;
+    --color-surface-elevated: #1b2138;
+    --color-surface-floating: #222943;
 
-        res.json(userSettings.settings);
-    } catch (error) {
-        console.error(error);
+    /* Elements */
+    --color-element: #151a2d;
+    --color-element-hover: #1a2036;
+    --color-element-active: #232b47;
+    --color-element-selected: rgba(124, 58, 237, 0.18);
+    --color-element-disabled: rgba(255, 255, 255, 0.04);
 
-        res.status(500).json({
-            message: "Failed to load settings.",
-        });
-    }
+    /* Border */
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-hover: rgba(124, 58, 237, 0.35);
+    --color-border-active: rgba(124, 58, 237, 0.65);
+    --color-border-focus: #8b5cf6;
+
+    /* Text */
+    --color-text: #f8fafc;
+    --color-text-secondary: #b8c0d9;
+    --color-text-muted: #7e87a7;
+    --color-text-disabled: #5b6380;
+    --color-text-accent: #a78bfa;
+
+    /* Interactive */
+    --color-hover: #1a2036;
+    --color-active: #232b47;
+    --color-focus: rgba(139, 92, 246, 0.35);
+    --color-selected: rgba(124, 58, 237, 0.25);
+
+    /* Overlay */
+    --color-overlay: rgba(0, 0, 0, 0.55);
+    --color-overlay-light: rgba(255, 255, 255, 0.04);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+
+    /* Status */
+    --color-success: #22c55e;
+    --color-success-hover: #16a34a;
+    --color-success-bg: rgba(34, 197, 94, 0.15);
+    --color-warning: #f59e0b;
+    --color-warning-hover: #d97706;
+    --color-warning-bg: rgba(245, 158, 11, 0.15);
+    --color-error: #ef4444;
+    --color-error-hover: #dc2626;
+    --color-error-bg: rgba(239, 68, 68, 0.15);
+
+    /* Inputs */
+    --color-input-bg: #0e1220;
+    --color-input-hover: #151a2d;
+    --color-input-focus: #1b2138;
+    --color-input-disabled: #090b13;
+
+    /* Scrollbar */
+    --color-scrollbar: rgba(255, 255, 255, 0.12);
+    --color-scrollbar-hover: rgba(255, 255, 255, 0.22);
+
+    /* Dashboard */
+    --z-dashboard: 0;
+
+    /* Hover UIs */
+    --z-popover: 100;
+
+    /* Settings */
+    --z-settings: 1000;
+
+    /* Dialogs opened from Settings */
+    --z-dialog: 1100;
+
+    /* Notifications */
+    --z-toast: 1200;
+
+    /* Critical confirmation */
+    --z-alert: 1300;
 }
 
-async function updateSettings(req, res) {
-    try {
-        const userId = req.user.id;
+Sandbox                                                                         
+├── README.md                                                       
+├── backend
+│   ├── config
+│   │   └── database.js
+│   ├── controllers
+│   │   ├── authController.js
+│   │   ├── settingsController.js
+│   │   └── weatherController.js
+│   ├── database
+│   │   ├── backfillLocations.js
+│   │   ├── init.js
+│   │   ├── schema
+│   │   │   ├── locations.js
+│   │   │   ├── userSettings.js
+│   │   │   ├── users.js
+│   │   │   └── weatherData.js
+│   │   └── seed.js
+│   ├── middleware
+│   │   └── authMiddleware.js
+│   ├── migration
+│   │   ├── 001_create_users.js
+│   │   ├── 002_create_user_settings.js
+│   │   ├── 003_create_location.js
+│   │   ├── 004_create_weather_data.js
+│   │   └── migrate.js
+│   ├── models
+│   │   ├── Location.js
+│   │   ├── User.js
+│   │   ├── UserSettings.js
+│   │   └── WeatherData.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── routes
+│   │   ├── authRoutes.js
+│   │   ├── settingsRoutes.js
+│   │   └── weatherRoutes.js
+│   ├── server.js
+│   ├── services
+│   │   ├── authService.js
+│   │   ├── openMeteoService.js
+│   │   ├── weatherDataStore.js
+│   │   ├── weatherFormatter.js
+│   │   └── weatherService.js
+│   └── utils
+│       ├── jwt.js
+│       └── password.js
+├── frontend
+│   ├── _note-2.txt
+│   ├── _note.txt
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── src
+│   │   ├── App.jsx
+│   │   ├── components
+│   │   │   ├── Dashboard
+│   │   │   ├── Login
+│   │   │   ├── Modules
+│   │   │   ├── Settings
+│   │   │   └── common
+│   │   ├── constants
+│   │   │   ├── dashboard
+│   │   │   ├── dialog
+│   │   │   ├── i18n
+│   │   │   ├── interface
+│   │   │   └── modules
+│   │   ├── context
+│   │   │   ├── AuthContext.jsx
+│   │   │   ├── DashboardContext.jsx
+│   │   │   ├── DialogContext.jsx
+│   │   │   └── SettingsContext.jsx
+│   │   ├── hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useDashboard.js
+│   │   │   ├── useDialog.js
+│   │   │   ├── useLanguage.js
+│   │   │   ├── useLocation.js
+│   │   │   ├── useSettings.js
+│   │   │   ├── useTheme.js
+│   │   │   └── useWeather.js
+│   │   ├── main.jsx
+│   │   ├── services
+│   │   │   ├── apiClient.js
+│   │   │   ├── authService.js
+│   │   │   ├── settingsService.js
+│   │   │   └── weatherApi.js
+│   │   └── styles
+│   │       ├── global.css
+│   │       └── variable.css
+│   └── vite.config.js
+└── shared
+    └── constants
+        ├── defaults
+        │   ├── defaultDashboard.js
+        │   └── defaultSettings.js
+        ├── themes
+        │   ├── darkDefault.js
+        │   └── lightDefault.js
+        └── weather
+            ├── weatherCodes.js
+            └── weatherGradients.js
 
-        const settings = req.body;
-
-        await UserSettings.upsert(userId, settings);
-
-        res.json({
-            message: "Settings saved.",
-        });
-    } catch (error) {
-        console.error(error);
-
-        res.status(500).json({
-            message: "Failed to save settings.",
-        });
-    }
-}
-
-export default {
-    getSettings,
-    updateSettings,
-};
-
-// SettingsContext.jsx
-
-import { createContext, useContext } from "react";
-
-const SettingsContext = createContext(null);
-
-export function SettingsProvider({ value, children }) {
-    return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
-}
-
-export function useSettingsContext() {
-    const context = useContext(SettingsContext);
-
-    if (!context) {
-        throw new Error("useSettingsContext must be used inside SettingsProvider");
-    }
-
-    return context;
-}
-
-// useSettings.js
-
-import { useState, useEffect, useCallback } from "react";
-import { useSettingsContext } from "../context/SettingsContext";
-import { DEFAULT_SETTINGS } from "../constants/defaults/defaultSettings";
-
-/**
- * useSettings Hook
- * Manages application settings with localStorage persistence.
- */
-export function useSettingsState() {
-    const [settings, setSettings] = useState(() => {
-        try {
-            console.log("[Settings] Loading settings...");
-
-            const stored = localStorage.getItem("co-efficient-settings");
-
-            if (!stored) {
-                console.log("[Settings] No saved settings found. Using defaults.");
-                return structuredClone(DEFAULT_SETTINGS);
-            }
-
-            console.log("[Settings] Saved settings found.");
-
-            const parsed = JSON.parse(stored);
-
-            const merged = {
-                ...structuredClone(DEFAULT_SETTINGS),
-                ...parsed,
-
-                preferences: {
-                    ...DEFAULT_SETTINGS.preferences,
-                    ...parsed.preferences,
-                },
-
-                themes: [
-                    ...DEFAULT_SETTINGS.themes,
-                    ...(parsed.themes ?? []).filter(
-                        (saved) => !DEFAULT_SETTINGS.themes.some((def) => def.id === saved.id),
-                    ),
-                ],
-
-                moduleDefaults: parsed.moduleDefaults ?? DEFAULT_SETTINGS.moduleDefaults,
-            };
-
-            console.log("[Settings] Settings loaded:", merged);
-
-            return merged;
-        } catch (e) {
-            console.error("[Settings] Failed to load settings:", e);
-            return structuredClone(DEFAULT_SETTINGS);
-        }
-    });
-
-    useEffect(() => {
-        try {
-            console.log("[Settings] Saving settings:", settings);
-
-            localStorage.setItem("co-efficient-settings", JSON.stringify(settings));
-        } catch (e) {
-            console.error("[Settings] Failed to save settings:", e);
-        }
-    }, [settings]);
-
-    const updateSetting = useCallback((path, value) => {
-        console.log("[Settings] Updating:", path, "=>", value);
-
-        setSettings((prev) => {
-            const updated = structuredClone(prev);
-
-            const keys = path.split(".");
-            let current = updated;
-
-            for (let i = 0; i < keys.length - 1; i++) {
-                current = current[keys[i]];
-            }
-
-            current[keys[keys.length - 1]] = value;
-
-            console.log("[Settings] Updated settings:", updated);
-
-            return updated;
-        });
-    }, []);
-
-    // =====================================================
-    // Preferences
-    // =====================================================
-
-    const updatePreference = useCallback(
-        (path, value) => {
-            console.log("[Preferences] Updating:", path, "=>", value);
-
-            updateSetting(`preferences.${path}`, value);
-        },
-        [updateSetting],
-    );
-
-    // =====================================================
-    // Module Defaults
-    // =====================================================
-
-    const updateModuleDefault = useCallback(
-        (moduleType, key, value) => {
-            console.log("[Module Default] Updating:", moduleType, key, "=>", value);
-
-            updateSetting(`moduleDefaults.${moduleType}.${key}`, value);
-        },
-        [updateSetting],
-    );
-
-    // =====================================================
-    // Themes
-    // =====================================================
-
-    const applyTheme = useCallback(
-        (themeId) => {
-            console.log("[Theme] Applying theme:", themeId);
-
-            updateSetting("preferences.appearance.currentTheme", themeId);
-        },
-        [updateSetting],
-    );
-
-    const saveTheme = useCallback((theme) => {
-        console.log("[Theme] Saving new theme:", theme);
-
-        setSettings((prev) => ({
-            ...prev,
-            themes: [...prev.themes, theme],
-        }));
-    }, []);
-
-    const updateTheme = useCallback((id, updates) => {
-        console.log("[Theme] Updating theme:", id, updates);
-
-        setSettings((prev) => ({
-            ...prev,
-            themes: prev.themes.map((theme) =>
-                theme.id === id ? { ...theme, ...updates } : theme,
-            ),
-        }));
-    }, []);
-
-    const deleteTheme = useCallback((id) => {
-        console.log("[Theme] Deleting theme:", id);
-
-        setSettings((prev) => ({
-            ...prev,
-            themes: prev.themes.filter((theme) => theme.id !== id),
-        }));
-    }, []);
-
-    // =====================================================
-    // Locations
-    // =====================================================
-
-    const applyLocation = useCallback(
-        (locationId) => {
-            updateSetting("preferences.locationId", locationId);
-        },
-        [updateSetting],
-    );
-
-    const saveLocation = useCallback((location) => {
-        setSettings((prev) => ({
-            ...prev,
-            locations: [...prev.locations, location],
-        }));
-    }, []);
-
-    const updateLocation = useCallback((id, updates) => {
-        setSettings((prev) => ({
-            ...prev,
-            locations: prev.locations.map((location) =>
-                location.id === id ? { ...location, ...updates } : location,
-            ),
-        }));
-    }, []);
-
-    const deleteLocation = useCallback((id) => {
-        setSettings((prev) => ({
-            ...prev,
-            locations: prev.locations.filter((location) => location.id !== id),
-
-            // If the deleted location was the current default,
-            // fall back to the built-in default.
-            preferences:
-                prev.preferences.locationId === id
-                    ? {
-                          ...prev.preferences,
-                          locationId: "default-location",
-                      }
-                    : prev.preferences,
-        }));
-    }, []);
-
-    // =====================================================
-    // Reset
-    // =====================================================
-
-    const resetToDefaults = useCallback(() => {
-        console.log("[Settings] Resetting to defaults.");
-
-        setSettings(structuredClone(DEFAULT_SETTINGS));
-    }, []);
-
-    const getSetting = useCallback(
-        (path) => {
-            const value = path.split(".").reduce((obj, key) => obj?.[key], settings);
-
-            console.log("[Settings] Get:", path, "=>", value);
-
-            return value;
-        },
-        [settings],
-    );
-
-    return {
-        settings,
-
-        updateSetting,
-
-        updatePreference,
-        updateModuleDefault,
-
-        applyTheme,
-
-        saveTheme,
-        updateTheme,
-        deleteTheme,
-
-        applyLocation,
-        saveLocation,
-        updateLocation,
-        deleteLocation,
-
-        resetToDefaults,
-
-        getSetting,
-    };
-}
-
-export function useSettings() {
-    return useSettingsContext();
-}

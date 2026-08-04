@@ -1,3 +1,4 @@
+import Location from "../models/Location.js";
 import UserSettings from "../models/UserSettings.js";
 import { getWeather } from "../services/weatherService.js";
 
@@ -6,45 +7,64 @@ export async function getWeatherController(req, res) {
         console.log("========== WEATHER REQUEST ==========");
         console.log("[Weather] User:", req.user);
 
-        const userSettings = await UserSettings.findByUserId(req.user.id);
+        const requestedLocationId = req.query.locationId;
 
-        console.log("[Weather] User Settings:", userSettings);
+        let location = null;
 
-        if (!userSettings) {
-            return res.status(404).json({
-                message: "User settings not found.",
-            });
+        if (requestedLocationId) {
+            location = await Location.findById(requestedLocationId, req.user.id);
+
+            // Not in the locations table yet — it may only exist in the
+            // user's settings JSON (e.g. added via the Settings UI, which
+            // still writes there). Sync it over so future lookups and the
+            // weather cache work off the real table going forward.
+            if (!location) {
+                const userSettings = await UserSettings.findByUserId(req.user.id);
+                const settingsLocation = userSettings?.settings?.locations?.find(
+                    (loc) => loc.id === requestedLocationId,
+                );
+
+                if (settingsLocation) {
+                    console.log(
+                        "[Weather] Syncing location from settings into locations table:",
+                        settingsLocation,
+                    );
+
+                    await Location.create({
+                        id: settingsLocation.id,
+                        userId: req.user.id,
+                        name: settingsLocation.name,
+                        latitude: settingsLocation.latitude,
+                        longitude: settingsLocation.longitude,
+                        timezone: settingsLocation.timezone ?? "Asia/Tokyo",
+                        builtIn: Boolean(settingsLocation.builtIn),
+                    });
+
+                    location = await Location.findById(requestedLocationId, req.user.id);
+                }
+            }
         }
 
-        const settings = userSettings.settings;
-
-        console.log("[Weather] Settings:", settings);
-
-        const locationId =
-            settings.preferences?.locationId ?? settings.preferences?.preferences?.locationId;
-
-        console.log("[Weather] Selected Location ID:", locationId);
-
-        console.log("[Weather] Available Locations:", settings.locations);
-
-        const location = settings.locations.find((location) => location.id === locationId);
+        // Still nothing — fall back to the user's built-in default, then
+        // to whatever's first.
+        if (!location) {
+            const locations = await Location.findAllByUserId(req.user.id);
+            location = locations.find((l) => l.builtIn) ?? locations[0] ?? null;
+        }
 
         console.log("[Weather] Selected Location:", location);
 
         if (!location) {
             return res.status(404).json({
-                message: "Selected location not found.",
+                message: "No location found for user.",
             });
         }
 
-        const weather = await getWeather(
-            location.latitude,
-            location.longitude,
-            location.timezone ?? "Asia/Tokyo",
-        );
+        const weather = await getWeather(location);
 
         weather.location = {
             ...weather.location,
+            id: location.id,
             name: location.name,
         };
 

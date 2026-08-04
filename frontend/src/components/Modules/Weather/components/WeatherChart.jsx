@@ -1,14 +1,36 @@
 import React, { useState } from "react";
 import "../weather.css";
 
+// ── Easy-to-tweak visual knobs ──────────────────────────────────────────
+// How "curvy" the line is. 0 = straight lines between points.
+// 0.333 (1/3) = the original bezier smoothness. 0.5 = max smooth/rounded.
+// Keep it between 0 and 0.5 — going higher starts creating loops/overshoot.
+const CURVE_SMOOTHNESS = 0.333;
+
+// Extra breathing room added above/below the min/max, in the metric's own
+// units (e.g. 1 = 1°C of padding above the hottest point, 1 below the coldest).
+const AXIS_PADDING = 1;
+// ─────────────────────────────────────────────────────────────────────────
+
 /**
  * Props:
  * - dataset: [{ label, value, valueMax?, valueMin? }]
  * - metricInfo: { id, labelEn, labelJa, color, unit }
  * - isJapanese: boolean
  * - isHourly: boolean — dual max/min lines are only shown for the 7-day temp view
+ * - allDaysDataset: optional array of datasets (same shape as `dataset`), one
+ *   per day. When passed on the hourly view, the axis min/max is computed
+ *   across ALL of these days instead of just the day currently shown, so the
+ *   scale — and therefore the curve shapes — are directly comparable across
+ *   days. If omitted, falls back to using just `dataset`.
  */
-export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly }) {
+export default function WeatherChart({
+    dataset,
+    metricInfo,
+    isJapanese,
+    isHourly,
+    allDaysDataset,
+}) {
     const [hoveredIdx, setHoveredIdx] = useState(null);
 
     if (!dataset || dataset.length === 0) return null;
@@ -17,26 +39,50 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
     const height = 110;
     const paddingX = 0;
     const paddingY = 15;
+    // Reserved space on the left for the max/mid/min value labels, so the
+    // curve/line itself starts to the right of the text instead of under it.
+    const paddingLeft = 26;
 
     const isDual = metricInfo.id === "temp" && !isHourly;
 
-    let minVal, maxVal;
+    // For the hourly view, pull values from every day (when provided) so the
+    // axis range reflects the whole week, not just whichever day is showing.
+    const rangeSourceDatasets =
+        isHourly && allDaysDataset && allDaysDataset.length > 0 ? allDaysDataset : [dataset];
+
+    let rawMin, rawMax;
     if (isDual) {
-        const allVals = dataset.flatMap((d) => [d.valueMax ?? d.value, d.valueMin ?? d.value]);
-        minVal = Math.min(...allVals);
-        maxVal = Math.max(...allVals);
+        const allVals = rangeSourceDatasets.flatMap((ds) =>
+            ds.flatMap((d) => [d.valueMax ?? d.value, d.valueMin ?? d.value]),
+        );
+        rawMin = Math.min(...allVals);
+        rawMax = Math.max(...allVals);
     } else {
-        const allVals = dataset.map((d) => d.value);
-        minVal = Math.min(...allVals);
-        maxVal = Math.max(...allVals);
+        const allVals = rangeSourceDatasets.flatMap((ds) => ds.map((d) => d.value));
+        rawMin = Math.min(...allVals);
+        rawMax = Math.max(...allVals);
     }
-    const valRange = maxVal - minVal === 0 ? 1 : maxVal - minVal;
+
+    // Round to whole numbers with a bit of padding, rather than snapping to
+    // multiples of 5/10 — so the axis shows plain values like 21, 22, 34, 36.
+    const minVal = Math.floor(rawMin - AXIS_PADDING);
+    const maxVal = Math.ceil(rawMax + AXIS_PADDING);
+    // Only temperature can legitimately go below 0 — clamp everything else
+    // (%, wind speed, etc.) so it never shows a negative axis label.
+    const clampedMinVal = metricInfo.id === "temp" ? minVal : Math.max(0, minVal);
+    const valRange = maxVal - clampedMinVal === 0 ? 1 : maxVal - clampedMinVal;
+    const midVal = Math.round((clampedMinVal + maxVal) / 2);
 
     const toPoints = (pickValue) =>
         dataset.map((d, idx) => {
-            const x = paddingX + (idx / (dataset.length - 1)) * (width - 2 * paddingX);
+            const x =
+                paddingX +
+                paddingLeft +
+                (idx / (dataset.length - 1)) * (width - 2 * paddingX - paddingLeft);
             const y =
-                height - paddingY - ((pickValue(d) - minVal) / valRange) * (height - 2 * paddingY);
+                height -
+                paddingY -
+                ((pickValue(d) - clampedMinVal) / valRange) * (height - 2 * paddingY);
             const hour = d.label.slice(0, 2);
             return {
                 x,
@@ -56,9 +102,9 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
         for (let i = 1; i < pts.length; i++) {
             const prev = pts[i - 1];
             const curr = pts[i];
-            const cpX1 = prev.x + (curr.x - prev.x) / 3;
+            const cpX1 = prev.x + (curr.x - prev.x) * CURVE_SMOOTHNESS;
             const cpY1 = prev.y;
-            const cpX2 = prev.x + (2 * (curr.x - prev.x)) / 3;
+            const cpX2 = prev.x + (curr.x - prev.x) * (1 - CURVE_SMOOTHNESS);
             const cpY2 = curr.y;
             pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
         }
@@ -103,7 +149,7 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
                     {isJapanese ? metricInfo.labelJa : metricInfo.labelEn} ({metricInfo.unit})
                 </span>
                 <span className="weather-chart__range">
-                    Range: {minVal}-{maxVal} {metricInfo.unit}
+                    Range: {clampedMinVal}-{maxVal} {metricInfo.unit}
                 </span>
             </div>
 
@@ -125,7 +171,7 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
                     </defs>
 
                     <line
-                        x1={paddingX}
+                        x1={paddingX + paddingLeft}
                         y1={paddingY}
                         x2={width - paddingX}
                         y2={paddingY}
@@ -133,12 +179,45 @@ export default function WeatherChart({ dataset, metricInfo, isJapanese, isHourly
                         strokeDasharray="2 2"
                     />
                     <line
-                        x1={paddingX}
+                        x1={paddingX + paddingLeft}
                         y1={height - paddingY}
                         x2={width - paddingX}
                         y2={height - paddingY}
                         stroke="rgba(255,255,255,0.12)"
                     />
+
+                    {/* Value-axis labels: max / mid / min — sit in the reserved
+                        paddingLeft strip, clear of the curve/lines */}
+                    <text
+                        x={paddingX}
+                        y={paddingY + 3}
+                        fill="rgba(255,255,255,0.35)"
+                        fontFamily="JetBrains Mono, monospace"
+                        fontSize="8px"
+                        textAnchor="start"
+                    >
+                        {maxVal}
+                    </text>
+                    <text
+                        x={paddingX}
+                        y={height / 2 + 3}
+                        fill="rgba(255,255,255,0.35)"
+                        fontFamily="JetBrains Mono, monospace"
+                        fontSize="8px"
+                        textAnchor="start"
+                    >
+                        {midVal}
+                    </text>
+                    <text
+                        x={paddingX}
+                        y={height - paddingY - 2}
+                        fill="rgba(255,255,255,0.35)"
+                        fontFamily="JetBrains Mono, monospace"
+                        fontSize="8px"
+                        textAnchor="start"
+                    >
+                        {clampedMinVal}
+                    </text>
 
                     {isDual ? (
                         <>

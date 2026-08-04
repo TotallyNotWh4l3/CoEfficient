@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { getWeather } from "../services/weatherApi";
 
-export default function useWeather() {
+/**
+ * @param {string} [locationId] — when provided, fetches weather for that
+ * location specifically. When omitted, the backend falls back to the
+ * user's saved preference (original behavior, unchanged).
+ */
+export default function useWeather(locationId) {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -10,7 +15,7 @@ export default function useWeather() {
         try {
             setLoading(true);
 
-            const data = await getWeather();
+            const data = await getWeather(locationId);
 
             setWeather(data);
             setError(null);
@@ -20,7 +25,7 @@ export default function useWeather() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [locationId]);
 
     useEffect(() => {
         loadWeather();
