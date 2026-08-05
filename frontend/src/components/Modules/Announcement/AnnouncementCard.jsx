@@ -20,6 +20,9 @@ import {
 } from "lucide-react";
 import useAnnouncements from "../../../hooks/useAnnouncements";
 import AnnouncementArchiveModal from "./AnnouncementArchiveModal";
+import { useDashboard } from "../../../hooks/useDashboard";
+import { useSettings } from "../../../hooks/useSettings";
+import { useAuth } from "../../../hooks/useAuth";
 import {
     CATEGORY_TABS,
     CATEGORY_CONFIG,
@@ -29,14 +32,32 @@ import {
 } from "../../../constants/modules/announcementConstants";
 import "./AnnouncementCard.css";
 
-export default function AnnouncementCard({
-    isJapanese,
-    onRemove,
-    currentUser, // { id, name, role }
-    isExtended: passedIsExtended,
-    onToggleExtended,
-}) {
-    const [isExtended, setIsExtended] = useState(passedIsExtended || false);
+/**
+ * Matches the same contract every other module gets from ModuleRenderer:
+ * only a `module` object is passed in (see WeatherModuleContainer for the
+ * sibling pattern). Language, user, and layout mode are all derived here
+ * instead of prop-drilled.
+ *
+ * `module` shape (see defaultDashboard.js):
+ * {
+ *   id, type: 'announcement',
+ *   settings: { title, view: 'compact' | 'extended' },
+ *   layout: { w, h },
+ * }
+ */
+export default function AnnouncementCard({ module }) {
+    const { removeModule, updateModuleSettings } = useDashboard();
+    const { settings } = useSettings();
+    const { user } = useAuth();
+
+    const isJapanese = settings?.preferences?.language === "ja";
+    // users table only has id/username/role — there's no `name` column.
+    const currentUser = user ? { id: user.id, name: user.username, role: user.role } : null;
+
+    const isExtended = module.settings?.view === "extended";
+    const setIsExtended = (next) =>
+        updateModuleSettings(module.id, "view", next ? "extended" : "compact");
+    const onRemove = () => removeModule(module.id);
 
     const {
         announcements,
@@ -127,9 +148,7 @@ export default function AnnouncementCard({
     };
 
     const toggleExtended = () => {
-        const next = !isExtended;
-        setIsExtended(next);
-        onToggleExtended && onToggleExtended(next);
+        setIsExtended(!isExtended);
     };
 
     const filtered = announcements.filter((item) => {

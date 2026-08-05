@@ -86,7 +86,7 @@ const announcementController = {
                 contentJa,
                 categories,
                 isPinned,
-                author: { id: req.user.id, name: req.user.name, role: req.user.role },
+                author: { id: req.user.id, name: req.user.username, role: req.user.role },
             });
 
             broadcast("created", created);
@@ -111,7 +111,7 @@ const announcementController = {
 
             const updated = await Announcement.update(req.params.id, req.body, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
 
@@ -137,7 +137,7 @@ const announcementController = {
 
             const deleted = await Announcement.softDelete(req.params.id, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
 
@@ -158,7 +158,7 @@ const announcementController = {
         try {
             const restored = await Announcement.restore(req.params.id, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
             if (!restored)
@@ -184,7 +184,7 @@ const announcementController = {
         try {
             const archived = await Announcement.archive(req.params.id, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
             if (!archived) return res.status(404).json({ message: "Announcement not found." });
