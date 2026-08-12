@@ -1,0 +1,15 @@
+.location-dialog {
+    width: 100%;
+    padding: 1.5rem;
+}
+
+.location-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.location-dialog__error {
+    color: var(--color-error);
+    font-size: 0.75rem;
+}

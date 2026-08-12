@@ -1,135 +1,135 @@
-// ja.js
 export default {
     dashboard: {
         header: {
             title: "Co:Efficient",
-            subTitle: "アップデート情報",
+            subTitle: "アップデート",
         },
     },
 
     settings: {
-        mainTitle: "設定",
-        close: "設定を閉じる",
+        // =====================================================
+        // General
+        // =====================================================
 
-        logout: "ログアウト",
-        autoSave: "変更は自動的に保存されます",
-        readOnly: "認証されていないため、設定は読み取り専用です",
+        title: "設定",
+        autoSave: "自動保存済み",
+
+        // =====================================================
+        // Sidebar
+        // =====================================================
+
         sidebar: {
-            theme: "テーマと外観",
-            location: "場所と言語",
-            grid: "グリッドレイアウト",
-            modules: "モジュール設定",
-            presets: "プリセット",
+            interface: "インターフェース",
+            dashboard: "ダッシュボード",
+            modules: "モジュール",
+            about: "このアプリについて",
         },
 
-        theme: {
-            title: "テーマと外観",
-            presets: "プリセットテーマ",
-            customization: "カスタマイズ",
-            customizationDescription:
-                "色、フォント、不透明度などの細かな設定は今後のアップデートで追加予定です。",
+        // =====================================================
+        // Interface
+        // =====================================================
 
-            options: {
-                darkDefault: "ダーク（標準）",
-                darkMinimal: "ダーク（ミニマル）",
-                darkAccent: "ダーク（アクセント）",
-                lightDefault: "ライト（標準）",
-                lightMinimal: "ライト（ミニマル）",
-                lightAccent: "ライト（アクセント）",
+        interface: {
+            title: "インターフェース",
+            description: "アプリケーションの外観と言語の設定",
+
+            language: {
+                title: "言語",
+                description: "表示言語の選択",
+
+                add: "地域を追加",
+            },
+
+            appearance: {
+                title: "外観",
+                description: "ビジュアルオプションとUIスタイルの設定",
+
+                current: "現在のテーマ",
+
+                themes: {
+                    title: "テーマ",
+                    description: "プリセットまたはカスタムテーマ",
+
+                    builtIn: "プリセット",
+                    custom: "カスタム",
+
+                    apply: "適用",
+                    create: "新規作成",
+                    edit: "編集",
+                    delete: "削除",
+                },
+
+                customization: {
+                    title: "カスタマイズ",
+                    description: "カラー、タイポグラフィ、枠線、エフェクトの設定",
+
+                    colors: "カラー",
+                    typography: "タイポグラフィ",
+                    borders: "枠線",
+                    effects: "エフェクト",
+                },
+            },
+
+            location: {
+                title: "地域",
+                description: "アプリケーションで使用する地域を管理します。",
+
+                current: {
+                    title: "デフォルトの地域",
+                    description: "デフォルトとして使用する地域を選択してください。",
+                },
+
+                add: "地域を追加",
+                empty: "保存された地域はありません。",
             },
         },
 
-        grid: {
-            title: "グリッドレイアウト",
-            columns: "列数",
-            columnsDescription: "ダッシュボードに配置するモジュールの列数を設定します。",
-            spacing: "モジュール間隔",
-            spacingDescription: "モジュール間の余白を調整します。",
-            preview: "プレビュー",
-            module: "モジュール",
-            column: "列",
-            columnsPlural: "列",
+        // =====================================================
+        // Dashboard
+        // =====================================================
 
-            gapOptions: {
-                tight: "狭い",
-                normal: "標準",
-                spacious: "広い",
-                extraSpacious: "とても広い",
+        dashboard: {
+            title: "ダッシュボード",
+            description: "新規ダッシュボードのデフォルトレイアウト",
+
+            layout: {
+                title: "レイアウト",
+                description: "余白とグリッド列数の設定",
+
+                columns: "列数",
+                gap: "間隔",
+                padding: "パディング",
             },
         },
 
-        location: {
-            title: "地域・言語設定",
-            location: "地域",
-            language: "言語",
-            dashboardLocation: "表示地域（天気用）",
-            placeholder: "例: Tokyo, New York",
-            hint: "天気予報の取得対象となる都市名を入力してください。",
-        },
+        // =====================================================
+        // Modules
+        // =====================================================
 
         modules: {
-            title: "モジュール設定",
-            on: "オン",
-            off: "オフ",
+            title: "モジュール",
+            description: "モジュールのデフォルト動作設定",
 
-            names: {
-                weather: "天気",
-                schedule: "スケジュール",
-                announcements: "お知らせ",
-                sound: "サウンド",
+            weather: {
+                title: "天気",
             },
 
-            descriptions: {
-                weather: "現在の天気と予報を設定します。",
-                schedule: "予定や時間割の表示を設定します。",
-                announcements: "ダッシュボードのお知らせを設定します。",
-                sound: "通知音やアラートを設定します。",
+            schedule: {
+                title: "スケジュール",
             },
 
-            labels: {
-                enabled: "有効",
-                forecastDays: "予報日数",
-                showAlerts: "気象警報を表示",
-                viewMode: "表示モード",
-                daysBeforeToday: "今日より前の日数",
-                maxDisplay: "最大表示数",
-                volume: "音量",
-                alertSound: "通知音",
-            },
-
-            options: {
-                relative: "相対表示",
-                absolute: "絶対表示",
-                default: "デフォルト",
-                chime: "チャイム",
-                bell: "ベル",
-                none: "なし",
+            announcements: {
+                title: "お知らせ",
             },
         },
 
-        presets: {
-            title: "プリセット管理",
-            builtIn: "標準プリセット",
-            custom: "ユーザープリセット",
-            saveCurrent: "現在の設定を保存",
-            saveAsCustom: "名前を付けて保存",
-            enterName: "プリセット名を入力",
-            save: "保存",
-            cancel: "キャンセル",
-            reset: "リセット",
-            resetButton: "すべての設定を初期化",
-            warning: "すべての設定がデフォルト値に戻ります。",
-            deleteConfirm: "プリセット「{name}」を削除しますか？",
-            resetConfirm: "設定をすべて初期化しますか？この操作は取り消せません。",
-        },
+        // =====================================================
+        // About
+        // =====================================================
 
-        auth: {
-            title: "認証が必要です",
-            description: "設定を変更するにはパスワードを入力してください",
-            passwordPlaceholder: "パスワードを入力",
-            unlockButton: "設定を解除",
-            incorrectPassword: "パスワードが正しくありません",
-            demoHint: "（デモ: 「admin」または「1234」を使用してください）",
+        about: {
+            title: "このアプリについて",
+            description: "アプリ情報およびクレジット",
         },
     },
 };

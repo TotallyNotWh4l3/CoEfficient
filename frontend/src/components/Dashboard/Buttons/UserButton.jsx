@@ -1,17 +1,22 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { User, LogIn, LogOut, ChevronDown, FunnelIcon } from "lucide-react";
+import { User, LogIn, LogOut, ChevronDown } from "lucide-react";
+import { useAuth } from "../../../hooks/useAuth";
 import "./user-button.css";
 
-const isLoggedIn = false; // Replace with your auth state
-
 export default function UserButton() {
+    const { user, logout } = useAuth();
+
+    const isLoggedIn = user !== null;
+
     return (
         <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
                 <button className="user-button">
                     <User size={18} />
 
-                    <span className="user-button__username">{isLoggedIn ? "John Doe" : "Guest"}</span>
+                    <span className="user-button__username">
+                        {isLoggedIn ? user.username : "Guest"}
+                    </span>
 
                     <ChevronDown size={16} />
                 </button>
@@ -21,17 +26,23 @@ export default function UserButton() {
                 <DropdownMenu.Content className="user-button__content" sideOffset={8} align="end">
                     <DropdownMenu.Label className="user-button__label">Account</DropdownMenu.Label>
 
-                    <DropdownMenu.Item className="user-button__item">
-                        <LogIn size={16} />
-                        Login
-                    </DropdownMenu.Item>
+                    {!isLoggedIn && (
+                        <DropdownMenu.Item className="user-button__item">
+                            <LogIn size={16} />
+                            Login
+                        </DropdownMenu.Item>
+                    )}
 
-                    <DropdownMenu.Separator className="user-button__separator" />
+                    {isLoggedIn && (
+                        <>
+                            <DropdownMenu.Separator className="user-button__separator" />
 
-                    <DropdownMenu.Item className="user-button__item">
-                        <LogOut size={16} />
-                        Sign Out
-                    </DropdownMenu.Item>
+                            <DropdownMenu.Item className="user-button__item" onSelect={logout}>
+                                <LogOut size={16} />
+                                Sign Out
+                            </DropdownMenu.Item>
+                        </>
+                    )}
                 </DropdownMenu.Content>
             </DropdownMenu.Portal>
         </DropdownMenu.Root>

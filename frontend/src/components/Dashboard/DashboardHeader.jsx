@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Layers } from "lucide-react";
-import { LinearGradient } from "react-text-gradients";
+import LinearGradient from "../common/LinearGradient";
 
 // Components
 import SettingsButton from "./Buttons/SettingsButton";

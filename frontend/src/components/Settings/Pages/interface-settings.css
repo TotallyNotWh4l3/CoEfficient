@@ -1,7 +1,6 @@
 .interface-settings {
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    flex-direction: column; 
 }
 
 .interface-settings__section {

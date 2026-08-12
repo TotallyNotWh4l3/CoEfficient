@@ -13,15 +13,15 @@ export const SETTINGS_PAGES = [
         icon: Blocks,
     },
 
-    {
-        id: "dashboard",
-        title: "Dashboard",
-        icon: LayoutDashboard,
-    },
-    
-    {
-        id: "about",
-        title: "About",
-        icon: CircleHelp,
-    },
+    // {
+    //     id: "dashboard",
+    //     title: "Dashboard",
+    //     icon: LayoutDashboard,
+    // },
+
+    // {
+    //     id: "about",
+    //     title: "About",
+    //     icon: CircleHelp,
+    // },
 ];

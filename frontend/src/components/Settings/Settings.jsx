@@ -1,35 +1,30 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import "./settings.css";
 
 import { SETTINGS_PAGES } from "../../constants/interface";
 
 import SettingsSidebar from "./Sidebar/SettingsSidebar";
+import SettingsContent from "./Content/SettingsContent";
+import { X } from "lucide-react";
 
-import InterfaceSettings from "./Pages/InterfaceSettings";
-import ModuleSettings from "./Pages/ModuleSettings";
-import DashboardSettings from "./Pages/DashboardSettings";
-import AboutSettings from "./Pages/AboutSettings";
-
-const PAGE_COMPONENTS = {
-    interface: InterfaceSettings,
-    // modules: ModuleSettings,
-    // dashboard: DashboardSettings,
-    // about: AboutSettings,
-};
-
-export default function Settings() {
+export default function Settings({ onClose, closing }) {
     const [currentPage, setCurrentPage] = useState(SETTINGS_PAGES[0].id);
 
-    const CurrentPage = useMemo(() => PAGE_COMPONENTS[currentPage], [currentPage]);
-
     return (
-        <div className="settings">
+        <div className={`settings ${closing ? "settings--closing" : ""}`}>
+            <button
+                className="settings__close-button"
+                type="button"
+                aria-label="Close Settings"
+                onClick={onClose}
+            >
+                <X />
+            </button>
+
             <SettingsSidebar currentPage={currentPage} onPageChange={setCurrentPage} />
 
-            <main className="settings__content">
-                <CurrentPage />
-            </main>
+            <SettingsContent currentPage={currentPage} />
         </div>
     );
 }

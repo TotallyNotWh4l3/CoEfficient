@@ -10,7 +10,7 @@
     height: 2rem;
     padding: 0 0.5rem;
 
-    background: var(--color-bg);
+    background: var(--color-element);
     border: 1px solid var(--color-border);
     border-radius: 9999px;
 
@@ -25,14 +25,18 @@
 }
 
 .user-button:hover {
-    background: var(--color-surface);
+    background: var(--color-element-hover);
     border-color: var(--color-border-hover);
+}
+
+.user-button:active {
+    background: var(--color-element-active);
 }
 
 .user-button:focus-visible {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-focus);
 }
 
 .user-button__username {
@@ -49,12 +53,12 @@
 
     padding: 0.25rem;
 
-    background: var(--color-bg-elevated);
+    background: var(--color-surface-elevated);
 
     border: 1px solid var(--color-border);
     border-radius: 0.75rem;
 
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--shadow-md);
 
     animation: user-button-fade-in 120ms ease;
 }
@@ -84,8 +88,12 @@
 
 .user-button__item:hover,
 .user-button__item[data-highlighted] {
-    background: var(--color-surface);
+    background: var(--color-element-hover);
     color: var(--color-text);
+}
+
+.user-button__item:active {
+    background: var(--color-element-active);
 }
 
 .user-button__separator {

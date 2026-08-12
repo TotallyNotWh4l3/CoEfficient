@@ -1,274 +1,104 @@
-// =====================================================
-// Dashboard Options
-// =====================================================
-
-export const COLUMN_OPTIONS = [2, 3, 4, 6];
-
-export const GAP_OPTIONS = [
-    { value: 8, labelKey: "tight" },
-    { value: 16, labelKey: "normal" },
-    { value: 24, labelKey: "spacious" },
-    { value: 32, labelKey: "extraSpacious" },
-];
-
-// =====================================================
-// Default Dashboard
-// =====================================================
-
-export const DEFAULT_DASHBOARD = {
-    id: "default-dashboard",
-
-    name: "Main Dashboard",
-
-    layout: {
-        columns: 3,
-        gap: 16,
-        padding: 16,
-    },
-
-    modules: [
-        {
-            id: "weather-default",
-            type: "weather",
-            settings: {
-                title: "Weather",
-                city: "Tokyo",
-                view: "conditions",
-            },
-            layout: {
-                w: 2,
-                h: 2,
-            },
-        },
-    ],
-};
-
-export const DEFAULT_SETTINGS = {
-    // =====================================================
-    // Preferences
-    // =====================================================
-    preferences: {
-        language: "en",
-
-        location: {
-            name: "Tokyo",
-            latitude: 35.6762,
-            longitude: 139.6503,
-        },
-
-        appearance: {
-            currentStyle: "dark-default",
-        },
-    },
-
-    // =====================================================
-    // Styles
-    // =====================================================
-    styles: [
-        {
-            id: "dark-default",
-            name: "Dark Default",
-            builtIn: true,
-            basedOn: null,
-
-            appearance: {
-                colors: {},
-                typography: {},
-                borders: {},
-                effects: {},
-            },
-        },
-
-        {
-            id: "light-default",
-            name: "Light Default",
-            builtIn: true,
-            basedOn: null,
-
-            appearance: {
-                colors: {},
-                typography: {},
-                borders: {},
-                effects: {},
-            },
-        },
-    ],
-
-    // =====================================================
-    // Module Defaults
-    // =====================================================
-    moduleDefaults: {
-        weather: {
-            title: "Weather",
-            city: "Tokyo",
-            view: "conditions",
-        },
-
-        schedule: {
-            title: "Schedule",
-        },
-
-        announcement: {
-            title: "Announcements",
-        },
-    },
-};
-
-// constants/moduleSettings.js
-
-export const MODULE_CONFIG = [
-    {
-        id: "weather",
-        nameKey: "weather",
-        descriptionKey: "weather",
-
-        settings: [
-            {
-                key: "forecastDays",
-                labelKey: "forecastDays",
-                type: "range",
-                min: 1,
-                max: 14,
-            },
-            {
-                key: "showAlerts",
-                labelKey: "showAlerts",
-                type: "toggle",
-            },
-        ],
-    },
-
-    {
-        id: "schedule",
-        nameKey: "schedule",
-        descriptionKey: "schedule",
-
-        settings: [
-            {
-                key: "viewMode",
-                labelKey: "viewMode",
-                type: "select",
-                options: [
-                    {
-                        value: "relative",
-                        labelKey: "relative",
-                    },
-                    {
-                        value: "absolute",
-                        labelKey: "absolute",
-                    },
-                ],
-            },
-            {
-                key: "daysBeforeToday",
-                labelKey: "daysBeforeToday",
-                type: "range",
-                min: 0,
-                max: 7,
-            },
-        ],
-    },
-
-    {
-        id: "announcement",
-        nameKey: "announcements",
-        descriptionKey: "announcements",
-
-        settings: [
-            {
-                key: "maxDisplay",
-                labelKey: "maxDisplay",
-                type: "range",
-                min: 1,
-                max: 10,
-            },
-        ],
-    },
-];
-
-
-// =====================================================
-// Settings UI Options
-// =====================================================
-
-import { Palette, Globe, LayoutGrid, Blocks, Star } from "lucide-react";
-
-export const LANGUAGE_OPTIONS = [
-    { id: "en", label: "English" },
-    { id: "ja", label: "日本語" },
-];
-
-export const SETTINGS_TABS = [
-    {
-        id: "theme",
-        labelKey: "theme",
-        icon: Palette,
-    },
-    {
-        id: "location",
-        labelKey: "location",
-        icon: Globe,
-    },
-    {
-        id: "grid",
-        labelKey: "grid",
-        icon: LayoutGrid,
-    },
-    {
-        id: "modules",
-        labelKey: "modules",
-        icon: Blocks,
-    },
-    {
-        id: "presets",
-        labelKey: "presets",
-        icon: Star,
-    },
-];
-
-// =====================================================
-// Built-in Styles
-// =====================================================
-
-export const DEFAULT_PRESETS = [
-    { id: "dark-default", name: "Dark (Default)", type: "default" },
-    { id: "dark-minimal", name: "Dark (Minimal)", type: "default" },
-    { id: "dark-accent", name: "Dark (Accent)", type: "default" },
-    { id: "light-default", name: "Light (Default)", type: "default" },
-    { id: "light-minimal", name: "Light (Minimal)", type: "default" },
-    { id: "light-accent", name: "Light (Accent)", type: "default" },
-];
-
-export const THEME_OPTIONS = [
-    {
-        id: "dark-default",
-        labelKey: "darkDefault",
-        preview: "🌙",
-    },
-    {
-        id: "dark-minimal",
-        labelKey: "darkMinimal",
-        preview: "⚫",
-    },
-    {
-        id: "dark-accent",
-        labelKey: "darkAccent",
-        preview: "💜",
-    },
-    {
-        id: "light-default",
-        labelKey: "lightDefault",
-        preview: "☀️",
-    },
-    {
-        id: "light-minimal",
-        labelKey: "lightMinimal",
-        preview: "⚪",
-    },
-    {
-        id: "light-accent",
-        labelKey: "lightAccent",
-        preview: "💛",
-    },
-];
-
+Sandbox
+├── README.md
+├── backend
+│   ├── config
+│   │   └── database.js
+│   ├── constants
+│   │   └── defaultSettings.js
+│   ├── controllers
+│   │   ├── authController.js
+│   │   ├── settingsController.js
+│   │   └── weatherController.js
+│   ├── database
+│   │   ├── init.js
+│   │   ├── schema
+│   │   │   ├── userSettings.js
+│   │   │   └── users.js
+│   │   └── seed.js
+│   ├── middleware
+│   │   └── authMiddleware.js
+│   ├── migration
+│   │   ├── 001_create_users.js
+│   │   ├── 002_create_user_settings.js
+│   │   └── migrate.js
+│   ├── models
+│   │   ├── User.js
+│   │   └── UserSettings.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── routes
+│   │   ├── authRoutes.js
+│   │   ├── settingsRoutes.js
+│   │   └── weatherRoutes.js
+│   ├── server.js
+│   ├── services
+│   │   ├── authService.js
+│   │   ├── openMeteoService.js
+│   │   ├── weatherCache.js
+│   │   ├── weatherFormatter.js
+│   │   └── weatherService.js
+│   └── utils
+│       ├── jwt.js
+│       └── password.js
+├── frontend
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── src
+│   │   ├── App.jsx
+│   │   ├── components
+│   │   │   ├── Dashboard
+│   │   │   ├── Login
+│   │   │   ├── Modules
+│   │   │   ├── Settings
+│   │   │   └── common
+│   │   ├── constants
+│   │   │   ├── dashboard
+│   │   │   ├── defaults
+│   │   │   ├── dialog
+│   │   │   ├── i18n
+│   │   │   ├── interface
+│   │   │   └── modules
+│   │   ├── context
+│   │   │   ├── AuthContext.jsx
+│   │   │   ├── DashboardContext.jsx
+│   │   │   ├── DialogContext.jsx
+│   │   │   └── SettingsContext.jsx
+│   │   ├── hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useDashboard.js
+│   │   │   ├── useDialog.js
+│   │   │   ├── useLanguage.js
+│   │   │   ├── useLocation.js
+│   │   │   ├── useSettings.js
+│   │   │   ├── useTheme.js
+│   │   │   └── useWeather.js
+│   │   ├── main.jsx
+│   │   ├── services
+│   │   │   ├── apiClient.js
+│   │   │   ├── authService.js
+│   │   │   ├── settingsService.js
+│   │   │   ├── weatherApi.js
+│   │   │   ├── weatherFormatter.js
+│   │   │   └── weatherService.js
+│   │   ├── styles
+│   │   │   ├── global.css
+│   │   │   └── variable.css
+│   │   └── utils
+│   │       ├── weatherCodes.js
+│   │       └── weatherGradients.js
+│   └── vite.config.js
+└── shared
+    └── constants
+        ├── defaults
+        │   ├── defaultSettings.js
+        │   └── index.js
+        ├── themes
+        │   ├── darkDefault.js
+        │   ├── index.js
+        │   └── lightDefault.js
+        └── weather
+            └── weatherCodes.js

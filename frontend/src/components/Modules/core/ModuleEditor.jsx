@@ -20,6 +20,18 @@ export default function ModuleEditor({ module }) {
                         value={module.settings.city ?? ""}
                         onChange={(e) => updateModuleSettings(module.id, "city", e.target.value)}
                     />
+
+                    <label>Forecast days: {module.settings.forecastDays ?? 3}</label>
+
+                    <input
+                        type="range"
+                        min="1"
+                        max="7"
+                        value={module.settings.forecastDays ?? 3}
+                        onChange={(e) =>
+                            updateModuleSettings(module.id, "forecastDays", Number(e.target.value))
+                        }
+                    />
                 </>
             )}
         </div>

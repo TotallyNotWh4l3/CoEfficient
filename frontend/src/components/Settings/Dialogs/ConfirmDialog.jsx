@@ -1,0 +1,34 @@
+import Settings from "../Components/SettingsComponents";
+
+export default function ConfirmDialog({
+    title,
+    description,
+
+    confirmText = "Confirm",
+    cancelText = "Cancel",
+
+    danger = false,
+
+    onConfirm,
+    onClose,
+}) {
+    return (
+        <div className="confirm-dialog">
+            <Settings.Title>{title}</Settings.Title>
+
+            <Settings.Description>{description}</Settings.Description>
+
+            <Settings.Divider />
+
+            <Settings.Row>
+                <Settings.Button variant="secondary" onClick={onClose}>
+                    {cancelText}
+                </Settings.Button>
+
+                <Settings.Button variant={danger ? "danger" : "primary"} onClick={onConfirm}>
+                    {confirmText}
+                </Settings.Button>
+            </Settings.Row>
+        </div>
+    );
+}
