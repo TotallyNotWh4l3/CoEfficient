@@ -29,6 +29,7 @@ router.use(authenticate);
 router.get("/recent", announcementController.getRecent);
 router.get("/archive", announcementController.getArchived);
 router.get("/sync", announcementController.getSince);
+router.get("/unread-count", announcementController.getUnreadCount);
 router.get("/:id/logs", announcementController.getLogs);
 router.get("/", announcementController.getAll);
 
@@ -37,5 +38,6 @@ router.patch("/:id", announcementController.update);
 router.delete("/:id", announcementController.remove);
 router.post("/:id/archive", announcementController.archiveNow);
 router.post("/:id/restore", announcementController.restore);
+router.post("/:id/read", announcementController.markRead);
 
 export default router;

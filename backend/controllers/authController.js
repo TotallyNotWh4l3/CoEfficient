@@ -36,16 +36,16 @@ async function login(req, res) {
         // Ensure the user always has a settings record
         // -------------------------------------------------
 
-        console.log("DEFAULT_SETTINGS before save:", JSON.stringify(DEFAULT_SETTINGS, null, 2));
-
         const existingSettings = await UserSettings.findByUserId(user.id);
 
         if (!existingSettings) {
             console.log(`[Auth] Creating default settings for user ${user.username}`);
-            console.log(DEFAULT_SETTINGS);
-            console.log(DEFAULT_SETTINGS.themes);
             await UserSettings.upsert(user.id, DEFAULT_SETTINGS);
         }
+
+        // NOTE: locations are no longer per-user (see Location.js / locationsController.js) —
+        // they're a single shared table everyone reads from, so there's nothing to
+        // backfill into a user's own settings anymore.
 
         const token = JWT.generateToken(user);
 

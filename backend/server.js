@@ -6,6 +6,8 @@ import "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
+import announcementRoutes from "./routes/announcementRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
 
 console.log("weatherRoutes loaded");
 
@@ -19,6 +21,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/announcements", announcementRoutes);
+app.use("/api/locations", locationRoutes);
 
 app.get("/", (req, res) => {
     res.json({

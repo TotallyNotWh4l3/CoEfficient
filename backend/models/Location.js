@@ -37,15 +37,40 @@ function findAllByUserId(userId) {
     });
 }
 
-function findById(id, userId) {
+/**
+ * Locations are shared/global (one list everyone sees), not per-user —
+ * user_id on the row just tracks who created it. This lists all of them.
+ */
+function findAll() {
+    return new Promise((resolve, reject) => {
+        db.all(
+            `
+            SELECT *
+            FROM locations
+            ORDER BY built_in DESC, created_at ASC
+            `,
+            [],
+            (error, rows) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                resolve(rows.map(mapRow));
+            },
+        );
+    });
+}
+
+function findById(id) {
     return new Promise((resolve, reject) => {
         db.get(
             `
             SELECT *
             FROM locations
-            WHERE id = ? AND user_id = ?
+            WHERE id = ?
             `,
-            [id, userId],
+            [id],
             (error, row) => {
                 if (error) {
                     reject(error);
@@ -58,6 +83,11 @@ function findById(id, userId) {
     });
 }
 
+/**
+ * userId here means "created by" (an audit trail of who added it), not an
+ * owner — the row is visible/usable by everyone once created. Only the
+ * controller layer restricts *who* is allowed to call this (admin/manager).
+ */
 function create(location) {
     const {
         id,
@@ -96,7 +126,7 @@ function create(location) {
     });
 }
 
-function update(id, userId, updates) {
+function update(id, updates) {
     const fields = [];
     const values = [];
 
@@ -124,14 +154,14 @@ function update(id, userId, updates) {
         return Promise.resolve(0);
     }
 
-    values.push(id, userId);
+    values.push(id);
 
     return new Promise((resolve, reject) => {
         db.run(
             `
             UPDATE locations
             SET ${fields.join(", ")}
-            WHERE id = ? AND user_id = ?
+            WHERE id = ?
             `,
             values,
             function (error) {
@@ -146,14 +176,14 @@ function update(id, userId, updates) {
     });
 }
 
-function deleteById(id, userId) {
+function deleteById(id) {
     return new Promise((resolve, reject) => {
         db.run(
             `
             DELETE FROM locations
-            WHERE id = ? AND user_id = ? AND built_in = 0
+            WHERE id = ? AND built_in = 0
             `,
-            [id, userId],
+            [id],
             function (error) {
                 if (error) {
                     reject(error);
@@ -168,6 +198,7 @@ function deleteById(id, userId) {
 
 export default {
     findAllByUserId,
+    findAll,
     findById,
 
     create,

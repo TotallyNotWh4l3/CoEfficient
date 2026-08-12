@@ -322,10 +322,14 @@
 }
 
 .settings__row-label {
+    display: flex;
     font-size: 1rem;
     font-weight: 600;
     color: var(--color-text);
     line-height: 1;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    gap: 0.25rem;
 }
 
 .settings__row-description {

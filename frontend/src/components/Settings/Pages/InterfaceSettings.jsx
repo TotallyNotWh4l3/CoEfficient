@@ -4,6 +4,7 @@ import { useSettings } from "../../../hooks/useSettings";
 import { useLanguage } from "../../../hooks/useLanguage";
 import { useLocation } from "../../../hooks/useLocation";
 import { useDialog } from "../../../hooks/useDialog";
+import { useAuth } from "../../../hooks/useAuth";
 
 import Settings from "../Components/SettingsComponents";
 import LocationList from "../Components/LocationList";
@@ -20,12 +21,16 @@ export default function InterfaceSettings() {
     }
 
     if (!settings) {
-        console.log(settings)
+        console.log(settings);
         return <div className="interface-settings">Unable to load settings.</div>;
     }
 
-    const { locationOptions } = useLocation();
+    const { locations, locationOptions, deleteLocation } = useLocation();
     const { openDialog } = useDialog();
+    const { user } = useAuth();
+
+    const role = user?.role?.toLowerCase();
+    const canManageLocations = role === "manager" || role === "admin";
 
     const T = useLanguage();
 
@@ -95,47 +100,65 @@ export default function InterfaceSettings() {
                     {T.settings.interface.location.description}
                 </Settings.Description>
 
+                {/* Every user picks their own default from the shared list. */}
                 <Settings.Select
                     value={settings.preferences.locationId}
                     options={locationOptions}
                     onChange={(event) => applyLocation(event.target.value)}
                 />
 
-                {/* <LocationList
-                    locations={settings.locations}
-                    defaultLocationId={settings.preferences.locationId}
-                    onEdit={(location) =>
-                        openDialog({
-                            type: "location",
-                            props: {
-                                mode: "edit",
-                                location,
-                            },
-                        })
-                    }
-                    onDelete={(location) =>
-                        openDialog({
-                            type: "confirm-delete-location",
-                            props: {
-                                location,
-                            },
-                        })
-                    }
-                /> */}
+                {/* Managing the shared list itself (add/edit/delete) is
+                    manager/admin only — the backend also enforces this,
+                    this just keeps the buttons from showing to everyone. */}
+                {canManageLocations && (
+                    <>
+                        <LocationList
+                            locations={locations}
+                            defaultLocationId={settings.preferences.locationId}
+                            canManage={canManageLocations}
+                            onEdit={(location) =>
+                                openDialog({
+                                    type: "location",
+                                    props: {
+                                        mode: "edit",
+                                        location,
+                                    },
+                                })
+                            }
+                            onDelete={(location) =>
+                                openDialog({
+                                    type: "confirm",
+                                    props: {
+                                        title:
+                                            T.settings.interface.location.deleteTitle ??
+                                            "Delete location?",
+                                        description:
+                                            T.settings.interface.location.deleteMessage ??
+                                            `Remove "${location.name}" for everyone? This can't be undone.`,
+                                        confirmText:
+                                            T.settings.interface.location.deleteConfirm ?? "Delete",
+                                        danger: true,
+                                        onConfirm: () => deleteLocation(location.id),
+                                    },
+                                })
+                            }
+                        />
 
-                <Settings.Button
-                    variant="secondary"
-                    onClick={() =>
-                        openDialog({
-                            type: "location",
-                            props: {
-                                mode: "create",
-                            },
-                        })
-                    }
-                >
-                    {T.settings.interface.location.add}
-                </Settings.Button>
+                        <Settings.Button
+                            variant="secondary"
+                            onClick={() =>
+                                openDialog({
+                                    type: "location",
+                                    props: {
+                                        mode: "create",
+                                    },
+                                })
+                            }
+                        >
+                            {T.settings.interface.location.add}
+                        </Settings.Button>
+                    </>
+                )}
             </Settings.Section>
         </div>
     );

@@ -6,6 +6,7 @@ import locations from "./schema/locations.js";
 import weatherData from "./schema/weatherData.js";
 import announcements from "./schema/announcements.js";
 import announcementLogs from "./schema/announcementLogs.js";
+import announcementReads from "./schema/announcementReads.js";
 
 const tables = [
     { name: "Users", sql: usersTable },
@@ -13,7 +14,8 @@ const tables = [
     { name: "Locations", sql: locations },
     { name: "WeatherData", sql: weatherData },
     { name: "Announcements", sql: announcements },
-    { name: "AnnouncementLogs", sql: announcementLogs}
+    { name: "AnnouncementLogs", sql: announcementLogs },
+    { name: "AnnouncementReads", sql: announcementReads },
 ];
 
 db.serialize(() => {

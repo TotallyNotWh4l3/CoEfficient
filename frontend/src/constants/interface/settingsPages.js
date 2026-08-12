@@ -7,18 +7,18 @@ export const SETTINGS_PAGES = [
         icon: Monitor,
     },
 
-    // {
-    //     id: "modules",
-    //     title: "Modules",
-    //     icon: Blocks,
-    // },
+    {
+        id: "modules",
+        title: "Modules",
+        icon: Blocks,
+    },
 
     // {
     //     id: "dashboard",
     //     title: "Dashboard",
     //     icon: LayoutDashboard,
     // },
-    
+
     // {
     //     id: "about",
     //     title: "About",

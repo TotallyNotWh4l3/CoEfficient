@@ -7,6 +7,7 @@
 
 import Announcement from "../models/Announcement.js";
 import AnnouncementLog from "../models/AnnouncementLog.js";
+import AnnouncementRead from "../models/AnnouncementRead.js";
 import { broadcast, subscribe } from "../services/announcementSyncService.js";
 
 const isAdmin = (user) => user.role?.toLowerCase() === "admin";
@@ -17,7 +18,8 @@ const announcementController = {
     // GET /api/announcements/recent -> last 5, for the dashboard card
     async getRecent(req, res) {
         try {
-            res.json(await Announcement.listRecent(5));
+            const items = await Announcement.listRecent(5);
+            res.json(await AnnouncementRead.attachReadState(items, req.user?.id));
         } catch (err) {
             res.status(500).json({
                 message: "Failed to load recent announcements.",
@@ -29,7 +31,8 @@ const announcementController = {
     // GET /api/announcements -> full active list (search/filter/tabs happen client-side)
     async getAll(req, res) {
         try {
-            res.json(await Announcement.listActive());
+            const items = await Announcement.listActive();
+            res.json(await AnnouncementRead.attachReadState(items, req.user?.id));
         } catch (err) {
             res.status(500).json({ message: "Failed to load announcements.", error: err.message });
         }
@@ -71,6 +74,29 @@ const announcementController = {
         }
     },
 
+    // POST /api/announcements/:id/read -> mark one announcement as read by the current user
+    async markRead(req, res) {
+        try {
+            await AnnouncementRead.markRead(req.params.id, req.user.id);
+            res.json({ success: true });
+        } catch (err) {
+            res.status(500).json({
+                message: "Failed to mark announcement as read.",
+                error: err.message,
+            });
+        }
+    },
+
+    // GET /api/announcements/unread-count -> badge count for the current user
+    async getUnreadCount(req, res) {
+        try {
+            const count = await AnnouncementRead.unreadCount(req.user.id);
+            res.json({ count });
+        } catch (err) {
+            res.status(500).json({ message: "Failed to load unread count.", error: err.message });
+        }
+    },
+
     // POST /api/announcements -> any authenticated user may post
     async create(req, res) {
         const { title, titleJa, content, contentJa, categories, isPinned } = req.body;
@@ -86,7 +112,7 @@ const announcementController = {
                 contentJa,
                 categories,
                 isPinned,
-                author: { id: req.user.id, name: req.user.name, role: req.user.role },
+                author: { id: req.user.id, name: req.user.username, role: req.user.role },
             });
 
             broadcast("created", created);
@@ -111,7 +137,7 @@ const announcementController = {
 
             const updated = await Announcement.update(req.params.id, req.body, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
 
@@ -137,7 +163,7 @@ const announcementController = {
 
             const deleted = await Announcement.softDelete(req.params.id, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
 
@@ -158,7 +184,7 @@ const announcementController = {
         try {
             const restored = await Announcement.restore(req.params.id, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
             if (!restored)
@@ -184,7 +210,7 @@ const announcementController = {
         try {
             const archived = await Announcement.archive(req.params.id, {
                 id: req.user.id,
-                name: req.user.name,
+                name: req.user.username,
                 role: req.user.role,
             });
             if (!archived) return res.status(404).json({ message: "Announcement not found." });

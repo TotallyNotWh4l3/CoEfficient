@@ -41,6 +41,22 @@ export default function WeatherModuleContainer({ module }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [module.settings?.location]);
 
+    // New modules (added via ModuleManager/ModuleSettings) have no
+    // settings.location yet — without a fallback this sits on
+    // "Loading weather..." forever since nothing ever assigns one.
+    // Once locations are available, default to the user's own preferred
+    // location, or just the first shared location, and persist it.
+    useEffect(() => {
+        if (selectedLocationId) return;
+        if (locationOptions.length === 0) return;
+
+        const fallbackId = settings?.preferences?.locationId ?? locationOptions[0].id;
+
+        setSelectedLocationId(fallbackId);
+        updateModuleSettings(module.id, "location", fallbackId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedLocationId, locationOptions, settings?.preferences?.locationId]);
+
     const { weather, loading, error, refresh } = useWeather(selectedLocationId);
 
     const handleLocationChange = (id) => {

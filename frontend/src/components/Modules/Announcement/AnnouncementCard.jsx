@@ -20,6 +20,9 @@ import {
 } from "lucide-react";
 import useAnnouncements from "../../../hooks/useAnnouncements";
 import AnnouncementArchiveModal from "./AnnouncementArchiveModal";
+import { useDashboard } from "../../../hooks/useDashboard";
+import { useSettings } from "../../../hooks/useSettings";
+import { useAuth } from "../../../hooks/useAuth";
 import {
     CATEGORY_TABS,
     CATEGORY_CONFIG,
@@ -29,14 +32,32 @@ import {
 } from "../../../constants/modules/announcementConstants";
 import "./AnnouncementCard.css";
 
-export default function AnnouncementCard({
-    isJapanese,
-    onRemove,
-    currentUser, // { id, name, role }
-    isExtended: passedIsExtended,
-    onToggleExtended,
-}) {
-    const [isExtended, setIsExtended] = useState(passedIsExtended || false);
+/**
+ * Matches the same contract every other module gets from ModuleRenderer:
+ * only a `module` object is passed in (see WeatherModuleContainer for the
+ * sibling pattern). Language, user, and layout mode are all derived here
+ * instead of prop-drilled.
+ *
+ * `module` shape (see defaultDashboard.js):
+ * {
+ *   id, type: 'announcement',
+ *   settings: { title, view: 'compact' | 'extended' },
+ *   layout: { w, h },
+ * }
+ */
+export default function AnnouncementCard({ module }) {
+    const { removeModule, updateModuleSettings } = useDashboard();
+    const { settings } = useSettings();
+    const { user } = useAuth();
+
+    const isJapanese = settings?.preferences?.language === "ja";
+    // users table only has id/username/role — there's no `name` column.
+    const currentUser = user ? { id: user.id, name: user.username, role: user.role } : null;
+
+    const isExtended = module.settings?.view === "extended";
+    const setIsExtended = (next) =>
+        updateModuleSettings(module.id, "view", next ? "extended" : "compact");
+    const onRemove = () => removeModule(module.id);
 
     const {
         announcements,
@@ -45,6 +66,8 @@ export default function AnnouncementCard({
         createAnnouncement,
         updateAnnouncement,
         deleteAnnouncement,
+        markAsRead,
+        unreadCount,
     } = useAnnouncements({ recentOnly: !isExtended, live: true });
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -112,7 +135,19 @@ export default function AnnouncementCard({
             resetForm();
             setShowCreateModal(false);
         } catch (err) {
-            showToast(isJapanese ? "保存に失敗しました。" : "Failed to save.");
+            const serverMessage = err?.response?.data?.message;
+            console.error(
+                "[AnnouncementCard] Save failed:",
+                err?.response?.status,
+                err?.response?.data || err,
+            );
+            showToast(
+                serverMessage
+                    ? `${isJapanese ? "保存に失敗しました" : "Failed to save"}: ${serverMessage}`
+                    : isJapanese
+                      ? "保存に失敗しました。"
+                      : "Failed to save.",
+            );
         }
     };
 
@@ -127,12 +162,10 @@ export default function AnnouncementCard({
     };
 
     const toggleExtended = () => {
-        const next = !isExtended;
-        setIsExtended(next);
-        onToggleExtended && onToggleExtended(next);
+        setIsExtended(!isExtended);
     };
 
-    const filtered = announcements.filter((item) => {
+    const filtered = (announcements || []).filter((item) => {
         const itemCats = item.categories || ["general"];
         const matchesTab = activeTab === "all" || itemCats.includes(activeTab);
         const q = searchQuery.toLowerCase();
@@ -160,6 +193,11 @@ export default function AnnouncementCard({
                             {isJapanese
                                 ? `進行中の通知: ${filtered.length}件`
                                 : `Active notices: ${filtered.length}`}
+                            {unreadCount > 0 && (
+                                <span className="ann-unread-badge">
+                                    {isJapanese ? `未読${unreadCount}件` : `${unreadCount} unread`}
+                                </span>
+                            )}
                         </p>
                     </div>
                 </div>
@@ -274,9 +312,18 @@ export default function AnnouncementCard({
                             return (
                                 <div
                                     key={item.id}
-                                    className={`ann-item ${cfg.className}`}
-                                    onClick={() => setSelectedItem(item)}
+                                    className={`ann-item ${cfg.className} ${!item.isRead ? "ann-item-unread" : ""}`}
+                                    onClick={() => {
+                                        setSelectedItem(item);
+                                        if (!item.isRead) markAsRead(item.id);
+                                    }}
                                 >
+                                    {!item.isRead && (
+                                        <div
+                                            className="ann-unread-dot"
+                                            title={isJapanese ? "未読" : "Unread"}
+                                        />
+                                    )}
                                     {item.isPinned && (
                                         <div className="ann-pin-indicator">
                                             <Pin className="icon-xxs" />

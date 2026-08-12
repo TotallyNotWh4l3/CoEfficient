@@ -3,7 +3,7 @@
 import Dialog from "./Dialog";
 
 import { useDialog } from "../../../../../hooks/useDialog";
-import { useSettings } from "../../../../../hooks/useSettings";
+import { useLocation } from "../../../../../hooks/useLocation";
 
 // Dialogs
 import LocationDialog from "../../../Dialogs/LocationDialog";
@@ -12,7 +12,13 @@ import ConfirmDialog from "../../../Dialogs/ConfirmDialog";
 export default function DialogManager() {
     const { dialogs, closeDialog } = useDialog();
 
-    const { saveLocation, updateLocation, deleteLocation } = useSettings();
+    // Locations are now a shared, server-backed list (see useLocation.js) —
+    // not a per-user settings.locations blob — so create/update go through
+    // the API instead of useSettings' old saveLocation/updateLocation.
+    // Delete is triggered from InterfaceSettings via a "confirm" dialog
+    // whose onConfirm callback calls deleteLocation directly, so it's not
+    // needed here.
+    const { createLocation, updateLocation } = useLocation();
 
     return (
         <>
@@ -31,11 +37,18 @@ export default function DialogManager() {
                             <LocationDialog
                                 initialLocation={dialog.props?.location}
                                 onClose={() => closeDialog(dialog.id)}
-                                onSave={(location) => {
-                                    if (dialog.props?.location) {
-                                        updateLocation(location.id, location);
-                                    } else {
-                                        saveLocation(location);
+                                onSave={async (location) => {
+                                    try {
+                                        if (dialog.props?.location) {
+                                            await updateLocation(location.id, location);
+                                        } else {
+                                            await createLocation(location);
+                                        }
+                                    } catch (error) {
+                                        console.error(
+                                            "[DialogManager] Failed to save location:",
+                                            error,
+                                        );
                                     }
 
                                     closeDialog(dialog.id);

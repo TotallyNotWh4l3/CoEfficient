@@ -20,7 +20,10 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
             const data = recentOnly
                 ? await announcementService.getRecent()
                 : await announcementService.getAll();
-            setAnnouncements(data);
+            setAnnouncements(Array.isArray(data) ? data : []);
+            if (!Array.isArray(data)) {
+                console.warn("[useAnnouncements] Expected an array, got:", data);
+            }
         } catch (e) {
             setError(e.message || "Failed to load announcements.");
         } finally {
@@ -41,10 +44,11 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
 
         const upsert = (item) => {
             setAnnouncements((prev) => {
-                const exists = prev.some((a) => a.id === item.id);
+                const list = Array.isArray(prev) ? prev : [];
+                const exists = list.some((a) => a.id === item.id);
                 const next = exists
-                    ? prev.map((a) => (a.id === item.id ? item : a))
-                    : [item, ...prev];
+                    ? list.map((a) => (a.id === item.id ? item : a))
+                    : [item, ...list];
                 return next
                     .filter((a) => !a.isDeleted && !a.isArchived)
                     .sort((a, b) => {
@@ -56,7 +60,9 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
         };
 
         const remove = (item) => {
-            setAnnouncements((prev) => prev.filter((a) => a.id !== item.id));
+            setAnnouncements((prev) =>
+                Array.isArray(prev) ? prev.filter((a) => a.id !== item.id) : [],
+            );
         };
 
         source.addEventListener("created", (e) => upsert(JSON.parse(e.data)));
@@ -70,13 +76,21 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
 
     const createAnnouncement = useCallback(async (payload) => {
         const created = await announcementService.create(payload);
-        setAnnouncements((prev) => [created, ...prev]);
+        setAnnouncements((prev) => {
+            const list = Array.isArray(prev) ? prev : [];
+            // The SSE 'created' event may have already added this via upsert() —
+            // don't add it a second time.
+            if (list.some((a) => a.id === created.id)) return list;
+            return [created, ...list];
+        });
         return created;
     }, []);
 
     const updateAnnouncement = useCallback(async (id, payload) => {
         const updated = await announcementService.update(id, payload);
-        setAnnouncements((prev) => prev.map((a) => (a.id === id ? updated : a)));
+        setAnnouncements((prev) =>
+            (Array.isArray(prev) ? prev : []).map((a) => (a.id === id ? updated : a)),
+        );
         return updated;
     }, []);
 
@@ -84,6 +98,25 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
         await announcementService.remove(id);
         setAnnouncements((prev) => prev.filter((a) => a.id !== id));
     }, []);
+
+    const markAsRead = useCallback(async (id) => {
+        setAnnouncements((prev) =>
+            (Array.isArray(prev) ? prev : []).map((a) =>
+                a.id === id ? { ...a, isRead: true } : a,
+            ),
+        );
+        try {
+            await announcementService.markRead(id);
+        } catch (e) {
+            console.error("[useAnnouncements] Failed to mark as read:", e);
+            // Not rolling the optimistic update back — worst case the server
+            // re-marks it unread next fetch, which is a harmless nag, not a break.
+        }
+    }, []);
+
+    const unreadCount = (Array.isArray(announcements) ? announcements : []).filter(
+        (a) => !a.isRead,
+    ).length;
 
     return {
         announcements,
@@ -93,5 +126,7 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
         createAnnouncement,
         updateAnnouncement,
         deleteAnnouncement,
+        markAsRead,
+        unreadCount,
     };
 }
