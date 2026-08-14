@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS locations (
 
     user_id INTEGER NOT NULL,
 
-    name TEXT NOT NULL,
+    name TEXT NOT NULL UNIQUE,
 
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,

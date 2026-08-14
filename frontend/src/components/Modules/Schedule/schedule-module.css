@@ -1,0 +1,589 @@
+/* frontend/src/components/Modules/Schedule/schedule-module.css
+   Uses tokens from frontend/src/styles/variable.css */
+
+.icon-xxs {
+    width: 10px;
+    height: 10px;
+}
+.icon-xs {
+    width: 14px;
+    height: 14px;
+}
+.icon-sm {
+    width: 16px;
+    height: 16px;
+}
+
+/* ---------- Card shell ---------- */
+.sch-card {
+    position: relative;
+    color: var(--color-text);
+    background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-surface) 100%);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: box-shadow 0.35s ease;
+}
+.sch-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.sch-glow {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+}
+.sch-glow-top {
+    top: -15%;
+    right: -15%;
+    background: var(--color-accent-muted);
+}
+
+/* ---------- Header ---------- */
+.sch-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--color-border);
+    z-index: var(--z-dashboard, 1);
+    position: relative;
+}
+.sch-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sch-header-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--color-accent-muted);
+    border: 1px solid var(--color-accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-accent);
+}
+.sch-header-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text);
+}
+.sch-header-subtitle {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+}
+.sch-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sch-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    background: var(--color-accent);
+    color: var(--color-text);
+    border: 1px solid var(--color-accent-border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.sch-btn-primary:hover {
+    background: var(--color-accent-hover);
+}
+.sch-btn-primary:active {
+    background: var(--color-accent-active);
+}
+.sch-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sch-btn-secondary {
+    padding: 6px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--color-overlay-light);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    cursor: pointer;
+}
+.sch-btn-secondary:hover {
+    background: var(--color-hover);
+}
+
+.sch-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    font-size: 10px;
+    font-weight: 800;
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+}
+.sch-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+.sch-btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sch-icon-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--color-overlay);
+    color: var(--color-text-secondary);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.sch-icon-toggle:hover {
+    color: var(--color-error);
+    background: var(--color-hover);
+}
+
+/* ---------- Body ---------- */
+.sch-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+    min-height: 260px;
+    z-index: 1;
+    position: relative;
+}
+
+.sch-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 0 2px;
+}
+.sch-nav-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--color-text);
+}
+.sch-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-overlay);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 2px;
+}
+.sch-nav-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.sch-nav-btn:hover {
+    color: var(--color-text);
+    background: var(--color-hover);
+}
+.sch-nav-today {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* ---------- Calendar grid ---------- */
+.sch-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-border);
+    overflow: hidden;
+    flex-grow: 1;
+}
+.sch-grid-weekday {
+    background: var(--color-surface);
+    text-align: center;
+    padding: 6px 0;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+}
+.sch-grid-day {
+    background: var(--color-bg-elevated);
+    min-height: 64px;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: background 0.15s ease;
+}
+.sch-grid-day:hover {
+    background: var(--color-surface);
+}
+.sch-grid-day-outside {
+    opacity: 0.35;
+}
+.sch-grid-day-today {
+    background: var(--color-accent-muted);
+}
+
+.sch-day-number {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.sch-day-number-today {
+    background: var(--color-accent);
+    color: var(--color-text);
+}
+
+.sch-day-events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 2px;
+}
+.sch-event-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 4px var(--color-accent-border);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ---------- Empty / loading / error state ---------- */
+.sch-empty-state {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+    padding: 32px 0;
+}
+.sch-empty-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+.sch-empty-text {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    max-width: 220px;
+}
+.sch-error-text {
+    color: var(--color-error);
+}
+.sch-spin {
+    animation: sch-spin 1s linear infinite;
+    color: var(--color-text-accent);
+}
+@keyframes sch-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------- Footer ---------- */
+.sch-footer {
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 9.5px;
+    z-index: 1;
+    position: relative;
+}
+.sch-footer-live {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-secondary);
+}
+.sch-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    animation: sch-pulse 1.6s ease-in-out infinite;
+}
+@keyframes sch-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.4;
+        transform: scale(1.4);
+    }
+}
+
+/* ---------- Modal overlay ---------- */
+.sch-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay);
+    backdrop-filter: blur(6px);
+    z-index: var(--z-dialog, 1100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.sch-overlay-panel {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-accent-border);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+.sch-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+}
+.sch-overlay-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--color-text-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.sch-icon-btn {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--color-overlay-light);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+}
+.sch-icon-btn:hover {
+    color: var(--color-text);
+    background: var(--color-hover);
+}
+.sch-overlay-footer {
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: flex-end;
+}
+.sch-overlay-footer-split {
+    justify-content: space-between;
+}
+
+/* ---------- Day list modal ---------- */
+.sch-daylist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+.sch-daylist-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+.sch-daylist-row:hover {
+    background: var(--color-surface-elevated);
+}
+.sch-daylist-time {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--color-text-accent);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+}
+.sch-daylist-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text);
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sch-chevron {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+
+/* ---------- Detail modal ---------- */
+.sch-detail-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.sch-detail-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.4;
+}
+.sch-detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 9.5px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    padding: 8px 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+.sch-detail-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.sch-detail-desc {
+    font-size: 10.5px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* ---------- Form ---------- */
+.sch-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.sch-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.sch-label {
+    display: block;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+.sch-input,
+.sch-textarea {
+    width: 100%;
+    font-size: 11px;
+    background: var(--color-input-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: var(--color-text);
+    font-weight: 600;
+}
+.sch-input:focus,
+.sch-textarea:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 2px var(--color-focus);
+}
+.sch-input:disabled,
+.sch-textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.sch-textarea {
+    resize: none;
+}
+
+.sch-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+.sch-lock-note {
+    font-size: 9.5px;
+    color: var(--color-error);
+    background: var(--color-error-bg);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 6px 8px;
+    border-radius: 8px;
+}
+
+.sch-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+}
+.sch-form-actions-right {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}

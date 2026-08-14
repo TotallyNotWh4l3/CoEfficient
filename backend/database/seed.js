@@ -2,16 +2,13 @@ import User from "../models/User.js";
 import Password from "../utils/password.js";
 
 const USERS_TO_SEED = [
-    { username: "Administrator", password: "imwhale1123", role: "admin" },
+    { username: "admin", password: "wasd", role: "admin" },
 
-    { username: "Red Manager", password: "crimson", role: "manager" },
-    { username: "Blue Manager", password: "cobalt", role: "manager" },
+    { username: "manager1", password: "wasd", role: "manager" },
+    { username: "manager2", password: "wasd", role: "manager" },
 
-    { username: "Barrack Obama", password: "password123", role: "user" },
-    { username: "Donald Trump", password: "password123", role: "user" },
-    { username: "Joe Biden", password: "password123", role: "user" },
-    { username: "Bill Clinton", password: "password123", role: "user" },
-    { username: "George W. Bush", password: "password123", role: "user" },
+    { username: "user1", password: "wasd", role: "user" },
+    { username: "user2", password: "wasd", role: "user" },
 ];
 
 async function seed() {

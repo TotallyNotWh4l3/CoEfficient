@@ -42,6 +42,11 @@ const locationsController = {
             res.status(201).json(await Location.findById(id));
         } catch (error) {
             console.error(error);
+            if (error.message?.includes("UNIQUE constraint failed")) {
+                return res
+                    .status(400)
+                    .json({ message: "A location with that name already exists." });
+            }
             res.status(500).json({ message: "Failed to create location." });
         }
     },

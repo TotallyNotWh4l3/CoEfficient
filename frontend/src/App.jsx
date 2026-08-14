@@ -46,8 +46,8 @@ export default function App() {
     const authState = useAuthState();
 
     const settingsState = useSettingsState(authState.user);
+    const dashboardState = useDashboardState(authState.user);
 
-    const dashboardState = useDashboardState();
     const dialogState = useDialogState();
 
     return (

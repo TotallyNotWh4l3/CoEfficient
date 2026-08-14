@@ -8,6 +8,8 @@ import settingsRoutes from "./routes/settingsRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
 import announcementRoutes from "./routes/announcementRoutes.js";
 import locationRoutes from "./routes/locationRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import scheduleRoutes from "./routes/scheduleRoutes.js";
 
 console.log("weatherRoutes loaded");
 
@@ -23,6 +25,8 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/announcements", announcementRoutes);
 app.use("/api/locations", locationRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/schedule", scheduleRoutes);
 
 app.get("/", (req, res) => {
     res.json({

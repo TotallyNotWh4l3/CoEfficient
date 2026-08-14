@@ -1,11 +1,13 @@
 import Location from "../models/Location.js";
 import User from "../models/User.js";
+import { DEFAULT_SETTINGS } from "../../shared/constants/defaults/defaultSettings.js";
 
-// Built-in locations everyone starts with. Add more here as needed —
-// re-running this script is safe, it skips anything already present.
-const DEFAULT_LOCATIONS = [
-    { name: "Tokyo", latitude: 35.6762, longitude: 139.6503, timezone: "Asia/Tokyo" },
-];
+// Single source of truth: seed exactly what DEFAULT_SETTINGS.locations
+// defines, using the SAME ids. This matters because every new user's
+// settings.preferences.locationId ("default-location") needs to actually
+// resolve to a real row in the shared locations table — a randomly
+// generated id here would silently break that lookup for everyone.
+const DEFAULT_LOCATIONS = DEFAULT_SETTINGS.locations ?? [];
 
 async function seed() {
     try {
@@ -17,26 +19,26 @@ async function seed() {
         }
 
         const existing = await Location.findAll();
+        const existingIds = new Set(existing.map((loc) => loc.id));
         const existingNames = new Set(existing.map((loc) => loc.name));
 
         for (const loc of DEFAULT_LOCATIONS) {
-            if (existingNames.has(loc.name)) {
+            if (existingIds.has(loc.id) || existingNames.has(loc.name)) {
                 console.log(`${loc.name} already exists, skipping.`);
                 continue;
             }
 
-            const id = crypto.randomUUID();
             await Location.create({
-                id,
+                id: loc.id,
                 userId: admin.id,
                 name: loc.name,
                 latitude: loc.latitude,
                 longitude: loc.longitude,
                 timezone: loc.timezone,
-                builtIn: true,
+                builtIn: loc.builtIn ?? true,
             });
 
-            console.log(`Created built-in location: ${loc.name} (ID: ${id})`);
+            console.log(`Created built-in location: ${loc.name} (ID: ${loc.id})`);
         }
     } catch (error) {
         console.error(error);

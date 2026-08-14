@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSettings } from "./useSettings";
+import { useAuth } from "./useAuth";
 import locationService from "../services/locationService";
 
 /**
@@ -11,6 +12,7 @@ import locationService from "../services/locationService";
  */
 export function useLocation() {
     const { settings, loading: settingsLoading } = useSettings();
+    const { user } = useAuth();
 
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -29,9 +31,17 @@ export function useLocation() {
         }
     }, []);
 
+    // Only fetch once actually logged in — DialogManager mounts unconditionally
+    // (even on the Login screen, see App.jsx), so without this guard every
+    // page load fires an unauthenticated GET /api/locations and logs a 401.
     useEffect(() => {
+        if (!user) {
+            setLocations([]);
+            setLoading(false);
+            return;
+        }
         load();
-    }, [load]);
+    }, [user, load]);
 
     const currentLocation = useMemo(() => {
         if (!settings) return null;

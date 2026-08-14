@@ -1,10 +1,10 @@
 import WeatherModuleContainer from "../Weather/WeatherModuleContainer";
 import AnnouncementCard from "../Announcement/AnnouncementCard";
-
+import ScheduleModule from "../Schedule/ScheduleModule";
 const MODULE_COMPONENTS = {
     weather: WeatherModuleContainer,
     announcement: AnnouncementCard,
-    // announcement: AnnouncementModule,
+    schedule: ScheduleModule,
 };
 
 export default function ModuleRenderer({ module, onSelect }) {
