@@ -1,7 +1,14 @@
 import { X, Clock, User, Pencil, Trash2 } from "lucide-react";
 import { canModify } from "../utils/scheduleHelpers";
 
-export default function ScheduleDetailModal({ event, currentUser, onClose, onEdit, onDelete }) {
+export default function ScheduleDetailModal({
+    event,
+    currentUser,
+    tagsById,
+    onClose,
+    onEdit,
+    onDelete,
+}) {
     const editable = canModify(currentUser, event);
 
     return (
@@ -16,6 +23,32 @@ export default function ScheduleDetailModal({ event, currentUser, onClose, onEdi
 
                 <div className="sch-detail-body">
                     <h4 className="sch-detail-title">{event.title}</h4>
+                    {event.subtitle && <p className="sch-detail-subtitle">{event.subtitle}</p>}
+
+                    {event.tags?.length > 0 && (
+                        <div className="sch-detail-tags">
+                            {event.tags.map((tagId) => {
+                                const tag = tagsById[tagId];
+                                return (
+                                    <span
+                                        key={tagId}
+                                        className="sch-tag-badge"
+                                        style={
+                                            tag
+                                                ? {
+                                                      background: `${tag.color}22`,
+                                                      borderColor: tag.color,
+                                                      color: tag.color,
+                                                  }
+                                                : undefined
+                                        }
+                                    >
+                                        {tagId}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    )}
 
                     <div className="sch-detail-meta">
                         <span>

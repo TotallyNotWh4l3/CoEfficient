@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw, Settings } from "lucide-react";
 import useSchedule from "../../../hooks/useSchedule";
+import useScheduleTags from "../../../hooks/useScheduleTags";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { useAuth } from "../../../hooks/useAuth";
 import ScheduleHeader from "./components/ScheduleHeader";
@@ -8,26 +9,55 @@ import ScheduleCalendarGrid from "./components/ScheduleCalendarGrid";
 import ScheduleDayListModal from "./components/ScheduleDayListModal";
 import ScheduleDetailModal from "./components/ScheduleDetailModal";
 import ScheduleEventFormModal from "./components/ScheduleEventFormModal";
+import ScheduleTagManagerModal from "./components/ScheduleTagManagerModal";
+import ScheduleRelativeSettings from "./components/ScheduleRelativeSettings";
 import ScheduleFooter from "./components/ScheduleFooter";
-import { formatDateStr } from "./utils/scheduleHelpers";
+import {
+    formatDateStr,
+    getRelativeRollingDays,
+    getRelativeWeekDays,
+} from "./utils/scheduleHelpers";
+
 import "./schedule-module.css";
 
 export default function ScheduleModule({ module }) {
     const { removeModule } = useDashboard();
     const { user } = useAuth();
     const onRemove = () => removeModule(module.id);
+    const isAdmin = user?.role?.toLowerCase() === "admin";
+
+    // ---- View mode state ----
+    const [viewMode, setViewMode] = useState("absolute"); // 'absolute' | 'relative'
+    const [layout, setLayout] = useState("month"); // 'month' | 'week'
+    const [anchorDate, setAnchorDate] = useState(new Date());
+    const [daysBefore, setDaysBefore] = useState(0);
+    const [showRelativeSettings, setShowRelativeSettings] = useState(false);
+
+    // Relative view fetches a bounded range instead of the whole table.
+    const relativeDays = useMemo(() => getRelativeRollingDays(daysBefore), [daysBefore]);
+    const relativeRange = useMemo(
+        () => ({
+            start: formatDateStr(relativeDays[0]),
+            end: formatDateStr(relativeDays[relativeDays.length - 1]),
+        }),
+        [relativeDays],
+    );
+    const relativeWeekDays = useMemo(() => getRelativeWeekDays(daysBefore), [daysBefore]);
 
     const { events, isLoading, error, reload, createEvent, updateEvent, deleteEvent } = useSchedule(
-        {
-            scope: "all",
-            live: true,
-        },
+        viewMode === "relative"
+            ? { scope: "range", range: relativeRange, live: true }
+            : { scope: "all", live: true },
     );
 
-    const [anchorDate, setAnchorDate] = useState(new Date());
-    const [dayListDate, setDayListDate] = useState(null); // 'YYYY-MM-DD' | null
-    const [selectedEvent, setSelectedEvent] = useState(null); // event | null (detail modal)
-    const [formState, setFormState] = useState(null); // { mode: 'add'|'edit', initialValues, editingId? } | null
+    const { tags, upsertTag, removeTag } = useScheduleTags();
+    const tagsById = useMemo(() => Object.fromEntries(tags.map((t) => [t.id, t])), [tags]);
+
+    // ---- Modal state ----
+    const [dayListDate, setDayListDate] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [formState, setFormState] = useState(null);
+    const [showTagManager, setShowTagManager] = useState(false);
 
     const todayStr = formatDateStr(new Date());
 
@@ -40,40 +70,49 @@ export default function ScheduleModule({ module }) {
         return map;
     }, [events]);
 
-    // --- Navigation ---
+    // ---- Navigation (Absolute view only — Relative view is always "today-centered") ----
     const goPrev = () => {
         const next = new Date(anchorDate);
-        next.setMonth(anchorDate.getMonth() - 1);
+        if (layout === "week") next.setDate(anchorDate.getDate() - 7);
+        else next.setMonth(anchorDate.getMonth() - 1);
         setAnchorDate(next);
     };
     const goNext = () => {
         const next = new Date(anchorDate);
-        next.setMonth(anchorDate.getMonth() + 1);
+        if (layout === "week") next.setDate(anchorDate.getDate() + 7);
+        else next.setMonth(anchorDate.getMonth() + 1);
         setAnchorDate(next);
     };
     const goToday = () => setAnchorDate(new Date());
 
-    // --- Flow: calendar day click -> day list ---
+    // ---- Flow: calendar day click -> day list ----
     const openDayList = (dateStr) => setDayListDate(dateStr);
     const closeDayList = () => setDayListDate(null);
 
-    // --- Flow: day list row click -> detail ---
+    // ---- Flow: day list row click -> detail ----
     const openDetail = (ev) => {
         setSelectedEvent(ev);
         setDayListDate(null);
     };
     const closeDetail = () => setSelectedEvent(null);
 
-    // --- Flow: header/day-list "Add Event" -> form (add mode) ---
+    // ---- Flow: "Add Event" -> form (add mode) ----
     const openAddForm = (dateStr) => {
         setFormState({
             mode: "add",
-            initialValues: { title: "", description: "", eventDate: dateStr, eventTime: "09:00" },
+            initialValues: {
+                title: "",
+                subtitle: "",
+                description: "",
+                eventDate: dateStr,
+                eventTime: "09:00",
+                tags: [],
+            },
         });
         setDayListDate(null);
     };
 
-    // --- Flow: detail "Edit" -> form (edit mode) ---
+    // ---- Flow: detail "Edit" -> form (edit mode) ----
     const openEditForm = () => {
         if (!selectedEvent) return;
         setFormState({
@@ -82,16 +121,18 @@ export default function ScheduleModule({ module }) {
             authorName: selectedEvent.author,
             initialValues: {
                 title: selectedEvent.title,
+                subtitle: selectedEvent.subtitle || "",
                 description: selectedEvent.description || "",
                 eventDate: selectedEvent.eventDate,
                 eventTime: selectedEvent.eventTime,
+                tags: selectedEvent.tags || [],
             },
         });
         setSelectedEvent(null);
     };
     const closeForm = () => setFormState(null);
 
-    // --- CRUD handlers ---
+    // ---- CRUD handlers ----
     const handleFormSubmit = async (values) => {
         try {
             if (formState.mode === "edit") {
@@ -122,11 +163,26 @@ export default function ScheduleModule({ module }) {
         closeForm();
     };
 
+    // Relative view's grid is driven by relativeDays directly rather than a
+    // navigable anchorDate, so we build its own eventsByDay-compatible map —
+    // reuse ScheduleCalendarGrid by feeding it a synthetic "anchor" and days.
+    // Simplest approach: ScheduleCalendarGrid always derives its own day list
+    // from anchorDate+layout for Absolute; for Relative we pass a distinct prop.
+
     return (
         <div className="sch-card">
             <div className="sch-glow sch-glow-top" />
 
-            <ScheduleHeader onAdd={() => openAddForm(todayStr)} onRemove={onRemove} />
+            <ScheduleHeader
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                layout={layout}
+                onLayoutChange={setLayout}
+                onAdd={() => openAddForm(todayStr)}
+                onManageTags={() => setShowTagManager(true)}
+                isAdmin={isAdmin}
+                onRemove={onRemove}
+            />
 
             <div className="sch-body">
                 {isLoading ? (
@@ -143,13 +199,42 @@ export default function ScheduleModule({ module }) {
                             Retry
                         </button>
                     </div>
+                ) : viewMode === "relative" ? (
+                    <>
+                        <div className="sch-nav">
+                            <span className="sch-nav-label">
+                                Relative — {daysBefore}d before, {30 - daysBefore}d after
+                            </span>
+                            <button
+                                className="sch-nav-btn"
+                                onClick={() => setShowRelativeSettings(true)}
+                                title="Configure rolling window"
+                            >
+                                <Settings className="icon-xs" />
+                            </button>
+                        </div>
+                        <ScheduleCalendarGrid
+                            anchorDate={new Date()}
+                            layout={layout}
+                            days={layout === "week" ? relativeWeekDays : relativeDays}
+                            onPrev={() => {}}
+                            onNext={() => {}}
+                            onToday={() => {}}
+                            eventsByDay={eventsByDay}
+                            tagsById={tagsById}
+                            onDayClick={openDayList}
+                            hideNav
+                        />
+                    </>
                 ) : (
                     <ScheduleCalendarGrid
                         anchorDate={anchorDate}
+                        layout={layout}
                         onPrev={goPrev}
                         onNext={goNext}
                         onToday={goToday}
                         eventsByDay={eventsByDay}
+                        tagsById={tagsById}
                         onDayClick={openDayList}
                     />
                 )}
@@ -161,6 +246,7 @@ export default function ScheduleModule({ module }) {
                 <ScheduleDayListModal
                     dateStr={dayListDate}
                     events={eventsByDay[dayListDate] || []}
+                    tagsById={tagsById}
                     onClose={closeDayList}
                     onAdd={openAddForm}
                     onSelectEvent={openDetail}
@@ -171,6 +257,7 @@ export default function ScheduleModule({ module }) {
                 <ScheduleDetailModal
                     event={selectedEvent}
                     currentUser={user}
+                    tagsById={tagsById}
                     onClose={closeDetail}
                     onEdit={openEditForm}
                     onDelete={handleDetailDelete}
@@ -182,9 +269,27 @@ export default function ScheduleModule({ module }) {
                     mode={formState.mode}
                     initialValues={formState.initialValues}
                     authorName={formState.authorName}
+                    tags={tags}
                     onClose={closeForm}
                     onSubmit={handleFormSubmit}
                     onDelete={formState.mode === "edit" ? handleFormDelete : undefined}
+                />
+            )}
+
+            {showTagManager && (
+                <ScheduleTagManagerModal
+                    tags={tags}
+                    onClose={() => setShowTagManager(false)}
+                    onUpsert={upsertTag}
+                    onRemove={removeTag}
+                />
+            )}
+
+            {showRelativeSettings && (
+                <ScheduleRelativeSettings
+                    daysBefore={daysBefore}
+                    onChange={setDaysBefore}
+                    onClose={() => setShowRelativeSettings(false)}
                 />
             )}
         </div>

@@ -6,7 +6,7 @@ import {
     getPrimaryCategory,
     CATEGORY_CONFIG,
 } from "../../../constants/modules/announcementConstants";
-import "./AnnouncementCard.css";
+import "./announcement-module.css";
 
 export default function AnnouncementArchiveModal({
     isJapanese,

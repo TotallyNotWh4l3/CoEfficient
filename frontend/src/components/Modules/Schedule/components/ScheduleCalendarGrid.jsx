@@ -1,71 +1,149 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { WEEKDAY_LABELS, getMonthGridDays, formatDateStr } from "../utils/scheduleHelpers";
+import {
+    WEEKDAY_LABELS,
+    getMonthGridDays,
+    getWeekDays,
+    formatDateStr,
+    hasConflict,
+    getEventColor,
+} from "../utils/scheduleHelpers";
 
 export default function ScheduleCalendarGrid({
     anchorDate,
+    layout,
+    days: daysOverride,
     onPrev,
     onNext,
     onToday,
     eventsByDay,
+    tagsById,
     onDayClick,
+    hideNav = false,
 }) {
     const todayStr = formatDateStr(new Date());
-    const monthDays = getMonthGridDays(anchorDate);
+    const days =
+        daysOverride ??
+        (layout === "week" ? getWeekDays(anchorDate) : getMonthGridDays(anchorDate));
+    const gridClass = layout === "week" ? "sch-grid sch-grid-week" : "sch-grid";
+
+    const navLabel =
+        layout === "week"
+            ? `Week of ${anchorDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
+            : anchorDate.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+    const weekdayLabels = daysOverride
+        ? days.slice(0, 7).map((d) => d.toLocaleDateString("en-US", { weekday: "short" }))
+        : WEEKDAY_LABELS;
 
     return (
         <>
-            <div className="sch-nav">
-                <span className="sch-nav-label">
-                    {anchorDate.toLocaleString("en-US", { month: "long", year: "numeric" })}
-                </span>
-                <div className="sch-nav-controls">
-                    <button className="sch-nav-btn" onClick={onPrev}>
-                        <ChevronLeft className="icon-xs" />
-                    </button>
-                    <button className="sch-nav-btn sch-nav-today" onClick={onToday}>
-                        Today
-                    </button>
-                    <button className="sch-nav-btn" onClick={onNext}>
-                        <ChevronRight className="icon-xs" />
-                    </button>
+            {!hideNav && (
+                <div className="sch-nav">
+                    <span className="sch-nav-label">{navLabel}</span>
+                    <div className="sch-nav-controls">
+                        <button className="sch-nav-btn" onClick={onPrev}>
+                            <ChevronLeft className="icon-xs" />
+                        </button>
+                        <button className="sch-nav-btn sch-nav-today" onClick={onToday}>
+                            Today
+                        </button>
+                        <button className="sch-nav-btn" onClick={onNext}>
+                            <ChevronRight className="icon-xs" />
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
-            <div className="sch-grid">
-                {WEEKDAY_LABELS.map((label) => (
-                    <div key={label} className="sch-grid-weekday">
+            <div className={gridClass}>
+                {weekdayLabels.map((label, i) => (
+                    <div key={`${label}-${i}`} className="sch-grid-weekday">
                         {label}
                     </div>
                 ))}
 
-                {monthDays.map((day, idx) => {
+                {days.map((day, idx) => {
                     const dayStr = formatDateStr(day);
                     const isToday = dayStr === todayStr;
-                    const isCurrentMonth = day.getMonth() === anchorDate.getMonth();
+                    const isCurrentMonth =
+                        layout === "week" ||
+                        daysOverride ||
+                        day.getMonth() === anchorDate.getMonth();
                     const dayEvents = eventsByDay[dayStr] || [];
+                    const conflict = hasConflict(dayEvents);
 
                     return (
                         <div
                             key={idx}
-                            className={`sch-grid-day${isToday ? " sch-grid-day-today" : ""}${
-                                isCurrentMonth ? "" : " sch-grid-day-outside"
-                            }`}
+                            className={`sch-grid-day${layout === "week" ? " sch-grid-day-week" : ""}${
+                                isToday ? " sch-grid-day-today" : ""
+                            }${isCurrentMonth ? "" : " sch-grid-day-outside"}`}
                             onClick={() => onDayClick(dayStr)}
                         >
-                            <span
-                                className={`sch-day-number${isToday ? " sch-day-number-today" : ""}`}
-                            >
-                                {day.getDate()}
-                            </span>
-                            <div className="sch-day-events">
-                                {dayEvents.slice(0, 6).map((ev) => (
-                                    <span
-                                        key={ev.id}
-                                        className="sch-event-dot"
-                                        title={`${ev.eventTime} — ${ev.title}`}
-                                    />
-                                ))}
+                            <div className="sch-grid-day-head">
+                                <span
+                                    className={`sch-day-number${isToday ? " sch-day-number-today" : ""}`}
+                                >
+                                    {day.getDate()}
+                                </span>
+                                {conflict && (
+                                    <span className="sch-conflict-badge" title="Time slot occupied">
+                                        !
+                                    </span>
+                                )}
                             </div>
+
+                            {layout === "week" ? (
+                                <div className="sch-day-events-week">
+                                    {dayEvents.map((ev) => {
+                                        const color = getEventColor(ev, tagsById);
+                                        return (
+                                            <div
+                                                key={ev.id}
+                                                className="sch-event-line"
+                                                style={
+                                                    color
+                                                        ? {
+                                                              background: `${color}22`,
+                                                              borderColor: `${color}55`,
+                                                              color,
+                                                          }
+                                                        : undefined
+                                                }
+                                            >
+                                                <span className="sch-event-line-title">
+                                                    {ev.title}
+                                                </span>
+                                                {ev.subtitle && (
+                                                    <span className="sch-event-line-subtitle">
+                                                        {ev.subtitle}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="sch-day-events">
+                                    {dayEvents.slice(0, 6).map((ev) => {
+                                        const color = getEventColor(ev, tagsById);
+                                        return (
+                                            <span
+                                                key={ev.id}
+                                                className="sch-event-dot"
+                                                style={
+                                                    color
+                                                        ? {
+                                                              background: color,
+                                                              boxShadow: `0 0 4px ${color}88`,
+                                                          }
+                                                        : undefined
+                                                }
+                                                title={`${ev.eventTime} — ${ev.title}`}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     );
                 })}

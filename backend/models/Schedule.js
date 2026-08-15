@@ -1,7 +1,4 @@
 // backend/models/Schedule.js
-// Data-access layer for schedule items, built on the async sqlite3 helpers
-// in backend/utils/dbHelpers.js.
-
 import { run, get, all } from "../utils/dbHelpers.js";
 
 function parseRow(row) {
@@ -9,9 +6,11 @@ function parseRow(row) {
     return {
         id: row.id,
         title: row.title,
+        subtitle: row.subtitle || null,
         description: row.description,
         eventDate: row.event_date,
         eventTime: row.event_time,
+        tags: JSON.parse(row.tags || "[]"),
         authorId: row.author_id,
         author: row.author_name,
         authorRole: row.author_role,
@@ -24,7 +23,6 @@ function parseRow(row) {
 }
 
 const Schedule = {
-    /** All active (non-deleted) events, soonest first. Cross-visible to everyone. */
     async listActive() {
         const rows = await all(
             `SELECT * FROM schedule_items
@@ -34,7 +32,6 @@ const Schedule = {
         return rows.map(parseRow);
     },
 
-    /** Today's events only, sorted by time. */
     async listToday(todayIso) {
         const rows = await all(
             `SELECT * FROM schedule_items
@@ -45,7 +42,6 @@ const Schedule = {
         return rows.map(parseRow);
     },
 
-    /** Events from today onward (for "upcoming events" + future "next event" module). */
     async listUpcoming(todayIso, limit = null) {
         const sql = `SELECT * FROM schedule_items
        WHERE is_deleted = 0 AND event_date >= ?
@@ -56,7 +52,17 @@ const Schedule = {
         return rows.map(parseRow);
     },
 
-    /** Anything updated after `sinceIso` — for SSE/delta sync, same pattern as Announcements. */
+    /** Range query for Relative view's rolling window — avoids fetching the entire table client-side. */
+    async listInRange(startIso, endIso) {
+        const rows = await all(
+            `SELECT * FROM schedule_items
+       WHERE is_deleted = 0 AND event_date >= ? AND event_date <= ?
+       ORDER BY event_date ASC, event_time ASC`,
+            [startIso, endIso],
+        );
+        return rows.map(parseRow);
+    },
+
     async listUpdatedSince(sinceIso) {
         const rows = await all(
             `SELECT * FROM schedule_items WHERE updated_at > ? ORDER BY updated_at ASC`,
@@ -70,41 +76,59 @@ const Schedule = {
         return parseRow(row);
     },
 
-    async create({ title, description, eventDate, eventTime, author }) {
+    async create({ title, subtitle, description, eventDate, eventTime, tags, author }) {
         const { lastID } = await run(
             `INSERT INTO schedule_items
-         (title, description, event_date, event_time, author_id, author_name, author_role)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [title, description || null, eventDate, eventTime, author.id, author.name, author.role],
+         (title, subtitle, description, event_date, event_time, tags, author_id, author_name, author_role)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                title,
+                subtitle || null,
+                description || null,
+                eventDate,
+                eventTime,
+                JSON.stringify(tags || []),
+                author.id,
+                author.name,
+                author.role,
+            ],
         );
 
         return Schedule.findById(lastID);
     },
 
-    /** Creator or manager/admin may call this — enforced in controller via canModify. */
     async update(id, changes) {
         const before = await Schedule.findById(id);
         if (!before || before.isDeleted) return null;
 
         const next = {
             title: changes.title ?? before.title,
+            subtitle: changes.subtitle ?? before.subtitle,
             description: changes.description ?? before.description,
             eventDate: changes.eventDate ?? before.eventDate,
             eventTime: changes.eventTime ?? before.eventTime,
+            tags: changes.tags ?? before.tags,
         };
 
         await run(
             `UPDATE schedule_items
-       SET title = ?, description = ?, event_date = ?, event_time = ?,
+       SET title = ?, subtitle = ?, description = ?, event_date = ?, event_time = ?, tags = ?,
            is_edited = 1, updated_at = datetime('now')
        WHERE id = ?`,
-            [next.title, next.description, next.eventDate, next.eventTime, id],
+            [
+                next.title,
+                next.subtitle,
+                next.description,
+                next.eventDate,
+                next.eventTime,
+                JSON.stringify(next.tags),
+                id,
+            ],
         );
 
         return Schedule.findById(id);
     },
 
-    /** Soft delete — row stays for sync/audit purposes, hidden from normal views. */
     async softDelete(id) {
         const before = await Schedule.findById(id);
         if (!before || before.isDeleted) return null;

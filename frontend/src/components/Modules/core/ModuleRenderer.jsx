@@ -1,5 +1,5 @@
 import WeatherModuleContainer from "../Weather/WeatherModuleContainer";
-import AnnouncementCard from "../Announcement/AnnouncementCard";
+import AnnouncementCard from "../Announcement/AnnouncementModule";
 import ScheduleModule from "../Schedule/ScheduleModule";
 const MODULE_COMPONENTS = {
     weather: WeatherModuleContainer,

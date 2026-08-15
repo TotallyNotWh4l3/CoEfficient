@@ -1,3 +1,5 @@
+// frontend/src/components/Modules/Schedule/utils/scheduleHelpers.js
+
 export const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export const ROLE_RANK = { user: 0, manager: 1, admin: 2 };
@@ -38,4 +40,54 @@ export function formatDisplayDate(dateStr) {
     const [y, m, d] = dateStr.split("-").map(Number);
     const date = new Date(y, m - 1, d);
     return date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+}
+
+export function getWeekDays(anchorDate) {
+    const dayOfWeek = anchorDate.getDay();
+    const startOfWeek = new Date(anchorDate);
+    startOfWeek.setDate(anchorDate.getDate() - dayOfWeek);
+
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(startOfWeek);
+        d.setDate(startOfWeek.getDate() + i);
+        days.push(d);
+    }
+    return days;
+}
+
+/** Rolling window centered on today: `daysBefore` days back through `30 - daysBefore` days ahead. */
+export function getRelativeRollingDays(daysBefore = 0) {
+    const today = new Date();
+    const days = [];
+    const startOffset = -daysBefore;
+    for (let i = 0; i < 30; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + startOffset + i);
+        days.push(d);
+    }
+    return days;
+}
+
+export function hasConflict(dayEvents) {
+    return dayEvents.length > 1;
+}
+
+/** First tag in the event's tag list determines display color; falls back to accent. */
+export function getEventColor(event, tagsById) {
+    if (!event.tags || event.tags.length === 0) return null;
+    const firstTag = tagsById[event.tags[0]];
+    return firstTag?.color || null;
+}
+
+export function getRelativeWeekDays(daysBefore = 0) {
+    const today = new Date();
+    const days = [];
+    const startOffset = -daysBefore;
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + startOffset + i);
+        days.push(d);
+    }
+    return days;
 }

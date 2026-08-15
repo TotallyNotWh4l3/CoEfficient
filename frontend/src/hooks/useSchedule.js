@@ -4,11 +4,17 @@ import scheduleService from "../services/scheduleService";
 
 /**
  * @param {object} options
- * @param {'all'|'today'|'upcoming'} options.scope - which slice to load
+ * @param {'all'|'today'|'upcoming'|'range'} options.scope
  * @param {number} options.limit - only used when scope === 'upcoming'
+ * @param {{start: string, end: string}} options.range - only used when scope === 'range', 'YYYY-MM-DD'
  * @param {boolean} options.live - subscribe to the SSE stream for real-time sync
  */
-export default function useSchedule({ scope = "all", limit = undefined, live = true } = {}) {
+export default function useSchedule({
+    scope = "all",
+    limit = undefined,
+    range = undefined,
+    live = true,
+} = {}) {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,6 +29,8 @@ export default function useSchedule({ scope = "all", limit = undefined, live = t
                 data = await scheduleService.getToday();
             } else if (scope === "upcoming") {
                 data = await scheduleService.getUpcoming(limit);
+            } else if (scope === "range" && range?.start && range?.end) {
+                data = await scheduleService.getRange(range.start, range.end);
             } else {
                 data = await scheduleService.getAll();
             }
@@ -35,13 +43,12 @@ export default function useSchedule({ scope = "all", limit = undefined, live = t
         } finally {
             setIsLoading(false);
         }
-    }, [scope, limit]);
+    }, [scope, limit, range?.start, range?.end]);
 
     useEffect(() => {
         load();
     }, [load]);
 
-    // Sort helper: by date then time, ascending (soonest first).
     const sortEvents = useCallback(
         (list) =>
             [...list].sort((a, b) => {
@@ -52,7 +59,6 @@ export default function useSchedule({ scope = "all", limit = undefined, live = t
         [],
     );
 
-    // Real-time sync: merge pushed events into local state instead of refetching everything.
     useEffect(() => {
         if (!live) return undefined;
 
@@ -64,6 +70,9 @@ export default function useSchedule({ scope = "all", limit = undefined, live = t
         const belongsInScope = (item) => {
             if (scope === "today") return item.eventDate === todayIso();
             if (scope === "upcoming") return item.eventDate >= todayIso();
+            if (scope === "range" && range?.start && range?.end) {
+                return item.eventDate >= range.start && item.eventDate <= range.end;
+            }
             return true;
         };
 
@@ -94,15 +103,14 @@ export default function useSchedule({ scope = "all", limit = undefined, live = t
         source.addEventListener("deleted", (e) => remove(JSON.parse(e.data)));
 
         return () => source.close();
-    }, [live, scope, limit, sortEvents]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [live, scope, limit, range?.start, range?.end, sortEvents]);
 
     const createEvent = useCallback(
         async (payload) => {
             const created = await scheduleService.create(payload);
             setEvents((prev) => {
                 const list = Array.isArray(prev) ? prev : [];
-                // The SSE 'created' event may have already added this via upsert() —
-                // don't add it a second time.
                 if (list.some((e) => e.id === created.id)) return list;
                 return sortEvents([created, ...list]);
             });

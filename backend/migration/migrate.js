@@ -10,6 +10,9 @@ import createAnnouncementReadsTable from "./007_create_announcement_reads.js";
 import createScheduleTable from "./008_create_schedule.js";
 import createDashboardSettingsTable from "./009_create_dashboard_settings.js";
 import createDashboardModulesTable from "./010_create_dashboard_modules.js";
+import createScheduleTagsTable from "./011_create_schedule_tags.js";
+import addScheduleSubtitleAndTags from "./012_add_schedule_subtitle_and_tags_column.js";
+
 
 const migrations = [
     { name: "001_create_users", up: createUsersTable },
@@ -22,6 +25,8 @@ const migrations = [
     { name: "008_create_schedule", up: createScheduleTable },
     { name: "009_create_dashboard_settings", up: createDashboardSettingsTable },
     { name: "010_create_dashboard_modules", up: createDashboardModulesTable },
+    { name: "011_create_schedule_tags", up: createScheduleTagsTable },
+    { name: "012_add_schedule_subtitle_and_tags_column", up: addScheduleSubtitleAndTags },
 ];
 
 async function runMigrations() {

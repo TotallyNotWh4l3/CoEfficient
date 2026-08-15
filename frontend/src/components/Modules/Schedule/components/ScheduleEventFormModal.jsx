@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { X, Trash2, Clock } from "lucide-react";
+import ScheduleTagPicker from "./ScheduleTagPicker";
 
 export default function ScheduleEventFormModal({
     mode,
     initialValues,
     authorName,
+    tags,
     onClose,
     onSubmit,
     onDelete,
 }) {
     const [form, setForm] = useState(initialValues);
     const [submitting, setSubmitting] = useState(false);
+
+    const toggleTag = (tagId) => {
+        setForm((f) => {
+            const has = f.tags.includes(tagId);
+            return { ...f, tags: has ? f.tags.filter((t) => t !== tagId) : [...f.tags, tagId] };
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -58,6 +67,17 @@ export default function ScheduleEventFormModal({
                         />
                     </div>
 
+                    <div>
+                        <label className="sch-label">Subtitle</label>
+                        <input
+                            className="sch-input"
+                            type="text"
+                            value={form.subtitle}
+                            onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
+                            placeholder="Optional short subtitle"
+                        />
+                    </div>
+
                     <div className="sch-form-row">
                         <div>
                             <label className="sch-label">Date *</label>
@@ -79,6 +99,20 @@ export default function ScheduleEventFormModal({
                                 onChange={(e) => setForm({ ...form, eventTime: e.target.value })}
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="sch-label">Tags</label>
+                        <ScheduleTagPicker
+                            tags={tags}
+                            selectedTags={form.tags}
+                            onToggle={toggleTag}
+                        />
+                        {form.tags.length > 0 && (
+                            <p className="sch-tag-priority-hint">
+                                First tag ({form.tags[0]}) determines the event's color.
+                            </p>
+                        )}
                     </div>
 
                     <div>

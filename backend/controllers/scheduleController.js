@@ -1,14 +1,7 @@
 // backend/controllers/scheduleController.js
-//
-// NOTE: assumes req.user is set by authMiddleware.js to { id, username, role }
-// (matching your JWT payload — see the note in announcementController.js about
-// authorName pulling from req.user.username, not req.user.name).
-
 import Schedule from "../models/Schedule.js";
+import ScheduleTag from "../models/ScheduleTag.js";
 import { broadcast, subscribe } from "../services/scheduleSyncService.js";
-
-const isAdmin = (user) => user.role?.toLowerCase() === "admin";
-const isManagerOrAbove = (user) => ["manager", "admin"].includes(user.role?.toLowerCase());
 
 const ROLE_RANK = { user: 0, manager: 1, admin: 2 };
 const canModify = (actor, event) => {
@@ -17,13 +10,13 @@ const canModify = (actor, event) => {
     const eventRank = ROLE_RANK[event.authorRole?.toLowerCase()] ?? 0;
     return actorRank > eventRank || event.authorId === actor.id;
 };
+const isAdmin = (user) => user.role?.toLowerCase() === "admin";
 
 function todayIso() {
-    return new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+    return new Date().toISOString().slice(0, 10);
 }
 
 const scheduleController = {
-    // GET /api/schedule -> full active list, everyone can see (cross-visible)
     async getAll(req, res) {
         try {
             res.json(await Schedule.listActive());
@@ -32,7 +25,6 @@ const scheduleController = {
         }
     },
 
-    // GET /api/schedule/today -> today's events only
     async getToday(req, res) {
         try {
             res.json(await Schedule.listToday(todayIso()));
@@ -44,7 +36,6 @@ const scheduleController = {
         }
     },
 
-    // GET /api/schedule/upcoming?limit=5 -> upcoming events, optional cap (used by future "next event" module)
     async getUpcoming(req, res) {
         try {
             const limit = req.query.limit ? parseInt(req.query.limit, 10) : null;
@@ -57,7 +48,19 @@ const scheduleController = {
         }
     },
 
-    // GET /api/schedule/sync?since=<ISO timestamp> -> delta fetch, same pattern as Announcements
+    // GET /api/schedule/range?start=YYYY-MM-DD&end=YYYY-MM-DD -> Relative view's rolling window
+    async getRange(req, res) {
+        const { start, end } = req.query;
+        if (!start || !end) {
+            return res.status(400).json({ message: "start and end query params are required." });
+        }
+        try {
+            res.json(await Schedule.listInRange(start, end));
+        } catch (err) {
+            res.status(500).json({ message: "Failed to load schedule range.", error: err.message });
+        }
+    },
+
     async getSince(req, res) {
         try {
             const since = req.query.since || "1970-01-01T00:00:00.000Z";
@@ -67,14 +70,12 @@ const scheduleController = {
         }
     },
 
-    // GET /api/schedule/stream -> SSE push channel
     stream(req, res) {
         subscribe(res);
     },
 
-    // POST /api/schedule -> any authenticated user may add an event
     async create(req, res) {
-        const { title, description, eventDate, eventTime } = req.body;
+        const { title, subtitle, description, eventDate, eventTime, tags } = req.body;
         if (!title?.trim() || !eventDate || !eventTime) {
             return res
                 .status(400)
@@ -84,9 +85,11 @@ const scheduleController = {
         try {
             const created = await Schedule.create({
                 title,
+                subtitle,
                 description,
                 eventDate,
                 eventTime,
+                tags,
                 author: { id: req.user.id, name: req.user.username, role: req.user.role },
             });
 
@@ -97,7 +100,6 @@ const scheduleController = {
         }
     },
 
-    // PATCH /api/schedule/:id -> creator or admin only
     async update(req, res) {
         try {
             const existing = await Schedule.findById(req.params.id);
@@ -105,7 +107,9 @@ const scheduleController = {
                 return res.status(404).json({ message: "Event not found." });
             }
             if (!canModify(req.user, existing)) {
-                return res.status(403).json({ message: "You can only edit your own events." });
+                return res
+                    .status(403)
+                    .json({ message: "You don't have permission to edit this event." });
             }
 
             const updated = await Schedule.update(req.params.id, req.body);
@@ -117,7 +121,6 @@ const scheduleController = {
         }
     },
 
-    // DELETE /api/schedule/:id -> creator or admin only (soft delete)
     async remove(req, res) {
         try {
             const existing = await Schedule.findById(req.params.id);
@@ -125,7 +128,9 @@ const scheduleController = {
                 return res.status(404).json({ message: "Event not found." });
             }
             if (!canModify(req.user, existing)) {
-                return res.status(403).json({ message: "You can only delete your own events." });
+                return res
+                    .status(403)
+                    .json({ message: "You don't have permission to delete this event." });
             }
 
             const deleted = await Schedule.softDelete(req.params.id);
@@ -134,6 +139,51 @@ const scheduleController = {
             res.json({ success: true });
         } catch (err) {
             res.status(500).json({ message: "Failed to delete event.", error: err.message });
+        }
+    },
+
+    // ---- Tag management ----
+
+    // GET /api/schedule/tags
+    async getTags(req, res) {
+        try {
+            res.json(await ScheduleTag.listAll());
+        } catch (err) {
+            res.status(500).json({ message: "Failed to load tags.", error: err.message });
+        }
+    },
+
+    // POST /api/schedule/tags -> admin only, { id, color }
+    async upsertTag(req, res) {
+        if (!isAdmin(req.user)) {
+            return res.status(403).json({ message: "Only admins can manage tag presets." });
+        }
+        const { id, color } = req.body;
+        if (!id?.trim() || !color?.trim()) {
+            return res.status(400).json({ message: "Tag id and color are required." });
+        }
+        try {
+            const tag = await ScheduleTag.upsert(id.trim(), color.trim());
+            broadcast("tag-updated", tag);
+            res.status(201).json(tag);
+        } catch (err) {
+            res.status(500).json({ message: "Failed to save tag.", error: err.message });
+        }
+    },
+
+    // DELETE /api/schedule/tags/:id -> admin only
+    async removeTag(req, res) {
+        if (!isAdmin(req.user)) {
+            return res.status(403).json({ message: "Only admins can manage tag presets." });
+        }
+        try {
+            const removed = await ScheduleTag.remove(req.params.id);
+            if (!removed) return res.status(404).json({ message: "Tag not found." });
+
+            broadcast("tag-removed", { id: req.params.id });
+            res.json({ success: true });
+        } catch (err) {
+            res.status(500).json({ message: "Failed to delete tag.", error: err.message });
         }
     },
 };

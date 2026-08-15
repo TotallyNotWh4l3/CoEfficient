@@ -1,7 +1,14 @@
 import { X, Plus, ChevronRight } from "lucide-react";
-import { formatDisplayDate } from "../utils/scheduleHelpers";
+import { formatDisplayDate, getEventColor } from "../utils/scheduleHelpers";
 
-export default function ScheduleDayListModal({ dateStr, events, onClose, onAdd, onSelectEvent }) {
+export default function ScheduleDayListModal({
+    dateStr,
+    events,
+    tagsById,
+    onClose,
+    onAdd,
+    onSelectEvent,
+}) {
     const sorted = [...events].sort((a, b) => a.eventTime.localeCompare(b.eventTime));
 
     return (
@@ -18,17 +25,33 @@ export default function ScheduleDayListModal({ dateStr, events, onClose, onAdd, 
                     {sorted.length === 0 ? (
                         <p className="sch-empty-text">No events scheduled.</p>
                     ) : (
-                        sorted.map((ev) => (
-                            <button
-                                key={ev.id}
-                                className="sch-daylist-row"
-                                onClick={() => onSelectEvent(ev)}
-                            >
-                                <span className="sch-daylist-time">{ev.eventTime}</span>
-                                <span className="sch-daylist-title">{ev.title}</span>
-                                <ChevronRight className="icon-xs sch-chevron" />
-                            </button>
-                        ))
+                        sorted.map((ev) => {
+                            const color = getEventColor(ev, tagsById);
+                            return (
+                                <button
+                                    key={ev.id}
+                                    className="sch-daylist-row"
+                                    onClick={() => onSelectEvent(ev)}
+                                >
+                                    {color && (
+                                        <span
+                                            className="sch-tag-dot"
+                                            style={{ background: color }}
+                                        />
+                                    )}
+                                    <span className="sch-daylist-time">{ev.eventTime}</span>
+                                    <span className="sch-daylist-title-group">
+                                        <span className="sch-daylist-title">{ev.title}</span>
+                                        {ev.subtitle && (
+                                            <span className="sch-daylist-subtitle">
+                                                {ev.subtitle}
+                                            </span>
+                                        )}
+                                    </span>
+                                    <ChevronRight className="icon-xs sch-chevron" />
+                                </button>
+                            );
+                        })
                     )}
                 </div>
 
