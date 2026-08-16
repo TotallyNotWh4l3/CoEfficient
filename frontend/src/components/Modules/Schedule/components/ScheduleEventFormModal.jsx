@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Trash2, Clock } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import ScheduleTagPicker from "./ScheduleTagPicker";
 
 export default function ScheduleEventFormModal({
@@ -11,6 +12,9 @@ export default function ScheduleEventFormModal({
     onSubmit,
     onDelete,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.schedule.form;
+
     const [form, setForm] = useState(initialValues);
     const [submitting, setSubmitting] = useState(false);
 
@@ -33,7 +37,7 @@ export default function ScheduleEventFormModal({
     };
 
     const handleDelete = async () => {
-        if (!window.confirm("Delete this event?")) return;
+        if (!window.confirm(t.confirmDelete)) return;
         setSubmitting(true);
         try {
             await onDelete();
@@ -47,7 +51,7 @@ export default function ScheduleEventFormModal({
             <div className="sch-overlay-panel" onClick={(e) => e.stopPropagation()}>
                 <div className="sch-overlay-header">
                     <span className="sch-overlay-title">
-                        {mode === "edit" ? "Edit Event" : "New Event"}
+                        {mode === "edit" ? t.titleEdit : t.titleAdd}
                     </span>
                     <button className="sch-icon-btn" onClick={onClose}>
                         <X className="icon-xs" />
@@ -56,31 +60,31 @@ export default function ScheduleEventFormModal({
 
                 <form className="sch-form" onSubmit={handleSubmit}>
                     <div>
-                        <label className="sch-label">Title *</label>
+                        <label className="sch-label">{t.titleField}</label>
                         <input
                             className="sch-input"
                             type="text"
                             required
                             value={form.title}
                             onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            placeholder="e.g., Team standup"
+                            placeholder={t.titlePlaceholder}
                         />
                     </div>
 
                     <div>
-                        <label className="sch-label">Subtitle</label>
+                        <label className="sch-label">{t.subtitleField}</label>
                         <input
                             className="sch-input"
                             type="text"
                             value={form.subtitle}
                             onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-                            placeholder="Optional short subtitle"
+                            placeholder={t.subtitlePlaceholder}
                         />
                     </div>
 
                     <div className="sch-form-row">
                         <div>
-                            <label className="sch-label">Date *</label>
+                            <label className="sch-label">{t.dateField}</label>
                             <input
                                 className="sch-input"
                                 type="date"
@@ -90,7 +94,7 @@ export default function ScheduleEventFormModal({
                             />
                         </div>
                         <div>
-                            <label className="sch-label">Time *</label>
+                            <label className="sch-label">{t.timeField}</label>
                             <input
                                 className="sch-input"
                                 type="time"
@@ -102,33 +106,31 @@ export default function ScheduleEventFormModal({
                     </div>
 
                     <div>
-                        <label className="sch-label">Tags</label>
+                        <label className="sch-label">{t.tagsField}</label>
                         <ScheduleTagPicker
                             tags={tags}
                             selectedTags={form.tags}
                             onToggle={toggleTag}
                         />
                         {form.tags.length > 0 && (
-                            <p className="sch-tag-priority-hint">
-                                First tag ({form.tags[0]}) determines the event's color.
-                            </p>
+                            <p className="sch-tag-priority-hint">{t.tagPriorityHint}</p>
                         )}
                     </div>
 
                     <div>
-                        <label className="sch-label">Description</label>
+                        <label className="sch-label">{t.descriptionField}</label>
                         <textarea
                             className="sch-textarea"
                             rows={3}
                             value={form.description}
                             onChange={(e) => setForm({ ...form, description: e.target.value })}
-                            placeholder="Optional details…"
+                            placeholder={t.descriptionPlaceholder}
                         />
                     </div>
 
                     {mode === "edit" && authorName && (
                         <p className="sch-meta-line">
-                            <Clock className="icon-xxs" /> Added by {authorName}
+                            <Clock className="icon-xxs" /> {t.addedBy} {authorName}
                         </p>
                     )}
 
@@ -141,17 +143,17 @@ export default function ScheduleEventFormModal({
                                 disabled={submitting}
                             >
                                 <Trash2 className="icon-xs" />
-                                <span>Delete</span>
+                                <span>{t.delete}</span>
                             </button>
                         ) : (
                             <div />
                         )}
                         <div className="sch-form-actions-right">
                             <button type="button" className="sch-btn-secondary" onClick={onClose}>
-                                Cancel
+                                {t.cancel}
                             </button>
                             <button type="submit" className="sch-btn-primary" disabled={submitting}>
-                                {mode === "edit" ? "Save Changes" : "Add Event"}
+                                {mode === "edit" ? t.saveChanges : t.addEvent}
                             </button>
                         </div>
                     </div>

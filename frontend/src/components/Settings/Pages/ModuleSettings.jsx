@@ -8,21 +8,23 @@ import { useLanguage } from "../../../hooks/useLanguage";
 
 import Settings from "../Components/SettingsComponents";
 
-// Mirrors ModuleManager.jsx's list — kept here too since this page owns the
-// "add module" UI now. If you add a new module type, add it in both places
-// (and in ModuleRenderer.jsx's MODULE_COMPONENTS map, or it won't render).
-const AVAILABLE_MODULES = [
-    { type: "weather", name: "Weather" },
-    { type: "schedule", name: "Schedule" },
-    { type: "announcement", name: "Announcements" },
-];
-
 export default function ModuleSettings() {
     const { dashboard, addModule, removeModule } = useDashboard();
     const { settings, loading } = useSettings();
 
     const T = useLanguage();
     const copy = T?.settings?.modules ?? {};
+
+    // Mirrors ModuleManager.jsx's list — kept here too since this page owns
+    // the "add module" UI now. If you add a new module type, add it in both
+    // places (and in ModuleRenderer.jsx's MODULE_COMPONENTS map, plus a
+    // settings.modules.<type>.title key in en.js/ja.js), or it won't render
+    // or won't have a translated name.
+    const AVAILABLE_MODULES = [
+        { type: "weather", name: copy.weather?.title ?? "Weather" },
+        { type: "schedule", name: copy.schedule?.title ?? "Schedule" },
+        { type: "announcement", name: copy.announcements?.title ?? "Announcements" },
+    ];
 
     if (loading) {
         return <div className="module-settings">Loading settings...</div>;

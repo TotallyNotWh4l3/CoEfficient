@@ -1,13 +1,11 @@
 import React from "react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import "../weather.css";
 
-/**
- * Props:
- * - activeTab: 'hourly' | 'daily'
- * - onChangeTab: (tab) => void
- * - isJapanese: boolean
- */
-export default function WeatherTabsBar({ activeTab, onChangeTab, isJapanese }) {
+export default function WeatherTabsBar({ activeTab, onChangeTab }) {
+    const lang = useLanguage();
+    const t = lang.modules.weather.forecast;
+
     return (
         <div className="weather-tabs">
             <div className="weather-tabs__group">
@@ -15,27 +13,21 @@ export default function WeatherTabsBar({ activeTab, onChangeTab, isJapanese }) {
                     onClick={() => onChangeTab("hourly")}
                     className={`weather-tabs__btn${activeTab === "hourly" ? " weather-tabs__btn--active" : ""}`}
                 >
-                    {isJapanese ? "24時間予報" : "Hourly"}
+                    {t.hourly}
                 </button>
                 <button
                     onClick={() => onChangeTab("daily")}
                     className={`weather-tabs__btn${activeTab === "daily" ? " weather-tabs__btn--active" : ""}`}
                 >
-                    {isJapanese ? "7日間推移" : "7-Day Trend"}
+                    {t.daily}
                 </button>
             </div>
 
             <div className="weather-tabs__hint">
                 {activeTab === "hourly" ? (
-                    <span className="weather-tabs__hint--cyan">
-                        {isJapanese
-                            ? "← 上の日付カードをクリックして時間別予報を切り替え"
-                            : "← Click a day card above to switch hours"}
-                    </span>
+                    <span className="weather-tabs__hint--cyan">{t.hourlyHint}</span>
                 ) : (
-                    <span className="weather-tabs__hint--white">
-                        {isJapanese ? "毎日一括 7日推移グラフ" : "7-DAY MULTI-VARIATE TREND GRAPH"}
-                    </span>
+                    <span className="weather-tabs__hint--white">{t.dailyHint}</span>
                 )}
             </div>
         </div>

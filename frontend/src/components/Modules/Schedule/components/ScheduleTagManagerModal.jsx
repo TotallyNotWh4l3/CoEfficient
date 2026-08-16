@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { X, Trash2 } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 
 export default function ScheduleTagManagerModal({ tags, onClose, onUpsert, onRemove }) {
+    const lang = useLanguage();
+    const t = lang.modules.schedule.tagManager;
+
     const [name, setName] = useState("");
     const [color, setColor] = useState("#3b82f6");
     const [submitting, setSubmitting] = useState(false);
@@ -22,7 +26,7 @@ export default function ScheduleTagManagerModal({ tags, onClose, onUpsert, onRem
         <div className="sch-overlay" onClick={onClose}>
             <div className="sch-overlay-panel" onClick={(e) => e.stopPropagation()}>
                 <div className="sch-overlay-header">
-                    <span className="sch-overlay-title">Manage Tags</span>
+                    <span className="sch-overlay-title">{t.title}</span>
                     <button className="sch-icon-btn" onClick={onClose}>
                         <X className="icon-xs" />
                     </button>
@@ -32,7 +36,7 @@ export default function ScheduleTagManagerModal({ tags, onClose, onUpsert, onRem
                     <input
                         type="text"
                         className="sch-input"
-                        placeholder="Tag name, e.g. meeting"
+                        placeholder={t.namePlaceholder}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
@@ -44,13 +48,13 @@ export default function ScheduleTagManagerModal({ tags, onClose, onUpsert, onRem
                         onChange={(e) => setColor(e.target.value)}
                     />
                     <button type="submit" className="sch-btn-primary" disabled={submitting}>
-                        Add
+                        {t.add}
                     </button>
                 </form>
 
                 <div className="sch-tag-list">
                     {tags.length === 0 ? (
-                        <p className="sch-empty-text">No tags yet.</p>
+                        <p className="sch-empty-text">{t.noTags}</p>
                     ) : (
                         tags.map((tag) => (
                             <div key={tag.id} className="sch-tag-list-row">
@@ -59,7 +63,7 @@ export default function ScheduleTagManagerModal({ tags, onClose, onUpsert, onRem
                                 <button
                                     className="sch-icon-toggle"
                                     onClick={() => onRemove(tag.id)}
-                                    title="Delete tag"
+                                    title={t.deleteTitle}
                                 >
                                     <Trash2 className="icon-xxs" />
                                 </button>

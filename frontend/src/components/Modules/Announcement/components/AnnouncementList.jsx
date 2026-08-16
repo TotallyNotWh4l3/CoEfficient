@@ -1,6 +1,6 @@
-// frontend/src/components/Modules/Announcement/components/AnnouncementList.jsx
 import React from "react";
 import { Bell } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import AnnouncementItem from "./AnnouncementItem";
 
 export default function AnnouncementList({
@@ -14,11 +14,12 @@ export default function AnnouncementList({
     onEditItem,
     onDeleteItem,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.announcement.list;
+
     return (
         <div className="ann-list" style={{ maxHeight: isExtended ? "480px" : "none" }}>
-            {isLoading && (
-                <p className="ann-empty-text">{isJapanese ? "読み込み中..." : "Loading..."}</p>
-            )}
+            {isLoading && <p className="ann-empty-text">{t.loading}</p>}
             {error && <p className="ann-empty-text ann-error-text">{error}</p>}
 
             {!isLoading &&
@@ -40,14 +41,8 @@ export default function AnnouncementList({
                     <div className="ann-empty-icon">
                         <Bell className="icon-sm" />
                     </div>
-                    <h5 className="ann-empty-title">
-                        {isJapanese ? "通知はありません" : "No bulletins found"}
-                    </h5>
-                    <p className="ann-empty-text">
-                        {isJapanese
-                            ? "該当するお知らせがありません。検索キーワードやカテゴリーフィルタをお試しください。"
-                            : "No alerts match the active parameters. Re-adjust your search or category buttons."}
-                    </p>
+                    <h5 className="ann-empty-title">{t.emptyTitle}</h5>
+                    <p className="ann-empty-text">{t.emptyText}</p>
                 </div>
             )}
         </div>

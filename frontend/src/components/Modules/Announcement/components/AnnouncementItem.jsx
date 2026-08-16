@@ -1,6 +1,6 @@
-// frontend/src/components/Modules/Announcement/components/AnnouncementItem.jsx
 import React from "react";
 import { Pin, User, Calendar, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import {
     CATEGORY_CONFIG,
     getPrimaryCategory,
@@ -15,13 +15,16 @@ export default function AnnouncementItem({
     onEdit,
     onDelete,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.announcement;
+
     const itemCats = item.categories || ["general"];
     const primCat = getPrimaryCategory(itemCats);
     const cfg = CATEGORY_CONFIG[primCat];
     const Icon = cfg.icon;
     const title = isJapanese ? item.titleJa || item.title : item.title;
     const desc = isJapanese ? item.contentJa || item.content : item.content;
-    const stamp = formatTimestamp(item.createdAt, isJapanese);
+    const stamp = formatTimestamp(item.createdAt, t.time);
     const modifiable = canModify(item);
 
     return (
@@ -29,9 +32,7 @@ export default function AnnouncementItem({
             className={`ann-item ${cfg.className} ${!item.isRead ? "ann-item-unread" : ""}`}
             onClick={onSelect}
         >
-            {!item.isRead && (
-                <div className="ann-unread-dot" title={isJapanese ? "未読" : "Unread"} />
-            )}
+            {!item.isRead && <div className="ann-unread-dot" title={t.item.unread} />}
             {item.isPinned && (
                 <div className="ann-pin-indicator">
                     <Pin className="icon-xxs" />
@@ -45,16 +46,12 @@ export default function AnnouncementItem({
                 <div className="ann-item-body">
                     <h4 className="ann-item-title">
                         {title}
-                        {item.isEdited && (
-                            <span className="ann-flag">
-                                [{isJapanese ? "編集済み" : "Edited"}]
-                            </span>
-                        )}
+                        {item.isEdited && <span className="ann-flag">[{t.item.edited}]</span>}
                     </h4>
                     <div className="ann-tag-row">
                         {itemCats.map((cat) => (
                             <span key={cat} className={`ann-tag ${CATEGORY_CONFIG[cat].className}`}>
-                                {cat}
+                                {t.categories[cat]}
                             </span>
                         ))}
                     </div>
@@ -81,14 +78,14 @@ export default function AnnouncementItem({
                             <button
                                 className="ann-item-action"
                                 onClick={(e) => onEdit(item, e)}
-                                title={isJapanese ? "編集" : "Edit"}
+                                title={t.item.edit}
                             >
                                 <Pencil className="icon-xxs" />
                             </button>
                             <button
                                 className="ann-item-action ann-item-action-danger"
                                 onClick={(e) => onDelete(item.id, e)}
-                                title={isJapanese ? "削除" : "Delete"}
+                                title={t.item.delete}
                             >
                                 <Trash2 className="icon-xxs" />
                             </button>

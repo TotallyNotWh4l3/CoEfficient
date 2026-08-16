@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "../weather.css";
 
+import { useLanguage } from "../../../../hooks/useLanguage";
+// ...add near top of component body:
 // ── Easy-to-tweak visual knobs ──────────────────────────────────────────
 // How "curvy" the line is. 0 = straight lines between points.
 // 0.333 (1/3) = the original bezier smoothness. 0.5 = max smooth/rounded.
@@ -32,6 +34,8 @@ export default function WeatherChart({
     allDaysDataset,
 }) {
     const [hoveredIdx, setHoveredIdx] = useState(null);
+    const lang = useLanguage();
+    const t = lang.modules.weather.chart;
 
     if (!dataset || dataset.length === 0) return null;
 
@@ -149,7 +153,7 @@ export default function WeatherChart({
                     {isJapanese ? metricInfo.labelJa : metricInfo.labelEn} ({metricInfo.unit})
                 </span>
                 <span className="weather-chart__range">
-                    Range: {clampedMinVal}-{maxVal} {metricInfo.unit}
+                    {t.range}: {clampedMinVal}-{maxVal} {metricInfo.unit}
                 </span>
             </div>
 
@@ -337,18 +341,14 @@ export default function WeatherChart({
                             <div className="weather-chart__tooltip-dual">
                                 <div className="weather-chart__tooltip-row">
                                     <span className="weather-chart__tooltip-swatch weather-chart__tooltip-swatch--max"></span>
-                                    <span className="weather-chart__tooltip-name">
-                                        {isJapanese ? "最高" : "Max"}:
-                                    </span>
+                                    <span className="weather-chart__tooltip-name">{t.max}:</span>
                                     <span className="weather-chart__tooltip-num">
                                         {dataset[hoveredIdx].valueMax}°C
                                     </span>
                                 </div>
                                 <div className="weather-chart__tooltip-row">
                                     <span className="weather-chart__tooltip-swatch weather-chart__tooltip-swatch--min"></span>
-                                    <span className="weather-chart__tooltip-name">
-                                        {isJapanese ? "最低" : "Min"}:
-                                    </span>
+                                    <span className="weather-chart__tooltip-name">{t.min}:</span>
                                     <span className="weather-chart__tooltip-num">
                                         {dataset[hoveredIdx].valueMin}°C
                                     </span>

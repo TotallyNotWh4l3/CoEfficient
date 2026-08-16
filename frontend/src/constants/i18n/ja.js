@@ -1,135 +1,252 @@
+// ja.js
+
 export default {
+    dateNames: {
+        monthsLong: [
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "11月",
+            "12月",
+        ],
+        weekdaysShort: ["日", "月", "火", "水", "木", "金", "土"],
+        weekdaysLong: ["日", "月", "火", "水", "木", "金", "土"],
+    },
+
     dashboard: {
         header: {
             title: "Co:Efficient",
             subTitle: "アップデート",
         },
     },
-
     settings: {
-        // =====================================================
-        // General
-        // =====================================================
-
         title: "設定",
         autoSave: "自動保存済み",
-
-        // =====================================================
-        // Sidebar
-        // =====================================================
-
         sidebar: {
             interface: "インターフェース",
             dashboard: "ダッシュボード",
             modules: "モジュール",
-            about: "このアプリについて",
+            about: "情報",
         },
-
-        // =====================================================
-        // Interface
-        // =====================================================
-
         interface: {
             title: "インターフェース",
-            description: "アプリケーションの外観と言語の設定",
-
+            description: "アプリの外観と言語の設定",
             language: {
                 title: "言語",
-                description: "表示言語の選択",
-
-                add: "地域を追加",
+                description: "アプリの言語選択",
+                add: "場所を追加",
             },
-
             appearance: {
                 title: "外観",
-                description: "ビジュアルオプションとUIスタイルの設定",
-
+                description: "ビジュアルオプションとUIのスタイリング",
                 current: "現在のテーマ",
-
                 themes: {
                     title: "テーマ",
-                    description: "プリセットまたはカスタムテーマ",
-
-                    builtIn: "プリセット",
+                    description: "組み込みまたはカスタムのテーマ",
+                    builtIn: "組み込み",
                     custom: "カスタム",
-
                     apply: "適用",
-                    create: "新規作成",
+                    create: "作成",
                     edit: "編集",
                     delete: "削除",
                 },
-
                 customization: {
                     title: "カスタマイズ",
-                    description: "カラー、タイポグラフィ、枠線、エフェクトの設定",
-
+                    description: "カラー、タイポグラフィ、ボーダー、エフェクト",
                     colors: "カラー",
                     typography: "タイポグラフィ",
-                    borders: "枠線",
+                    borders: "ボーダー",
                     effects: "エフェクト",
                 },
             },
-
             location: {
-                title: "地域",
-                description: "アプリケーションで使用する地域を管理します。",
-
+                title: "場所",
+                description: "アプリケーションで使用する場所を管理します。",
                 current: {
-                    title: "デフォルトの地域",
-                    description: "デフォルトとして使用する地域を選択してください。",
+                    title: "デフォルトの場所",
+                    description: "デフォルトとして使用する場所を選択します。",
                 },
-
-                add: "地域を追加",
-                empty: "保存された地域はありません。",
+                add: "場所を追加",
+                empty: "保存された場所はありません。",
             },
         },
-
-        // =====================================================
-        // Dashboard
-        // =====================================================
-
         dashboard: {
             title: "ダッシュボード",
-            description: "新規ダッシュボードのデフォルトレイアウト",
-
+            description: "新しいダッシュボードのデフォルトレイアウト",
             layout: {
                 title: "レイアウト",
-                description: "余白とグリッド列数の設定",
-
-                columns: "列数",
+                description: "間隔と列の設定",
+                columns: "列",
                 gap: "間隔",
                 padding: "パディング",
             },
         },
-
-        // =====================================================
-        // Modules
-        // =====================================================
-
         modules: {
             title: "モジュール",
             description: "モジュールのデフォルト動作設定",
-
+            available: "モジュールを追加",
+            availableDescription: "ダッシュボードに追加するモジュールを選択します。",
+            current: "現在のモジュール",
+            currentDescription: "現在ダッシュボードにあるモジュール。",
+            empty: "モジュールがまだ追加されていません — 上から選択して始めましょう。",
+            remove: "削除",
             weather: {
                 title: "天気",
             },
-
             schedule: {
                 title: "スケジュール",
             },
-
             announcements: {
                 title: "お知らせ",
             },
         },
-
-        // =====================================================
-        // About
-        // =====================================================
-
         about: {
-            title: "このアプリについて",
-            description: "アプリ情報およびクレジット",
+            title: "情報",
+            description: "アプリの情報とクレジット",
+        },
+    },
+    modules: {
+        weather: {
+            current: {
+                wmoCode: "WMOコード",
+                high: "最高",
+                low: "最低",
+                humidity: "湿度",
+                wind: "風速",
+                precipitation: "降水量",
+                loading: "天気を読み込んでいます...",
+                error: "天気を読み込めませんでした",
+                noData: "天気データが受信されませんでした",
+                retry: "再試行",
+            },
+            forecast: {
+                title: "予報トレンド",
+                updated: "更新:",
+                hourly: "時間別",
+                daily: "7日間トレンド",
+                hourlyHint: "← 上の日付カードをクリックして時間を切り替えます",
+                dailyHint: "7日間マルチバリエートトレンドグラフ",
+            },
+            chart: {
+                range: "範囲",
+                max: "最大",
+                min: "最小",
+            },
+            settings: {
+                title: "天気カードの設定",
+                back: "戻る",
+                layout: {
+                    title: "レイアウト表示モード",
+                    combined: {
+                        title: "統合ビュー",
+                        description:
+                            "マスターベントブロックにライブおよび完全な7日間の拡張予報の両方をレンダリングします。",
+                    },
+                    current: {
+                        title: "現在の天気のみ",
+                        description:
+                            "予報テーブルなしで、極めて高密度な現在の気象状況の統計をレンダリングします。",
+                    },
+                    forecast: {
+                        title: "予報トレンドのみ",
+                        description:
+                            "現在のステータスの雑音を最小限に抑え、完全な7日間の拡張予報とSVGチャートをレンダリングします。",
+                    },
+                },
+                active: "● アクティブ",
+                tip: "ヒント: メイン設定の詳細管理者コントロールを使用して、このタイルのレスポンシブな列数を切り替えます。",
+            },
+            header: {
+                selectLocation: "場所を選択",
+                moduleSettings: "モジュール設定",
+                remove: "ボードから削除",
+            },
+        },
+        schedule: {
+            header: {
+                title: "スケジュール",
+                subtitle: "チームのイベントと重要な日付",
+                addEvent: "追加",
+                manageTags: "タグを管理",
+                removeModule: "モジュールを削除",
+            },
+            viewToggle: {
+                absolute: "絶対",
+                relative: "相対",
+            },
+            layoutToggle: {
+                month: "月",
+                week: "週",
+            },
+            calendar: {
+                today: "今日",
+                weekOf: "週",
+                conflictTitle: "タイムスロットが占有されています",
+            },
+            relative: {
+                configureTitle: "ローリングウィンドウを設定",
+                settingsTitle: "相対ビューの設定",
+                daysBeforeLabel: "今日より前の日数:",
+                reset: "リセット",
+            },
+            dayList: {
+                noEvents: "予定されているイベントはありません。",
+                addEvent: "イベントを追加",
+            },
+            detail: {
+                title: "イベント詳細",
+                editedBy: "追加者",
+                lockNote: "作成者または上位の権限を持つユーザーのみがこのイベントを編集できます。",
+                edit: "編集",
+                delete: "削除",
+                close: "閉じる",
+                confirmDelete: "このイベントを削除しますか？",
+            },
+            form: {
+                titleAdd: "新しいイベント",
+                titleEdit: "イベントを編集",
+                titleField: "タイトル *",
+                titlePlaceholder: "例: チームスタンドアップ",
+                subtitleField: "サブタイトル",
+                subtitlePlaceholder: "任意の短いサブタイトル",
+                dateField: "日付 *",
+                timeField: "時間 *",
+                tagsField: "タグ",
+                tagPriorityHint: "最初のタグがイベントの色を決定します。",
+                descriptionField: "説明",
+                descriptionPlaceholder: "任意の内訳…",
+                addedBy: "追加者",
+                cancel: "キャンセル",
+                saveChanges: "変更を保存",
+                addEvent: "イベントを追加",
+                delete: "削除",
+                confirmDelete: "このイベントを削除しますか？",
+            },
+            tagManager: {
+                title: "タグを管理",
+                namePlaceholder: "タグ名、例: 会議",
+                add: "追加",
+                noTags: "タグはまだありません。",
+                deleteTitle: "タグを削除",
+            },
+            tagPicker: {
+                noTagsHint: "タグはまだありません。管理者は「タグを管理」からタグを追加できます。",
+            },
+            footer: {
+                liveSync: "ライブ同期",
+            },
+            status: {
+                loading: "スケジュールを読み込んでいます…",
+                errorTitle: "スケジュールの読み込みに失敗しました",
+                retry: "再試行",
+            },
         },
     },
 };

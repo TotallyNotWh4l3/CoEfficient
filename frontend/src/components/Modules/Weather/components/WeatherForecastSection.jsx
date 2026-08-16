@@ -5,21 +5,9 @@ import WeatherDailyGrid from "./WeatherDailyGrid";
 import WeatherTabsBar from "./WeatherTabsBar";
 import WeatherChart from "./WeatherChart";
 import { METRIC_DEFS } from "../utils/weatherHelpers.jsx";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import "../weather.css";
 
-/**
- * Props:
- * - isJapanese: boolean
- * - activeMetric: string
- * - onSelectMetric: (id) => void
- * - dailyList: [{ dayLabel, maxTemp, minTemp, weatherCode }]
- * - activeTab: 'hourly' | 'daily'
- * - onChangeTab: (tab) => void
- * - selectedDayIdx: number
- * - onSelectDay: (idx) => void
- * - chartDataset: [{ label, value, valueMax?, valueMin? }]
- * - timeString: string — "last updated" label
- */
 export default function WeatherForecastSection({
     isJapanese,
     activeMetric,
@@ -32,14 +20,14 @@ export default function WeatherForecastSection({
     chartDataset,
     timeString,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.weather.forecast;
     const activeMetricInfo = METRIC_DEFS.find((m) => m.id === activeMetric) || METRIC_DEFS[0];
 
     return (
         <>
             <div className="weather-section-title">
-                <span className="weather-section-title__label">
-                    {isJapanese ? "予報分析" : "Forecast Trends"}
-                </span>
+                <span className="weather-section-title__label">{t.title}</span>
                 <span className="weather-section-title__rule"></span>
             </div>
 
@@ -56,11 +44,7 @@ export default function WeatherForecastSection({
                 onSelectDay={onSelectDay}
             />
 
-            <WeatherTabsBar
-                activeTab={activeTab}
-                onChangeTab={onChangeTab}
-                isJapanese={isJapanese}
-            />
+            <WeatherTabsBar activeTab={activeTab} onChangeTab={onChangeTab} />
 
             <WeatherChart
                 dataset={chartDataset}
@@ -73,7 +57,7 @@ export default function WeatherForecastSection({
                 <div className="weather-updated__inner">
                     <Clock className="weather-updated__icon" />
                     <span className="weather-updated__text">
-                        {isJapanese ? "最終同期:" : "UPDATED:"} {timeString}
+                        {t.updated} {timeString}
                     </span>
                 </div>
             </div>

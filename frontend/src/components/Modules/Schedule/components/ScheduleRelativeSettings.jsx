@@ -1,6 +1,10 @@
 import { X, Info } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 
 export default function ScheduleRelativeSettings({ daysBefore, onChange, onClose }) {
+    const lang = useLanguage();
+    const t = lang.modules.schedule.relative;
+
     return (
         <div className="sch-overlay" onClick={onClose}>
             <div
@@ -8,7 +12,7 @@ export default function ScheduleRelativeSettings({ daysBefore, onChange, onClose
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="sch-overlay-header">
-                    <span className="sch-overlay-title">Relative View Settings</span>
+                    <span className="sch-overlay-title">{t.settingsTitle}</span>
                     <button className="sch-icon-btn" onClick={onClose}>
                         <X className="icon-xs" />
                     </button>
@@ -21,7 +25,9 @@ export default function ScheduleRelativeSettings({ daysBefore, onChange, onClose
                         {30 - daysBefore} day{30 - daysBefore === 1 ? "" : "s"} ahead (30 total).
                     </p>
 
-                    <label className="sch-label">Days before today: {daysBefore}</label>
+                    <label className="sch-label">
+                        {t.daysBeforeLabel} {daysBefore}
+                    </label>
                     <input
                         type="range"
                         min="0"
@@ -33,7 +39,7 @@ export default function ScheduleRelativeSettings({ daysBefore, onChange, onClose
 
                     <div className="sch-relative-quick-actions">
                         <button className="sch-btn-secondary" onClick={() => onChange(0)}>
-                            Reset
+                            {t.reset}
                         </button>
                     </div>
                 </div>

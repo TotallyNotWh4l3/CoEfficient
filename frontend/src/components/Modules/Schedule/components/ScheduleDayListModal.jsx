@@ -1,4 +1,5 @@
 import { X, Plus, ChevronRight } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import { formatDisplayDate, getEventColor } from "../utils/scheduleHelpers";
 
 export default function ScheduleDayListModal({
@@ -9,13 +10,18 @@ export default function ScheduleDayListModal({
     onAdd,
     onSelectEvent,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.schedule.dayList;
+
     const sorted = [...events].sort((a, b) => a.eventTime.localeCompare(b.eventTime));
 
     return (
         <div className="sch-overlay" onClick={onClose}>
             <div className="sch-overlay-panel" onClick={(e) => e.stopPropagation()}>
                 <div className="sch-overlay-header">
-                    <span className="sch-overlay-title">{formatDisplayDate(dateStr)}</span>
+                    <span className="sch-overlay-title">
+                        {formatDisplayDate(dateStr, lang.dateNames)}
+                    </span>
                     <button className="sch-icon-btn" onClick={onClose}>
                         <X className="icon-xs" />
                     </button>
@@ -23,7 +29,7 @@ export default function ScheduleDayListModal({
 
                 <div className="sch-daylist">
                     {sorted.length === 0 ? (
-                        <p className="sch-empty-text">No events scheduled.</p>
+                        <p className="sch-empty-text">{t.noEvents}</p>
                     ) : (
                         sorted.map((ev) => {
                             const color = getEventColor(ev, tagsById);
@@ -58,7 +64,7 @@ export default function ScheduleDayListModal({
                 <div className="sch-overlay-footer">
                     <button className="sch-btn-primary" onClick={() => onAdd(dateStr)}>
                         <Plus className="icon-xs" />
-                        <span>Add Event</span>
+                        <span>{t.addEvent}</span>
                     </button>
                 </div>
             </div>

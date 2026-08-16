@@ -1,22 +1,24 @@
-// frontend/src/components/Modules/Announcement/components/AnnouncementFilters.jsx
 import React from "react";
 import { Search, X } from "lucide-react";
-import { CATEGORY_TABS, TAB_LABELS } from "../../../../constants/modules/announcementConstants";
+import { useLanguage } from "../../../../hooks/useLanguage";
+import { CATEGORY_TABS } from "../../../../constants/modules/announcementConstants";
 
 export default function AnnouncementFilters({
-    isJapanese,
     searchQuery,
     onSearchChange,
     activeTab,
     onTabChange,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.announcement;
+
     return (
         <div className="ann-filters">
             <div className="ann-search">
                 <Search className="ann-search-icon icon-xs" />
                 <input
                     type="text"
-                    placeholder={isJapanese ? "件名や内容で検索..." : "Filter bulletins..."}
+                    placeholder={t.filters.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                 />
@@ -34,7 +36,7 @@ export default function AnnouncementFilters({
                         className={`ann-tab ${activeTab === tabKey ? "active" : ""}`}
                         onClick={() => onTabChange(tabKey)}
                     >
-                        {isJapanese ? TAB_LABELS[tabKey].ja : TAB_LABELS[tabKey].en}
+                        {t.categories[tabKey]}
                     </button>
                 ))}
             </div>

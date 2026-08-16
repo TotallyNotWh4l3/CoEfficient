@@ -1,8 +1,6 @@
 // frontend/src/constants/modules/announcementConstants.js
 import { AlertTriangle, Wrench, Star, Bell, Clipboard, Info } from "lucide-react";
 
-// Determines which category "wins" for card accent color / icon when an
-// announcement has multiple tags. Urgent always wins.
 export const CATEGORY_PRIORITY = [
     "urgent",
     "maintenance",
@@ -23,52 +21,12 @@ export const CATEGORY_TABS = [
 ];
 
 export const CATEGORY_CONFIG = {
-    urgent: {
-        en: "Urgent",
-        ja: "要対応",
-        icon: AlertTriangle,
-        className: "tag-urgent",
-    },
-    maintenance: {
-        en: "Maintenance",
-        ja: "整備/メンテ",
-        icon: Wrench,
-        className: "tag-maintenance",
-    },
-    event: {
-        en: "Event",
-        ja: "イベント",
-        icon: Star,
-        className: "tag-event",
-    },
-    announcement: {
-        en: "Announcement",
-        ja: "案内",
-        icon: Bell,
-        className: "tag-announcement",
-    },
-    notice: {
-        en: "Notice",
-        ja: "告示",
-        icon: Clipboard,
-        className: "tag-notice",
-    },
-    general: {
-        en: "General",
-        ja: "一般",
-        icon: Info,
-        className: "tag-general",
-    },
-};
-
-export const TAB_LABELS = {
-    all: { en: "All", ja: "すべて" },
-    urgent: { en: "Urgent", ja: "要対応" },
-    maintenance: { en: "Maintenance", ja: "整備/メンテ" },
-    event: { en: "Event", ja: "イベント" },
-    announcement: { en: "Announcement", ja: "案内" },
-    notice: { en: "Notice", ja: "告示" },
-    general: { en: "General", ja: "一般" },
+    urgent: { icon: AlertTriangle, className: "tag-urgent" },
+    maintenance: { icon: Wrench, className: "tag-maintenance" },
+    event: { icon: Star, className: "tag-event" },
+    announcement: { icon: Bell, className: "tag-announcement" },
+    notice: { icon: Clipboard, className: "tag-notice" },
+    general: { icon: Info, className: "tag-general" },
 };
 
 export function getPrimaryCategory(categories) {
@@ -79,8 +37,15 @@ export function getPrimaryCategory(categories) {
     return categories[0] || "general";
 }
 
-/** Relative time if < 3 days old, otherwise the plain date — per spec. */
-export function formatTimestamp(isoDate, isJapanese) {
+/**
+ * Relative time if < 3 days old, otherwise the plain date — per spec.
+ * `time` is lang.modules.announcement.time from en.js/ja.js, e.g.
+ * { justNow, minutesAgo, hoursAgo, daysAgo }.
+ * `locale` (e.g. "en" | "ja") controls word order, since Japanese suffixes
+ * the unit directly onto the number with no space ("3日前") while English
+ * puts a space before the unit ("3d ago").
+ */
+export function formatTimestamp(isoDate, time, locale) {
     const then = new Date(isoDate);
     const now = new Date();
     const diffMs = now - then;
@@ -88,17 +53,19 @@ export function formatTimestamp(isoDate, isJapanese) {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
+    const join = (n, unit) => (locale === "ja" ? `${n}${unit}` : `${n}${unit}`);
+
     if (diffDays >= 3) {
         return then.toISOString().split("T")[0];
     }
     if (diffDays >= 1) {
-        return isJapanese ? `${diffDays}日前` : `${diffDays}d ago`;
+        return join(diffDays, time.daysAgo);
     }
     if (diffHours >= 1) {
-        return isJapanese ? `${diffHours}時間前` : `${diffHours}h ago`;
+        return join(diffHours, time.hoursAgo);
     }
     if (diffMins >= 1) {
-        return isJapanese ? `${diffMins}分前` : `${diffMins}m ago`;
+        return join(diffMins, time.minutesAgo);
     }
-    return isJapanese ? "たった今" : "Just now";
+    return time.justNow;
 }

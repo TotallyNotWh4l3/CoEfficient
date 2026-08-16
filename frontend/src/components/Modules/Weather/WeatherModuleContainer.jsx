@@ -7,6 +7,8 @@ import { useSettings } from "../../../hooks/useSettings";
 import { useAuth } from "../../../hooks/useAuth";
 import { mapWeatherResponse } from "./utils/mapWeatherResponse";
 import "./weather.css";
+import { useLanguage } from "../../../hooks/useLanguage";
+// ...
 
 /**
  * Data-wiring layer for the weather module.
@@ -32,6 +34,8 @@ export default function WeatherModuleContainer({ module }) {
     const userRole = user?.role;
 
     const [selectedLocationId, setSelectedLocationId] = useState(module.settings?.location);
+    const lang = useLanguage();
+    const t = lang.modules.weather.current;
 
     // Keep in sync if settings load in after mount, or the module is updated elsewhere.
     useEffect(() => {

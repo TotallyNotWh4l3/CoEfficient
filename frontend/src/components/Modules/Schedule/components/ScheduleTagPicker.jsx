@@ -1,8 +1,12 @@
 import { Check } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 
 export default function ScheduleTagPicker({ tags, selectedTags, onToggle, disabled }) {
+    const lang = useLanguage();
+    const t = lang.modules.schedule.tagPicker;
+
     if (tags.length === 0) {
-        return <p className="sch-empty-text">No tags yet. Admins can add tags in Manage Tags.</p>;
+        return <p className="sch-empty-text">{t.noTagsHint}</p>;
     }
 
     return (

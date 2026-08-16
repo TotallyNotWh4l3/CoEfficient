@@ -36,10 +36,14 @@ export function getMonthGridDays(anchorDate) {
 }
 
 /** 'YYYY-MM-DD' -> "Thursday, August 14" */
-export function formatDisplayDate(dateStr) {
+export function formatDisplayDate(dateStr, dateNames) {
     const [y, m, d] = dateStr.split("-").map(Number);
     const date = new Date(y, m - 1, d);
-    return date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+
+    const weekday = dateNames.weekdaysLong[date.getDay()];
+    const month = dateNames.monthsLong[date.getMonth()];
+
+    return `${weekday}, ${month} ${date.getDate()}`;
 }
 
 export function getWeekDays(anchorDate) {

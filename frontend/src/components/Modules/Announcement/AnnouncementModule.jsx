@@ -1,9 +1,9 @@
-// frontend/src/components/Modules/Announcement/AnnouncementModule.jsx
 import React, { useState } from "react";
 import useAnnouncements from "../../../hooks/useAnnouncements";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { useSettings } from "../../../hooks/useSettings";
 import { useAuth } from "../../../hooks/useAuth";
+import { useLanguage } from "../../../hooks/useLanguage";
 import AnnouncementHeader from "./components/AnnouncementHeader";
 import AnnouncementFilters from "./components/AnnouncementFilters";
 import AnnouncementList from "./components/AnnouncementList";
@@ -14,27 +14,12 @@ import AnnouncementFormModal from "./components/AnnouncementFormModal";
 import AnnouncementArchiveModal from "./AnnouncementArchiveModal";
 import "./announcement-module.css";
 
-/**
- * Matches the same contract every other module gets from ModuleRenderer:
- * only a `module` object is passed in (see WeatherModuleContainer for the
- * sibling pattern). Language, user, and layout mode are all derived here
- * instead of prop-drilled.
- *
- * `module` shape (see defaultDashboard.js):
- * {
- *   id, type: 'announcement',
- *   settings: { title, view: 'compact' | 'extended' },
- *   layout: { w, h },
- * }
- *
- * This file owns all state and handlers; every child under ./components is
- * a presentational component that just renders props and forwards events
- * back up here — same split used by ScheduleModule and WeatherModule.
- */
 export default function AnnouncementModule({ module }) {
     const { removeModule, updateModuleSettings } = useDashboard();
     const { settings } = useSettings();
     const { user } = useAuth();
+    const lang = useLanguage();
+    const t = lang.modules.announcement;
 
     const isJapanese = settings?.preferences?.language === "ja";
     // users table only has id/username/role — there's no `name` column.
@@ -135,10 +120,10 @@ export default function AnnouncementModule({ module }) {
         try {
             if (editingId) {
                 await updateAnnouncement(editingId, payload);
-                showToast(isJapanese ? "更新しました。" : "Bulletin updated.");
+                showToast(t.toast.updated);
             } else {
                 await createAnnouncement(payload);
-                showToast(isJapanese ? "正常に公開されました！" : "Announcement published!");
+                showToast(t.toast.published);
             }
             resetForm();
             setShowCreateModal(false);
@@ -151,10 +136,8 @@ export default function AnnouncementModule({ module }) {
             );
             showToast(
                 serverMessage
-                    ? `${isJapanese ? "保存に失敗しました" : "Failed to save"}: ${serverMessage}`
-                    : isJapanese
-                      ? "保存に失敗しました。"
-                      : "Failed to save.",
+                    ? `${t.toast.saveFailed}: ${serverMessage}`
+                    : t.toast.saveFailedGeneric,
             );
         }
     };
@@ -163,9 +146,9 @@ export default function AnnouncementModule({ module }) {
         if (e) e.stopPropagation();
         try {
             await deleteAnnouncement(id);
-            showToast(isJapanese ? "削除されました。" : "Bulletin removed.");
+            showToast(t.toast.deleted);
         } catch {
-            showToast(isJapanese ? "削除に失敗しました。" : "Failed to delete.");
+            showToast(t.toast.deleteFailed);
         }
     };
 
@@ -189,7 +172,6 @@ export default function AnnouncementModule({ module }) {
             <div className="ann-glow ann-glow-bottom" />
 
             <AnnouncementHeader
-                isJapanese={isJapanese}
                 filteredCount={filtered.length}
                 unreadCount={unreadCount}
                 currentUser={currentUser}
@@ -202,7 +184,6 @@ export default function AnnouncementModule({ module }) {
 
             <div className="ann-body">
                 <AnnouncementFilters
-                    isJapanese={isJapanese}
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
                     activeTab={activeTab}
@@ -222,7 +203,7 @@ export default function AnnouncementModule({ module }) {
                 />
             </div>
 
-            <AnnouncementFooter isJapanese={isJapanese} />
+            <AnnouncementFooter />
 
             <AnnouncementToast message={successToast} />
 
@@ -234,7 +215,6 @@ export default function AnnouncementModule({ module }) {
 
             {showCreateModal && (
                 <AnnouncementFormModal
-                    isJapanese={isJapanese}
                     editingId={editingId}
                     formTitle={formTitle}
                     formContent={formContent}
@@ -251,12 +231,9 @@ export default function AnnouncementModule({ module }) {
 
             {showArchiveModal && (
                 <AnnouncementArchiveModal
-                    isJapanese={isJapanese}
                     isManagerOrAbove={isManagerOrAbove}
                     onClose={() => setShowArchiveModal(false)}
-                    onRestored={() =>
-                        showToast(isJapanese ? "復元しました。" : "Bulletin restored.")
-                    }
+                    onRestored={() => showToast(t.toast.restored)}
                 />
             )}
         </div>

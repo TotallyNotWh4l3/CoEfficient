@@ -7,57 +7,6 @@ import WeatherSettingsPanel from "./components/WeatherSettingsPanel";
 import { getWeatherGradient } from "./utils/weatherHelpers";
 import "./weather.css";
 
-/**
- * WeatherModule — pure UI shell, no data-fetching or mock generation.
- * All weather data comes in as props from the parent/backend integration.
- *
- * Props:
- * - locationOptions: [{ id, label }]
- * - selectedLocationId: string
- * - onLocationChange: (id) => void
- *
- * - current: {
- *     temperature: number,
- *     humidity: number,
- *     windSpeed: number,
- *     precipChance: number,
- *     weatherCode: number,
- *     isDay: 0 | 1,
- *     highTemp: number,
- *     lowTemp: number,
- *     time: string,          // e.g. "14:00"
- *   }
- *
- * - dailyList: [{
- *     dayLabel: string,
- *     maxTemp: number,
- *     minTemp: number,
- *     weatherCode: number,
- *     humidity: number,
- *     precipChance: number,
- *     precipSum: number,
- *     windSpeed: number,
- *   }]
- *
- * - hourlyByDay: {
- *     [dayIndex]: [{
- *       time: string,
- *       temp: number,
- *       maxTemp: number,
- *       minTemp: number,
- *       humidity: number,
- *       precipChance: number,
- *       precipSum: number,
- *       windSpeed: number,
- *     }]
- *   }
- *
- * - isJapanese: boolean
- * - userRole: string ('manager' | 'admin' | ...)
- * - layoutMode: 'combined' | 'current' | 'forecast'
- * - onLayoutModeChange: (mode) => void
- * - onRemove: () => void
- */
 export default function WeatherModule({
     locationOptions = [],
     selectedLocationId,
@@ -136,7 +85,7 @@ export default function WeatherModule({
                     temp={temperature}
                     highTemp={highTemp}
                     lowTemp={lowTemp}
-                    isJapanese={isJapanese}
+                    isJapanese={isJapanese} // still needed for getWeatherDescText
                 />
             )}
 
@@ -145,7 +94,7 @@ export default function WeatherModule({
                     humidity={humidity}
                     windSpeed={windSpeed}
                     precipChance={precipChance}
-                    isJapanese={isJapanese}
+                    // isJapanese removed — no longer used inside
                 />
             )}
 
@@ -166,10 +115,10 @@ export default function WeatherModule({
 
             {showSettings && (
                 <WeatherSettingsPanel
-                    isJapanese={isJapanese}
                     layoutMode={localLayoutMode}
                     onLayoutModeChange={handleLayoutModeChange}
                     onClose={() => setShowSettings(false)}
+                    // isJapanese removed
                 />
             )}
 

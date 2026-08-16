@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import {
-    WEEKDAY_LABELS,
     getMonthGridDays,
     getWeekDays,
     formatDateStr,
@@ -20,6 +20,10 @@ export default function ScheduleCalendarGrid({
     onDayClick,
     hideNav = false,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.schedule.calendar;
+    const { monthsLong, weekdaysShort } = lang.dateNames;
+
     const todayStr = formatDateStr(new Date());
     const days =
         daysOverride ??
@@ -28,12 +32,12 @@ export default function ScheduleCalendarGrid({
 
     const navLabel =
         layout === "week"
-            ? `Week of ${anchorDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
-            : anchorDate.toLocaleString("en-US", { month: "long", year: "numeric" });
+            ? `${t.weekOf} ${monthsLong[anchorDate.getMonth()].slice(0, 3)} ${anchorDate.getDate()}, ${anchorDate.getFullYear()}`
+            : `${monthsLong[anchorDate.getMonth()]} ${anchorDate.getFullYear()}`;
 
-    const weekdayLabels = daysOverride
-        ? days.slice(0, 7).map((d) => d.toLocaleDateString("en-US", { weekday: "short" }))
-        : WEEKDAY_LABELS;
+    // weekdaysShort is always the fixed Sun-Sat header row; daysOverride
+    // (relative view) still walks actual dates but the header stays static.
+    const weekdayLabels = weekdaysShort;
 
     return (
         <>
@@ -45,7 +49,7 @@ export default function ScheduleCalendarGrid({
                             <ChevronLeft className="icon-xs" />
                         </button>
                         <button className="sch-nav-btn sch-nav-today" onClick={onToday}>
-                            Today
+                            {t.today}
                         </button>
                         <button className="sch-nav-btn" onClick={onNext}>
                             <ChevronRight className="icon-xs" />
@@ -86,7 +90,7 @@ export default function ScheduleCalendarGrid({
                                     {day.getDate()}
                                 </span>
                                 {conflict && (
-                                    <span className="sch-conflict-badge" title="Time slot occupied">
+                                    <span className="sch-conflict-badge" title={t.conflictTitle}>
                                         !
                                     </span>
                                 )}

@@ -1,21 +1,9 @@
 import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MapPin, Settings, ChevronDown, Check } from "lucide-react";
+import { useLanguage } from "../../../../hooks/useLanguage";
 import "../weather.css";
 
-/**
- * Top row: location dropdown on the left, settings + remove actions
- * on the right.
- *
- * Props:
- * - locationOptions: [{ id, label }]   // from useLocation()
- * - selectedLocationId: string
- * - onLocationChange: (id) => void
- * - isManagerOrAbove: boolean — gates the settings button
- * - showSettings: boolean
- * - onToggleSettings: () => void
- * - onRemove: () => void
- */
 export default function WeatherHeader({
     locationOptions = [],
     selectedLocationId,
@@ -25,8 +13,11 @@ export default function WeatherHeader({
     onToggleSettings,
     onRemove,
 }) {
+    const lang = useLanguage();
+    const t = lang.modules.weather.header;
+
     const selectedLabel =
-        locationOptions.find((loc) => loc.id === selectedLocationId)?.label ?? "Select location";
+        locationOptions.find((loc) => loc.id === selectedLocationId)?.label ?? t.selectLocation;
 
     return (
         <div className="weather-header">
@@ -68,7 +59,7 @@ export default function WeatherHeader({
                     <button
                         onClick={onToggleSettings}
                         className={`weather-header__icon-btn${showSettings ? " weather-header__icon-btn--settings-active" : ""}`}
-                        title="Module Settings"
+                        title={t.moduleSettings}
                     >
                         <Settings className="weather-header__pin-icon" />
                     </button>
@@ -76,7 +67,7 @@ export default function WeatherHeader({
                 <button
                     onClick={onRemove}
                     className="weather-header__icon-btn weather-header__icon-btn--remove"
-                    title="Remove from board"
+                    title={t.remove}
                 >
                     ✕
                 </button>

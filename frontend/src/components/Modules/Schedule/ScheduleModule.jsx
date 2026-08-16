@@ -4,6 +4,7 @@ import useSchedule from "../../../hooks/useSchedule";
 import useScheduleTags from "../../../hooks/useScheduleTags";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { useAuth } from "../../../hooks/useAuth";
+import { useLanguage } from "../../../hooks/useLanguage";
 import ScheduleHeader from "./components/ScheduleHeader";
 import ScheduleCalendarGrid from "./components/ScheduleCalendarGrid";
 import ScheduleDayListModal from "./components/ScheduleDayListModal";
@@ -23,6 +24,8 @@ import "./schedule-module.css";
 export default function ScheduleModule({ module }) {
     const { removeModule } = useDashboard();
     const { user } = useAuth();
+    const lang = useLanguage();
+    const t = lang.modules.schedule;
     const onRemove = () => removeModule(module.id);
     const isAdmin = user?.role?.toLowerCase() === "admin";
 
@@ -148,7 +151,7 @@ export default function ScheduleModule({ module }) {
 
     const handleDetailDelete = async () => {
         if (!selectedEvent) return;
-        if (!window.confirm("Delete this event?")) return;
+        if (!window.confirm(t.detail.confirmDelete)) return;
         try {
             await deleteEvent(selectedEvent.id);
             closeDetail();
@@ -188,27 +191,28 @@ export default function ScheduleModule({ module }) {
                 {isLoading ? (
                     <div className="sch-empty-state">
                         <RefreshCw className="icon-sm sch-spin" />
-                        <p className="sch-empty-text">Loading schedule…</p>
+                        <p className="sch-empty-text">{t.status.loading}</p>
                     </div>
                 ) : error ? (
                     <div className="sch-empty-state">
                         <AlertCircle className="icon-sm sch-error-text" />
-                        <p className="sch-empty-title sch-error-text">Failed to load schedule</p>
+                        <p className="sch-empty-title sch-error-text">{t.status.errorTitle}</p>
                         <p className="sch-empty-text">{error}</p>
                         <button className="sch-btn-secondary" onClick={reload}>
-                            Retry
+                            {t.status.retry}
                         </button>
                     </div>
                 ) : viewMode === "relative" ? (
                     <>
                         <div className="sch-nav">
-                            <span className="sch-nav-label">
-                                Relative — {daysBefore}d before, {30 - daysBefore}d after
-                            </span>
+                            {/* <span className="sch-nav-label">
+                                {t.viewToggle.relative} — {daysBefore}d before, {30 - daysBefore}d
+                                after
+                            </span> */}
                             <button
                                 className="sch-nav-btn"
                                 onClick={() => setShowRelativeSettings(true)}
-                                title="Configure rolling window"
+                                title={t.relative.configureTitle}
                             >
                                 <Settings className="icon-xs" />
                             </button>

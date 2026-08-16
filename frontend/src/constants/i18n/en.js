@@ -1,135 +1,347 @@
+// en.js
+
 export default {
+    dateNames: {
+        monthsLong: [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ],
+        weekdaysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        weekdaysLong: [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ],
+    },
     dashboard: {
         header: {
             title: "Co:Efficient",
             subTitle: "Updates",
         },
     },
-
     settings: {
-        // =====================================================
-        // General
-        // =====================================================
-
         title: "Settings",
         autoSave: "Auto-saved",
-
-        // =====================================================
-        // Sidebar
-        // =====================================================
-
         sidebar: {
             interface: "Interface",
             dashboard: "Dashboard",
             modules: "Modules",
             about: "About",
         },
-
-        // =====================================================
-        // Interface
-        // =====================================================
-
         interface: {
             title: "Interface",
             description: "Application appearance and language settings",
-
             language: {
                 title: "Language",
                 description: "Application language selection",
-
                 add: "Add Location",
             },
-
             appearance: {
                 title: "Appearance",
                 description: "Visual options and UI styling",
-
                 current: "Current theme",
-
                 themes: {
                     title: "Themes",
                     description: "Built-in or custom themes",
-
                     builtIn: "Built-in",
                     custom: "Custom",
-
                     apply: "Apply",
                     create: "Create",
                     edit: "Edit",
                     delete: "Delete",
                 },
-
                 customization: {
                     title: "Customization",
                     description: "Colors, typography, borders, and effects",
-
                     colors: "Colors",
                     typography: "Typography",
                     borders: "Borders",
                     effects: "Effects",
                 },
             },
-
             location: {
                 title: "Location",
                 description: "Manage locations used by the application.",
-
                 current: {
                     title: "Default Location",
                     description: "Choose the location used as the default.",
                 },
-
                 add: "Add Location",
                 empty: "No saved locations.",
             },
         },
-
-        // =====================================================
-        // Dashboard
-        // =====================================================
-
         dashboard: {
             title: "Dashboard",
             description: "Default layout for new dashboards",
-
             layout: {
                 title: "Layout",
                 description: "Spacing and column configurations",
-
                 columns: "Columns",
                 gap: "Spacing",
                 padding: "Padding",
             },
         },
-
-        // =====================================================
-        // Modules
-        // =====================================================
-
         modules: {
             title: "Modules",
             description: "Default behavior configs for modules",
-
             weather: {
                 title: "Weather",
             },
-
             schedule: {
                 title: "Schedule",
             },
-
             announcements: {
                 title: "Announcements",
             },
         },
-
-        // =====================================================
-        // About
-        // =====================================================
-
         about: {
             title: "About",
             description: "App information and credits",
+        },
+    },
+    modules: {
+        weather: {
+            current: {
+                wmoCode: "WMO CODE",
+                high: "H",
+                low: "L",
+                humidity: "Humidity",
+                wind: "Wind",
+                precipitation: "Precip",
+                loading: "Loading weather...",
+                error: "Could not load weather",
+                noData: "No weather data received",
+                retry: "Retry",
+            },
+            forecast: {
+                title: "Forecast Trends",
+                updated: "UPDATED:",
+                hourly: "Hourly",
+                daily: "7-Day Trend",
+                hourlyHint: "← Click a day card above to switch hours",
+                dailyHint: "7-DAY MULTI-VARIATE TREND GRAPH",
+            },
+            chart: {
+                range: "Range",
+                max: "Max",
+                min: "Min",
+            },
+            settings: {
+                title: "Weather Card Settings",
+                back: "Back",
+                layout: {
+                    title: "Layout Display Mode",
+                    combined: {
+                        title: "Combined View",
+                        description:
+                            "Render both live and full 7-day extended forecasts in a master bento block.",
+                    },
+                    current: {
+                        title: "Only Current Weather",
+                        description:
+                            "Render extreme high-density current conditions stats with no forecast tables.",
+                    },
+                    forecast: {
+                        title: "Only Forecast Trends",
+                        description:
+                            "Render full 7-day extended forecasts & SVG chart with minimal current status clutter.",
+                    },
+                },
+                active: "● ACTIVE",
+                tip: "Tip: Use advanced admin controls in main settings to toggle responsive column counts for this tile.",
+            },
+            header: {
+                selectLocation: "Select location",
+                moduleSettings: "Module Settings",
+                remove: "Remove from board",
+            },
+        },
+        schedule: {
+            header: {
+                title: "Schedule",
+                subtitle: "Team events & important dates",
+                addEvent: "Add Event",
+                manageTags: "Manage tags",
+                removeModule: "Remove module",
+            },
+            viewToggle: {
+                absolute: "Absolute",
+                relative: "Relative",
+            },
+            layoutToggle: {
+                month: "Month",
+                week: "Week",
+            },
+            calendar: {
+                today: "Today",
+                weekOf: "Week of",
+                conflictTitle: "Time slot occupied",
+            },
+            relative: {
+                configureTitle: "Configure rolling window",
+                settingsTitle: "Relative View Settings",
+                daysBeforeLabel: "Days before today:",
+                reset: "Reset",
+            },
+            dayList: {
+                noEvents: "No events scheduled.",
+                addEvent: "Add Event",
+            },
+            detail: {
+                title: "Event Details",
+                editedBy: "Added by",
+                lockNote: "Only the creator or a higher-role user can edit this event.",
+                edit: "Edit",
+                delete: "Delete",
+                close: "Close",
+                confirmDelete: "Delete this event?",
+            },
+            form: {
+                titleAdd: "New Event",
+                titleEdit: "Edit Event",
+                titleField: "Title *",
+                titlePlaceholder: "e.g., Team standup",
+                subtitleField: "Subtitle",
+                subtitlePlaceholder: "Optional short subtitle",
+                dateField: "Date *",
+                timeField: "Time *",
+                tagsField: "Tags",
+                tagPriorityHint: "First tag determines the event's color.",
+                descriptionField: "Description",
+                descriptionPlaceholder: "Optional details…",
+                addedBy: "Added by",
+                cancel: "Cancel",
+                saveChanges: "Save Changes",
+                addEvent: "Add Event",
+                delete: "Delete",
+                confirmDelete: "Delete this event?",
+            },
+            tagManager: {
+                title: "Manage Tags",
+                namePlaceholder: "Tag name, e.g. meeting",
+                add: "Add",
+                noTags: "No tags yet.",
+                deleteTitle: "Delete tag",
+            },
+            tagPicker: {
+                noTagsHint: "No tags yet. Admins can add tags in Manage Tags.",
+            },
+            footer: {
+                liveSync: "Live sync",
+            },
+            status: {
+                loading: "Loading schedule…",
+                errorTitle: "Failed to load schedule",
+                retry: "Retry",
+            },
+        },
+        announcement: {
+            header: {
+                title: "Corporate Bulletins",
+                activeNotices: "Active notices:",
+                unread: "unread",
+                create: "Create",
+                viewerOnly: "Viewer Only",
+                viewArchive: "View archive",
+                compactView: "Compact View",
+                extendView: "Extend View",
+                removeModule: "Remove module",
+            },
+            filters: {
+                searchPlaceholder: "Filter bulletins...",
+            },
+            categories: {
+                urgent: "Urgent",
+                maintenance: "Maintenance",
+                event: "Event",
+                announcement: "Announcement",
+                notice: "Notice",
+                general: "General",
+                all: "All",
+            },
+            list: {
+                loading: "Loading...",
+                emptyTitle: "No bulletins found",
+                emptyText:
+                    "No alerts match the active parameters. Re-adjust your search or category buttons.",
+            },
+            item: {
+                unread: "Unread",
+                edited: "Edited",
+                edit: "Edit",
+                delete: "Delete",
+            },
+            detail: {
+                pinned: "Pinned Bulletin",
+                edited: "Edited",
+                closeReader: "Close Reader",
+            },
+            form: {
+                titleEdit: "Edit Bulletin",
+                titleCreate: "Compose Bulletin",
+                titleField: "Bulletin Title",
+                titlePlaceholder: "e.g., HVAC Maintenance Scheduled",
+                categoriesField: "Select Tags / Categories (Select Multiple)",
+                pinAutoHint: "※ Auto-pinned: 'Urgent' takes top priority",
+                pinManualHint: "Pin this bulletin to the top of the feed",
+                pinBulletin: "Pin Bulletin",
+                contentField: "Bulletin Content",
+                contentPlaceholder: "Specify details, instructions, or emergency protocols...",
+                cancel: "Cancel",
+                update: "Update",
+                publish: "Publish",
+            },
+            footer: {
+                liveFeed: "Live Feed Synced",
+            },
+            toast: {
+                updated: "Bulletin updated.",
+                published: "Announcement published!",
+                deleted: "Bulletin removed.",
+                restored: "Bulletin restored.",
+                saveFailed: "Failed to save",
+                saveFailedGeneric: "Failed to save.",
+                deleteFailed: "Failed to delete.",
+            },
+            time: {
+                justNow: "Just now",
+                minutesAgo: "m ago",
+                hoursAgo: "h ago",
+                daysAgo: "d ago",
+            },
+        },
+        modules: {
+            title: "Modules",
+            description: "Default behavior configs for modules",
+            available: "Add a Module",
+            availableDescription: "Pick a module to add it to your dashboard.",
+            current: "Current Modules",
+            currentDescription: "Modules currently on your dashboard.",
+            empty: "No modules added yet — pick one above to get started.",
+            remove: "Remove",
+            weather: {
+                title: "Weather",
+            },
+            schedule: {
+                title: "Schedule",
+            },
+            announcements: {
+                title: "Announcements",
+            },
         },
     },
 };

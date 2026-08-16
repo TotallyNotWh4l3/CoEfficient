@@ -1,9 +1,15 @@
-// frontend/src/components/Modules/Announcement/components/AnnouncementDetailOverlay.jsx
 import React from "react";
 import { X, Pin, User, Calendar } from "lucide-react";
-import { CATEGORY_CONFIG, formatTimestamp } from "../../../../constants/modules/announcementConstants";
+import { useLanguage } from "../../../../hooks/useLanguage";
+import {
+    CATEGORY_CONFIG,
+    formatTimestamp,
+} from "../../../../constants/modules/announcementConstants";
 
 export default function AnnouncementDetailOverlay({ item, isJapanese, onClose }) {
+    const lang = useLanguage();
+    const t = lang.modules.announcement;
+
     if (!item) return null;
 
     return (
@@ -16,7 +22,7 @@ export default function AnnouncementDetailOverlay({ item, isJapanese, onClose })
                         return (
                             <span key={cat} className={`ann-badge ${cfg.className}`}>
                                 <Icon className="icon-xxs" />
-                                {cat}
+                                {t.categories[cat]}
                             </span>
                         );
                     })}
@@ -30,14 +36,12 @@ export default function AnnouncementDetailOverlay({ item, isJapanese, onClose })
                 {item.isPinned && (
                     <div className="ann-pinned-flag">
                         <Pin className="icon-xs" />
-                        <span>{isJapanese ? "最優先掲示" : "Pinned Bulletin"}</span>
+                        <span>{t.detail.pinned}</span>
                     </div>
                 )}
                 <h4 className="ann-detail-title">
                     {isJapanese ? item.titleJa || item.title : item.title}
-                    {item.isEdited && (
-                        <span className="ann-flag">[{isJapanese ? "編集済み" : "Edited"}]</span>
-                    )}
+                    {item.isEdited && <span className="ann-flag">[{t.detail.edited}]</span>}
                 </h4>
 
                 <div className="ann-detail-meta">
@@ -48,7 +52,7 @@ export default function AnnouncementDetailOverlay({ item, isJapanese, onClose })
                     <span>•</span>
                     <span>
                         <Calendar className="icon-xxs" />
-                        {formatTimestamp(item.createdAt, isJapanese)}
+                        {formatTimestamp(item.createdAt, t.time)}
                     </span>
                 </div>
 
@@ -59,7 +63,7 @@ export default function AnnouncementDetailOverlay({ item, isJapanese, onClose })
 
             <div className="ann-overlay-footer">
                 <button className="ann-btn-secondary" onClick={onClose}>
-                    {isJapanese ? "閉じる" : "Close Reader"}
+                    {t.detail.closeReader}
                 </button>
             </div>
         </div>
