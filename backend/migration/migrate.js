@@ -12,6 +12,7 @@ import createDashboardSettingsTable from "./009_create_dashboard_settings.js";
 import createDashboardModulesTable from "./010_create_dashboard_modules.js";
 import createScheduleTagsTable from "./011_create_schedule_tags.js";
 import addScheduleSubtitleAndTags from "./012_add_schedule_subtitle_and_tags_column.js";
+import createThemesTable from "./013_create_themes.js";
 
 
 const migrations = [
@@ -27,6 +28,7 @@ const migrations = [
     { name: "010_create_dashboard_modules", up: createDashboardModulesTable },
     { name: "011_create_schedule_tags", up: createScheduleTagsTable },
     { name: "012_add_schedule_subtitle_and_tags_column", up: addScheduleSubtitleAndTags },
+    { name: "013_create_themes", up: createThemesTable },
 ];
 
 async function runMigrations() {

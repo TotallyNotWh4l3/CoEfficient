@@ -1,6 +1,5 @@
-// backend/routes/locationRoutes.js
 import express from "express";
-import locationsController from "../controllers/locationsController.js";
+import themesController from "../controllers/themesController.js";
 import authenticate from "../middleware/authMiddleware.js";
 import JWT from "../utils/jwt.js";
 
@@ -17,13 +16,13 @@ function authenticateStream(req, res, next) {
     }
 }
 
-router.get("/stream", authenticateStream, locationsController.stream);
+router.get("/stream", authenticateStream, themesController.stream);
 
 router.use(authenticate);
 
-router.get("/", locationsController.getAll);
-router.post("/", locationsController.create);
-router.patch("/:id", locationsController.update);
-router.delete("/:id", locationsController.remove);
+router.get("/", themesController.getAll);
+router.post("/", themesController.create);
+router.patch("/:id", themesController.update);
+router.delete("/:id", themesController.remove);
 
 export default router;

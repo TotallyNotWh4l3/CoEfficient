@@ -1,10 +1,33 @@
+// hooks/useLanguage.js
 import { useSettings } from "./useSettings";
 import { LANGUAGES } from "../constants/i18n";
+
+function deepMerge(base, override) {
+    if (typeof override !== "object" || override === null || Array.isArray(override)) {
+        return override !== undefined ? override : base;
+    }
+    const result = { ...base };
+    for (const key of Object.keys(base)) {
+        result[key] = deepMerge(base[key], override[key]);
+    }
+    // Include any keys present in override but not in base, so new/extra
+    // keys aren't silently dropped.
+    for (const key of Object.keys(override)) {
+        if (!(key in result)) {
+            result[key] = override[key];
+        }
+    }
+    return result;
+}
 
 export function useLanguage() {
     const { settings } = useSettings();
 
-    const language = settings?.preferences?.language ?? "en";
+    const languageKey = settings?.preferences?.language ?? "en";
+    const selected = LANGUAGES[languageKey] ?? LANGUAGES.en;
 
-    return LANGUAGES[language];
+    // English is treated as the complete reference — any key missing from
+    // the selected language (e.g. ja.js not yet covering a newer module)
+    // falls back to its English value instead of crashing consumers.
+    return languageKey === "en" ? selected : deepMerge(LANGUAGES.en, selected);
 }

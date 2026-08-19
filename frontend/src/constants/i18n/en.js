@@ -72,6 +72,28 @@ export default {
                     borders: "Borders",
                     effects: "Effects",
                 },
+                dialog: {
+                    titleCreate: "Create Theme",
+                    titleEdit: "Edit Theme",
+                    builtInNote: "Built-in themes can't be edited. Create a copy to customize it.",
+                    nameLabel: "Name",
+                    cancel: "Cancel",
+                    save: "Save",
+                    saving: "Saving...",
+                    saveFailed: "Failed to save theme. Please try again.",
+                    delete: "Delete",
+                    deleteFailed: "Failed to delete theme. Please try again.",
+                    groups: {
+                        accent: "Accent",
+                        surface: "Background & Surface",
+                        element: "Elements",
+                        border: "Borders",
+                        text: "Text",
+                        input: "Inputs",
+                        status: "Status",
+                        shadows: "Shadows",
+                    },
+                },
             },
             location: {
                 title: "Location",
@@ -82,6 +104,51 @@ export default {
                 },
                 add: "Add Location",
                 empty: "No saved locations.",
+                dialog: {
+                    titleAdd: "Add Location",
+                    titleEdit: "Edit Location",
+                    mode: {
+                        search: "Search Location",
+                        coordinates: "Coordinates",
+                    },
+                    search: {
+                        label: "Search",
+                        description:
+                            "Search for a city or place — selecting a result fills in its coordinates.",
+                        placeholder: "Tokyo",
+                        button: "Search",
+                        searching: "Searching...",
+                        noResults: "No matching locations found.",
+                        failed: "Search failed. Please try again.",
+                    },
+                    name: {
+                        label: "Name",
+                        description: "Optional — auto-filled from coordinates if left BLANK.",
+                        placeholder: "Auto-filled from coordinates",
+                    },
+                    latitude: {
+                        label: "Latitude",
+                        required: "Latitude is required.",
+                        invalidNumber: "Latitude must be a number.",
+                        outOfRange: "Latitude must be between -90 and 90.",
+                    },
+                    longitude: {
+                        label: "Longitude",
+                        required: "Longitude is required.",
+                        invalidNumber: "Longitude must be a number.",
+                        outOfRange: "Longitude must be between -180 and 180.",
+                    },
+                    gps: {
+                        button: "Use Current Location",
+                        locating: "Locating...",
+                    },
+                    footer: {
+                        cancel: "Cancel",
+                        save: "Save",
+                        saving: "Saving...",
+                        saveFailed: "Failed to save location. Please try again.",
+                    },
+                },
             },
         },
         dashboard: {
@@ -93,6 +160,10 @@ export default {
                 columns: "Columns",
                 gap: "Spacing",
                 padding: "Padding",
+            },
+            moduleDefaults: {
+                title: "Module Defaults",
+                description: "Default settings applied when a module is added to the dashboard.",
             },
         },
         modules: {
@@ -134,6 +205,9 @@ export default {
                 daily: "7-Day Trend",
                 hourlyHint: "← Click a day card above to switch hours",
                 dailyHint: "7-DAY MULTI-VARIATE TREND GRAPH",
+                today: "Today",
+                tomorrow: "Tomorrow",
+                dayFallback: "Day {n}",
             },
             chart: {
                 range: "Range",

@@ -1,17 +1,12 @@
-// frontend/src/hooks/useAnnouncements.js
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRealtime } from "../context/RealtimeContext";
 import announcementService from "../services/announcementService";
 
-/**
- * @param {object} options
- * @param {boolean} options.recentOnly - true = dashboard card (last 5), false = full list
- * @param {boolean} options.live - subscribe to the SSE stream for real-time sync
- */
 export default function useAnnouncements({ recentOnly = true, live = true } = {}) {
     const [announcements, setAnnouncements] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const streamRef = useRef(null);
+    const { subscribe } = useRealtime();
 
     const load = useCallback(async () => {
         setIsLoading(true);
@@ -35,12 +30,10 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
         load();
     }, [load]);
 
-    // Real-time sync: merge pushed events into local state instead of refetching everything.
     useEffect(() => {
         if (!live) return undefined;
 
-        const source = announcementService.openStream();
-        streamRef.current = source;
+        const url = announcementService.streamUrl();
 
         const upsert = (item) => {
             setAnnouncements((prev) => {
@@ -58,28 +51,31 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
                     .slice(0, recentOnly ? 5 : undefined);
             });
         };
-
         const remove = (item) => {
             setAnnouncements((prev) =>
                 Array.isArray(prev) ? prev.filter((a) => a.id !== item.id) : [],
             );
         };
 
-        source.addEventListener("created", (e) => upsert(JSON.parse(e.data)));
-        source.addEventListener("updated", (e) => upsert(JSON.parse(e.data)));
-        source.addEventListener("restored", (e) => upsert(JSON.parse(e.data)));
-        source.addEventListener("deleted", (e) => remove(JSON.parse(e.data)));
-        source.addEventListener("archived", (e) => remove(JSON.parse(e.data)));
+        const unsub1 = subscribe(url, "created", (e) => upsert(JSON.parse(e.data)));
+        const unsub2 = subscribe(url, "updated", (e) => upsert(JSON.parse(e.data)));
+        const unsub3 = subscribe(url, "restored", (e) => upsert(JSON.parse(e.data)));
+        const unsub4 = subscribe(url, "deleted", (e) => remove(JSON.parse(e.data)));
+        const unsub5 = subscribe(url, "archived", (e) => remove(JSON.parse(e.data)));
 
-        return () => source.close();
-    }, [live, recentOnly]);
+        return () => {
+            unsub1();
+            unsub2();
+            unsub3();
+            unsub4();
+            unsub5();
+        };
+    }, [live, recentOnly, subscribe]);
 
     const createAnnouncement = useCallback(async (payload) => {
         const created = await announcementService.create(payload);
         setAnnouncements((prev) => {
             const list = Array.isArray(prev) ? prev : [];
-            // The SSE 'created' event may have already added this via upsert() —
-            // don't add it a second time.
             if (list.some((a) => a.id === created.id)) return list;
             return [created, ...list];
         });
@@ -109,8 +105,6 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
             await announcementService.markRead(id);
         } catch (e) {
             console.error("[useAnnouncements] Failed to mark as read:", e);
-            // Not rolling the optimistic update back — worst case the server
-            // re-marks it unread next fetch, which is a harmless nag, not a break.
         }
     }, []);
 

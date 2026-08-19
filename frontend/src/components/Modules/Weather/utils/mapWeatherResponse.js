@@ -1,14 +1,3 @@
-const DAY_NAMES_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const DAY_NAMES_JA = ["日", "月", "火", "水", "木", "金", "土"];
-
-function getDayLabel(dateStr, index, isJapanese) {
-    if (index === 0) return isJapanese ? "今日" : "Today";
-    if (index === 1) return isJapanese ? "明日" : "Tomorrow";
-    const d = new Date(dateStr);
-    if (Number.isNaN(d.getTime())) return isJapanese ? `${index}日目` : `Day ${index + 1}`;
-    return isJapanese ? DAY_NAMES_JA[d.getDay()] : DAY_NAMES_EN[d.getDay()];
-}
-
 function toHHMM(isoString) {
     if (!isoString) return "--:--";
     const timePart = isoString.split("T")[1];
@@ -19,21 +8,34 @@ function dateKeyOf(isoString) {
     return isoString ? isoString.split("T")[0] : "";
 }
 
+function getDayLabel(dateStr, index, lang) {
+    const forecastCopy = lang?.modules?.weather?.forecast ?? {};
+
+    if (index === 0) return forecastCopy.today ?? "Today";
+    if (index === 1) return forecastCopy.tomorrow ?? "Tomorrow";
+
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) {
+        const fallback = forecastCopy.dayFallback ?? "Day {n}";
+        return fallback.replace("{n}", index + 1);
+    }
+
+    const weekdays = lang?.dateNames?.weekdaysShort;
+    return weekdays?.[d.getDay()] ?? d.toLocaleDateString(undefined, { weekday: "short" });
+}
+
 /**
  * Transforms the backend's /weather response (see weatherFormatter.js) into
  * the { current, dailyList, hourlyByDay } shape WeatherModule expects.
  *
  * @param {object} weather — response from GET /weather (formatWeather output)
- * @param {boolean} isJapanese
+ * @param {object} lang — the full language object from useLanguage()
  */
-export function mapWeatherResponse(weather, isJapanese = false) {
+export function mapWeatherResponse(weather, lang) {
     if (!weather) return null;
 
     const { current, hourly = [], daily = [] } = weather;
 
-    // Group hourly entries by the date they fall on, so we can:
-    //  - build hourlyByDay[dayIndex] for the hourly chart
-    //  - derive an average daily humidity (backend's daily data has no humidity field)
     const hourlyByDate = {};
     for (const item of hourly) {
         const key = dateKeyOf(item.time);
@@ -50,7 +52,7 @@ export function mapWeatherResponse(weather, isJapanese = false) {
             : null;
 
         return {
-            dayLabel: getDayLabel(day.date, index, isJapanese),
+            dayLabel: getDayLabel(day.date, index, lang),
             date: day.date,
             maxTemp: day.high,
             minTemp: day.low,

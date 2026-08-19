@@ -32,10 +32,10 @@ const scheduleService = {
      * Opens an SSE connection for real-time sync (create/update/delete + tag-updated/tag-removed).
      * Same token-as-query-param workaround as announcementService.openStream().
      */
-    openStream() {
+    streamUrl() {
         const base = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
         const token = localStorage.getItem("co-efficient-token") || "";
-        return new EventSource(`${base}${BASE}/stream?token=${encodeURIComponent(token)}`);
+        return `${base}/locations/stream?token=${encodeURIComponent(token)}`;
     },
 };
 

@@ -1,11 +1,11 @@
 // backend/controllers/locationsController.js
 import crypto from "node:crypto";
 import Location from "../models/Location.js";
+import { broadcast, subscribe } from "../services/locationsSyncService.js";
 
 const isManagerOrAbove = (user) => ["manager", "admin"].includes(user.role?.toLowerCase());
 
 const locationsController = {
-    // GET /api/locations -> everyone (any authenticated user) sees the shared list
     async getAll(req, res) {
         try {
             res.json(await Location.findAll());
@@ -15,7 +15,11 @@ const locationsController = {
         }
     },
 
-    // POST /api/locations -> manager/admin only
+    // GET /api/locations/stream
+    stream(req, res) {
+        subscribe(res);
+    },
+
     async create(req, res) {
         if (!isManagerOrAbove(req.user)) {
             return res.status(403).json({ message: "Only managers or admins can add locations." });
@@ -31,7 +35,7 @@ const locationsController = {
             const id = crypto.randomUUID();
             await Location.create({
                 id,
-                userId: req.user.id, // audit trail: who added it, not an owner
+                userId: req.user.id,
                 name,
                 latitude,
                 longitude,
@@ -39,7 +43,9 @@ const locationsController = {
                 builtIn: false,
             });
 
-            res.status(201).json(await Location.findById(id));
+            const created = await Location.findById(id);
+            broadcast("location-created", created);
+            res.status(201).json(created);
         } catch (error) {
             console.error(error);
             if (error.message?.includes("UNIQUE constraint failed")) {
@@ -51,7 +57,6 @@ const locationsController = {
         }
     },
 
-    // PATCH /api/locations/:id -> manager/admin only
     async update(req, res) {
         if (!isManagerOrAbove(req.user)) {
             return res.status(403).json({ message: "Only managers or admins can edit locations." });
@@ -64,14 +69,15 @@ const locationsController = {
             }
 
             await Location.update(req.params.id, req.body);
-            res.json(await Location.findById(req.params.id));
+            const updated = await Location.findById(req.params.id);
+            broadcast("location-updated", updated);
+            res.json(updated);
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Failed to update location." });
         }
     },
 
-    // DELETE /api/locations/:id -> manager/admin only, built-in locations are protected
     async remove(req, res) {
         if (!isManagerOrAbove(req.user)) {
             return res
@@ -89,6 +95,7 @@ const locationsController = {
             }
 
             await Location.deleteById(req.params.id);
+            broadcast("location-removed", { id: req.params.id });
             res.json({ success: true });
         } catch (error) {
             console.error(error);

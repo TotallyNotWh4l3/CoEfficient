@@ -1,21 +1,20 @@
 import { useEffect } from "react";
 import { useSettings } from "./useSettings";
+import { useThemes } from "./useThemes";
 
 function toKebabCase(value) {
     return value.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 }
 
 export function useTheme() {
-    const { settings, loading } = useSettings();
+    const { settings, loading: settingsLoading } = useSettings();
+    const { themes, loading: themesLoading } = useThemes();
 
     useEffect(() => {
-        if (loading || !settings) return;
+        if (settingsLoading || themesLoading || !settings) return;
 
         const themeId = settings?.preferences?.appearance?.currentTheme;
-        console.log("themeId:", themeId);
-        console.log("themes:", settings.themes);
-
-        const theme = settings?.themes?.find((theme) => theme.id === themeId);
+        const theme = themes.find((t) => t.id === themeId);
 
         if (!theme) {
             console.warn("[Theme] Theme not found:", themeId);
@@ -26,16 +25,12 @@ export function useTheme() {
 
         const applyGroup = (prefix, values) => {
             if (!values) return;
-
             Object.entries(values).forEach(([key, value]) => {
                 root.style.setProperty(`--${prefix}-${toKebabCase(key)}`, value);
             });
         };
 
         applyGroup("color", theme.appearance.colors);
-        applyGroup("color", theme.appearance.interactive);
         applyGroup("shadow", theme.appearance.shadows);
-
-        console.log("[Theme] Applied:", theme.name);
-    }, [settings, loading]);
+    }, [settings, settingsLoading, themes, themesLoading]);
 }

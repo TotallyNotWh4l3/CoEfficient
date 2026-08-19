@@ -37,7 +37,6 @@ export default function WeatherModuleContainer({ module }) {
     const lang = useLanguage();
     const t = lang.modules.weather.current;
 
-    // Keep in sync if settings load in after mount, or the module is updated elsewhere.
     useEffect(() => {
         if (module.settings?.location && module.settings.location !== selectedLocationId) {
             setSelectedLocationId(module.settings.location);
@@ -45,11 +44,6 @@ export default function WeatherModuleContainer({ module }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [module.settings?.location]);
 
-    // New modules (added via ModuleManager/ModuleSettings) have no
-    // settings.location yet — without a fallback this sits on
-    // "Loading weather..." forever since nothing ever assigns one.
-    // Once locations are available, default to the user's own preferred
-    // location, or just the first shared location, and persist it.
     useEffect(() => {
         if (selectedLocationId) return;
         if (locationOptions.length === 0) return;
@@ -64,8 +58,8 @@ export default function WeatherModuleContainer({ module }) {
     const { weather, loading, error, refresh } = useWeather(selectedLocationId);
 
     const handleLocationChange = (id) => {
-        setSelectedLocationId(id); // fetches immediately via useWeather's effect
-        updateModuleSettings(module.id, "location", id); // persists per-card choice
+        setSelectedLocationId(id);
+        updateModuleSettings(module.id, "location", id);
     };
 
     const handleLayoutModeChange = (mode) => {
@@ -79,9 +73,7 @@ export default function WeatherModuleContainer({ module }) {
     if (!selectedLocationId || (loading && !weather)) {
         return (
             <div className="weather-card weather-card--loading">
-                <span className="weather-card__status-text">
-                    {isJapanese ? "天気を読み込み中..." : "Loading weather..."}
-                </span>
+                <span className="weather-card__status-text">{t.loading}</span>
             </div>
         );
     }
@@ -89,11 +81,9 @@ export default function WeatherModuleContainer({ module }) {
     if (error) {
         return (
             <div className="weather-card weather-card--error">
-                <span className="weather-card__status-text">
-                    {isJapanese ? "天気を取得できませんでした" : "Could not load weather"}
-                </span>
+                <span className="weather-card__status-text">{t.error}</span>
                 <button className="weather-card__retry-btn" onClick={refresh}>
-                    {isJapanese ? "再試行" : "Retry"}
+                    {t.retry}
                 </button>
             </div>
         );
@@ -106,11 +96,9 @@ export default function WeatherModuleContainer({ module }) {
         );
         return (
             <div className="weather-card weather-card--error">
-                <span className="weather-card__status-text">
-                    {isJapanese ? "天気データがありません" : "No weather data received"}
-                </span>
+                <span className="weather-card__status-text">{t.noData}</span>
                 <button className="weather-card__retry-btn" onClick={refresh}>
-                    {isJapanese ? "再試行" : "Retry"}
+                    {t.retry}
                 </button>
             </div>
         );
@@ -122,7 +110,7 @@ export default function WeatherModuleContainer({ module }) {
         );
     }
 
-    const mapped = mapWeatherResponse(weather, isJapanese);
+    const mapped = mapWeatherResponse(weather, lang);
 
     return (
         <WeatherModule

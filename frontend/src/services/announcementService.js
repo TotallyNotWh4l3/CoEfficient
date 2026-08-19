@@ -25,7 +25,7 @@ const announcementService = {
      * as a query param instead — the backend's authenticateStream() middleware
      * expects this. Returns an EventSource; caller closes it on unmount.
      */
-    openStream() {
+    streamUrl() {
         const base = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
         const token = localStorage.getItem("co-efficient-token") || "";
         return new EventSource(`${base}${BASE}/stream?token=${encodeURIComponent(token)}`);

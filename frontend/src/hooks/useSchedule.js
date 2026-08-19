@@ -1,14 +1,7 @@
-// frontend/src/hooks/useSchedule.js
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRealtime } from "../context/RealtimeContext";
 import scheduleService from "../services/scheduleService";
 
-/**
- * @param {object} options
- * @param {'all'|'today'|'upcoming'|'range'} options.scope
- * @param {number} options.limit - only used when scope === 'upcoming'
- * @param {{start: string, end: string}} options.range - only used when scope === 'range', 'YYYY-MM-DD'
- * @param {boolean} options.live - subscribe to the SSE stream for real-time sync
- */
 export default function useSchedule({
     scope = "all",
     limit = undefined,
@@ -18,7 +11,7 @@ export default function useSchedule({
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const streamRef = useRef(null);
+    const { subscribe } = useRealtime();
 
     const load = useCallback(async () => {
         setIsLoading(true);
@@ -62,9 +55,7 @@ export default function useSchedule({
     useEffect(() => {
         if (!live) return undefined;
 
-        const source = scheduleService.openStream();
-        streamRef.current = source;
-
+        const url = scheduleService.streamUrl();
         const todayIso = () => new Date().toISOString().slice(0, 10);
 
         const belongsInScope = (item) => {
@@ -98,13 +89,17 @@ export default function useSchedule({
             setEvents((prev) => (Array.isArray(prev) ? prev.filter((e) => e.id !== item.id) : []));
         };
 
-        source.addEventListener("created", (e) => upsert(JSON.parse(e.data)));
-        source.addEventListener("updated", (e) => upsert(JSON.parse(e.data)));
-        source.addEventListener("deleted", (e) => remove(JSON.parse(e.data)));
+        const unsub1 = subscribe(url, "created", (e) => upsert(JSON.parse(e.data)));
+        const unsub2 = subscribe(url, "updated", (e) => upsert(JSON.parse(e.data)));
+        const unsub3 = subscribe(url, "deleted", (e) => remove(JSON.parse(e.data)));
 
-        return () => source.close();
+        return () => {
+            unsub1();
+            unsub2();
+            unsub3();
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [live, scope, limit, range?.start, range?.end, sortEvents]);
+    }, [live, scope, limit, range?.start, range?.end, sortEvents, subscribe]);
 
     const createEvent = useCallback(
         async (payload) => {
@@ -137,13 +132,5 @@ export default function useSchedule({
         setEvents((prev) => prev.filter((e) => e.id !== id));
     }, []);
 
-    return {
-        events,
-        isLoading,
-        error,
-        reload: load,
-        createEvent,
-        updateEvent,
-        deleteEvent,
-    };
+    return { events, isLoading, error, reload: load, createEvent, updateEvent, deleteEvent };
 }

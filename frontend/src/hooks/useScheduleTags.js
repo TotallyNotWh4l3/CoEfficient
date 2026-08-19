@@ -1,12 +1,12 @@
-// frontend/src/hooks/useScheduleTags.js
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRealtime } from "../context/RealtimeContext";
 import scheduleService from "../services/scheduleService";
 
 export default function useScheduleTags({ live = true } = {}) {
     const [tags, setTags] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const streamRef = useRef(null);
+    const { subscribe } = useRealtime();
 
     const load = useCallback(async () => {
         setIsLoading(true);
@@ -25,35 +25,36 @@ export default function useScheduleTags({ live = true } = {}) {
         load();
     }, [load]);
 
-    // Real-time sync: tag creates/updates/deletes reuse the same schedule SSE stream.
     useEffect(() => {
         if (!live) return undefined;
 
-        const source = scheduleService.openStream();
-        streamRef.current = source;
+        const url = scheduleService.streamUrl();
 
-        const upsert = (tag) => {
+        const upsert = (e) => {
+            const tag = JSON.parse(e.data);
             setTags((prev) => {
                 const exists = prev.some((t) => t.id === tag.id);
                 return exists ? prev.map((t) => (t.id === tag.id ? tag : t)) : [...prev, tag];
             });
         };
-
-        const remove = (payload) => {
+        const remove = (e) => {
+            const payload = JSON.parse(e.data);
             setTags((prev) => prev.filter((t) => t.id !== payload.id));
         };
 
-        source.addEventListener("tag-updated", (e) => upsert(JSON.parse(e.data)));
-        source.addEventListener("tag-removed", (e) => remove(JSON.parse(e.data)));
+        const unsub1 = subscribe(url, "tag-updated", upsert);
+        const unsub2 = subscribe(url, "tag-removed", remove);
 
-        return () => source.close();
-    }, [live]);
+        return () => {
+            unsub1();
+            unsub2();
+        };
+    }, [live, subscribe]);
 
     const upsertTag = useCallback(async (id, color) => {
         const tag = await scheduleService.upsertTag(id, color);
         setTags((prev) => {
             const exists = prev.some((t) => t.id === tag.id);
-            // The SSE 'tag-updated' event may have already applied this — avoid a duplicate.
             return exists ? prev.map((t) => (t.id === tag.id ? tag : t)) : [...prev, tag];
         });
         return tag;

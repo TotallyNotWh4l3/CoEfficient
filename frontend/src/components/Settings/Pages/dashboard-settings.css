@@ -1,0 +1,14 @@
+.dashboard-settings__module-block {
+    margin-top: 1rem;
+}
+
+.dashboard-settings__module-block:first-of-type {
+    margin-top: 0.5rem;
+}
+
+.dashboard-settings__module-name {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+    color: var(--color-text-accent);
+}

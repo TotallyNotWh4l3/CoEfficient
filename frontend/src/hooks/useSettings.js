@@ -29,11 +29,9 @@ export function useSettingsState(user) {
         async function loadSettings() {
             try {
                 setLoading(true);
-                console.log("[Settings] Loading...");
                 const data = await SettingsService.getSettings();
-                console.log("Settings response:", data);
                 setSettings(data);
-                console.log("[Settings] Loaded.");
+
             } catch (error) {
                 console.error("[Settings] Failed to load.", error);
             } finally {
@@ -117,29 +115,6 @@ export function useSettingsState(user) {
         },
         [updateSetting],
     );
-
-    const saveTheme = useCallback((theme) => {
-        setSettings((previous) => ({
-            ...previous,
-            themes: [...previous.themes, theme],
-        }));
-    }, []);
-
-    const updateTheme = useCallback((id, updates) => {
-        setSettings((previous) => ({
-            ...previous,
-            themes: previous.themes.map((theme) =>
-                theme.id === id ? { ...theme, ...updates } : theme,
-            ),
-        }));
-    }, []);
-
-    const deleteTheme = useCallback((id) => {
-        setSettings((previous) => ({
-            ...previous,
-            themes: previous.themes.filter((theme) => theme.id !== id),
-        }));
-    }, []);
 
     // =====================================================
     // Locations
@@ -225,10 +200,6 @@ export function useSettingsState(user) {
         updateModuleDefault,
 
         applyTheme,
-
-        saveTheme,
-        updateTheme,
-        deleteTheme,
 
         applyLocation,
         saveLocation,

@@ -1,3 +1,4 @@
+// backend/database/init.js
 import db from "../config/database.js";
 
 import usersTable from "./schema/users.js";
@@ -10,6 +11,7 @@ import announcementReads from "./schema/announcementReads.js";
 import scheduleItems from "./schema/schedule.js";
 import dashboardSettings from "./schema/dashboardSettings.js";
 import dashboardModules from "./schema/dashboardModules.js";
+import themes from "./schema/themes.js";
 
 const tables = [
     { name: "Users", sql: usersTable },
@@ -22,6 +24,7 @@ const tables = [
     { name: "ScheduleItems", sql: scheduleItems },
     { name: "DashboardSettings", sql: dashboardSettings },
     { name: "DashboardModules", sql: dashboardModules },
+    { name: "Themes", sql: themes },
 ];
 
 db.serialize(() => {

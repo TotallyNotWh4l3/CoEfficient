@@ -1,23 +1,18 @@
-// frontend/src/services/locationService.js
 import apiClient from "./apiClient";
 
-const BASE = "/locations";
+const BASE = "/themes";
 
-const locationService = {
+const themeService = {
     getAll: () => apiClient.get(BASE).then((r) => r.data),
     create: (payload) => apiClient.post(BASE, payload).then((r) => r.data),
     update: (id, payload) => apiClient.patch(`${BASE}/${id}`, payload).then((r) => r.data),
     remove: (id) => apiClient.delete(`${BASE}/${id}`).then((r) => r.data),
 
-    /**
-     * Opens an SSE connection for real-time sync (location-created/updated/removed).
-     * Same token-as-query-param pattern as scheduleService.openStream().
-     */
     streamUrl() {
         const base = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
         const token = localStorage.getItem("co-efficient-token") || "";
-        return `${base}/locations/stream?token=${encodeURIComponent(token)}`;
+        return `${base}${BASE}/stream?token=${encodeURIComponent(token)}`;
     },
 };
 
-export default locationService;
+export default themeService;

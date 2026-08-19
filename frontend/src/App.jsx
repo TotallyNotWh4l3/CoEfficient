@@ -18,6 +18,7 @@ import { AuthProvider } from "./context/AuthContext";
 // CSS
 import "./styles/global.css";
 import "./styles/variable.css";
+import { RealtimeProvider } from "./context/RealtimeContext";
 
 function ThemeApplier() {
     useTheme();
@@ -55,7 +56,9 @@ export default function App() {
             <SettingsProvider value={settingsState}>
                 <DashboardProvider value={dashboardState}>
                     <DialogProvider value={dialogState}>
-                        <AppContent />
+                        <RealtimeProvider>
+                            <AppContent />
+                        </RealtimeProvider>
                     </DialogProvider>
                 </DashboardProvider>
             </SettingsProvider>

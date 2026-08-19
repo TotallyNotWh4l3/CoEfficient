@@ -5,6 +5,7 @@ import { useLanguage } from "../../../hooks/useLanguage";
 import { useLocation } from "../../../hooks/useLocation";
 import { useDialog } from "../../../hooks/useDialog";
 import { useAuth } from "../../../hooks/useAuth";
+import { useThemes } from "../../../hooks/useThemes";
 
 import Settings from "../Components/SettingsComponents";
 import LocationList from "../Components/LocationList";
@@ -26,18 +27,26 @@ export default function InterfaceSettings() {
     }
 
     const { locations, locationOptions, deleteLocation } = useLocation();
+    const { themes } = useThemes();
     const { openDialog } = useDialog();
     const { user } = useAuth();
 
     const role = user?.role?.toLowerCase();
-    const canManageLocations = role === "manager" || role === "admin";
+    // Same permission tier as Locations — managing the shared list (themes,
+    // locations) is manager/admin only. The backend also enforces this;
+    // this just keeps the buttons from showing to everyone.
+    const canManageShared = role === "manager" || role === "admin";
 
-    const T = useLanguage();
-
-    const themeOptions = (settings.themes ?? []).map((theme) => ({
+    const themeOptions = (themes ?? []).map((theme) => ({
         id: theme.id,
         label: theme.name,
     }));
+
+    const currentTheme = (themes ?? []).find(
+        (theme) => theme.id === settings.preferences.appearance.currentTheme,
+    );
+
+    const T = useLanguage();
 
     return (
         <div className="interface-settings">
@@ -85,6 +94,34 @@ export default function InterfaceSettings() {
                     options={themeOptions}
                     onChange={(event) => applyTheme(event.target.value)}
                 />
+
+                {canManageShared && (
+                    <Settings.Row className="interface-settings__theme-actions">
+                        <Settings.Button
+                            variant="secondary"
+                            onClick={() =>
+                                openDialog({
+                                    type: "theme",
+                                    props: { theme: currentTheme, mode: "edit" },
+                                })
+                            }
+                        >
+                            {T.settings.interface.appearance.themes.edit}
+                        </Settings.Button>
+
+                        <Settings.Button
+                            variant="secondary"
+                            onClick={() =>
+                                openDialog({
+                                    type: "theme",
+                                    props: { baseTheme: currentTheme, mode: "create" },
+                                })
+                            }
+                        >
+                            {T.settings.interface.appearance.themes.create}
+                        </Settings.Button>
+                    </Settings.Row>
+                )}
             </Settings.Section>
 
             <Settings.Divider />
@@ -110,12 +147,12 @@ export default function InterfaceSettings() {
                 {/* Managing the shared list itself (add/edit/delete) is
                     manager/admin only — the backend also enforces this,
                     this just keeps the buttons from showing to everyone. */}
-                {canManageLocations && (
+                {canManageShared && (
                     <>
                         <LocationList
                             locations={locations}
                             defaultLocationId={settings.preferences.locationId}
-                            canManage={canManageLocations}
+                            canManage={canManageShared}
                             onEdit={(location) =>
                                 openDialog({
                                     type: "location",
