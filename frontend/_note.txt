@@ -1,46 +1,101 @@
-Sandbox
+CoEfficient
 ├── README.md
 ├── backend
 │   ├── config
 │   │   └── database.js
-│   ├── constants
-│   │   └── defaultSettings.js
 │   ├── controllers
+│   │   ├── announcementController.js
 │   │   ├── authController.js
+│   │   ├── dashboardController.js
+│   │   ├── geocodingCotroller.js
+│   │   ├── locationsController.js
+│   │   ├── scheduleController.js
 │   │   ├── settingsController.js
+│   │   ├── themesController.js
 │   │   └── weatherController.js
 │   ├── database
+│   │   ├── backfillLocations.js
+│   │   ├── coefficient.db
 │   │   ├── init.js
 │   │   ├── schema
+│   │   │   ├── announcementLogs.js
+│   │   │   ├── announcementReads.js
+│   │   │   ├── announcements.js
+│   │   │   ├── dashboardModules.js
+│   │   │   ├── dashboardSettings.js
+│   │   │   ├── locations.js
+│   │   │   ├── schedule.js
+│   │   │   ├── scheduleTags.js
+│   │   │   ├── themes.js
 │   │   │   ├── userSettings.js
-│   │   │   └── users.js
-│   │   └── seed.js
+│   │   │   ├── users.js
+│   │   │   └── weatherData.js
+│   │   ├── seed.js
+│   │   ├── seedLocations.js
+│   │   └── seedThemes.js
 │   ├── middleware
 │   │   └── authMiddleware.js
 │   ├── migration
 │   │   ├── 001_create_users.js
 │   │   ├── 002_create_user_settings.js
+│   │   ├── 003_create_location.js
+│   │   ├── 004_create_weather_data.js
+│   │   ├── 005_create_announcements.js
+│   │   ├── 006_create_announcement_logs.js
+│   │   ├── 007_create_announcement_reads.js
+│   │   ├── 008_create_schedule.js
+│   │   ├── 009_create_dashboard_settings.js
+│   │   ├── 010_create_dashboard_modules.js
+│   │   ├── 011_create_schedule_tags.js
+│   │   ├── 012_add_schedule_subtitle_and_tags_column.js
+│   │   ├── 013_create_themes.js
 │   │   └── migrate.js
 │   ├── models
+│   │   ├── Announcement.js
+│   │   ├── AnnouncementLog.js
+│   │   ├── AnnouncementRead.js
+│   │   ├── Dashboard.js
+│   │   ├── Location.js
+│   │   ├── Schedule.js
+│   │   ├── ScheduleTag.js
+│   │   ├── Theme.js
 │   │   ├── User.js
-│   │   └── UserSettings.js
+│   │   ├── UserSettings.js
+│   │   └── WeatherData.js
+│   ├── nodemon.json
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── routes
+│   │   ├── announcementRoutes.js
 │   │   ├── authRoutes.js
+│   │   ├── dashboardRoutes.js
+│   │   ├── geocodingRoutes.js
+│   │   ├── locationRoutes.js
+│   │   ├── scheduleRoutes.js
 │   │   ├── settingsRoutes.js
+│   │   ├── themeRoutes.js
 │   │   └── weatherRoutes.js
 │   ├── server.js
 │   ├── services
+│   │   ├── announcementArchiveJob.js
+│   │   ├── announcementSyncService.js
 │   │   ├── authService.js
+│   │   ├── dashboardSyncService.js
+│   │   ├── geocodingService.js
+│   │   ├── locationsSyncService.js
 │   │   ├── openMeteoService.js
-│   │   ├── weatherCache.js
+│   │   ├── scheduleSyncService.js
+│   │   ├── themesSyncService.js
+│   │   ├── weatherDataStore.js
 │   │   ├── weatherFormatter.js
 │   │   └── weatherService.js
 │   └── utils
+│       ├── dbHelpers.js
 │       ├── jwt.js
 │       └── password.js
 ├── frontend
+│   ├── _note-2.txt
+│   ├── _note.txt
 │   ├── index.html
 │   ├── package-lock.json
 │   ├── package.json
@@ -51,54 +106,177 @@ Sandbox
 │   │   ├── App.jsx
 │   │   ├── components
 │   │   │   ├── Dashboard
+│   │   │   │   ├── Buttons
+│   │   │   │   │   ├── SettingsButton.jsx
+│   │   │   │   │   ├── UserButton.jsx
+│   │   │   │   │   ├── settings-button.css
+│   │   │   │   │   └── user-button.css
+│   │   │   │   ├── Dashboard.jsx
+│   │   │   │   ├── DashboardHeader.jsx
+│   │   │   │   ├── DashboardWorkspace.jsx
+│   │   │   │   ├── dashboard-header.css
+│   │   │   │   ├── dashboard-workspace.css
+│   │   │   │   └── dashboard.css
 │   │   │   ├── Login
+│   │   │   │   ├── Login.jsx
+│   │   │   │   └── login.css
 │   │   │   ├── Modules
+│   │   │   │   ├── Announcement
+│   │   │   │   │   ├── AnnouncementArchiveModal.jsx
+│   │   │   │   │   ├── AnnouncementModule.jsx
+│   │   │   │   │   ├── announcement-module.css
+│   │   │   │   │   ├── components
+│   │   │   │   │   │   ├── AnnouncementDetailOverlay.jsx
+│   │   │   │   │   │   ├── AnnouncementFilters.jsx
+│   │   │   │   │   │   ├── AnnouncementFooter.jsx
+│   │   │   │   │   │   ├── AnnouncementFormModal.jsx
+│   │   │   │   │   │   ├── AnnouncementHeader.jsx
+│   │   │   │   │   │   ├── AnnouncementItem.jsx
+│   │   │   │   │   │   ├── AnnouncementList.jsx
+│   │   │   │   │   │   └── AnnouncementToast.jsx
+│   │   │   │   │   └── note.txt
+│   │   │   │   ├── Schedule
+│   │   │   │   │   ├── ScheduleModule.jsx
+│   │   │   │   │   ├── components
+│   │   │   │   │   │   ├── ScheduleCalendarGrid.jsx
+│   │   │   │   │   │   ├── ScheduleDayListModal.jsx
+│   │   │   │   │   │   ├── ScheduleDetailModal.jsx
+│   │   │   │   │   │   ├── ScheduleEventFormModal.jsx
+│   │   │   │   │   │   ├── ScheduleFooter.jsx
+│   │   │   │   │   │   ├── ScheduleHeader.jsx
+│   │   │   │   │   │   ├── ScheduleLayoutToggle.jsx
+│   │   │   │   │   │   ├── ScheduleRelativeSettings.jsx
+│   │   │   │   │   │   ├── ScheduleTagManagerModal.jsx
+│   │   │   │   │   │   ├── ScheduleTagPicker.jsx
+│   │   │   │   │   │   └── ScheduleViewToggle.jsx
+│   │   │   │   │   ├── schedule-module.css
+│   │   │   │   │   └── utils
+│   │   │   │   │       └── scheduleHelpers.js
+│   │   │   │   ├── Weather
+│   │   │   │   │   ├── WeatherModule.jsx
+│   │   │   │   │   ├── WeatherModuleContainer.jsx
+│   │   │   │   │   ├── components
+│   │   │   │   │   │   ├── WeatherChart.jsx
+│   │   │   │   │   │   ├── WeatherCurrentSummary.jsx
+│   │   │   │   │   │   ├── WeatherDailyGrid.jsx
+│   │   │   │   │   │   ├── WeatherForecastSection.jsx
+│   │   │   │   │   │   ├── WeatherHeader.jsx
+│   │   │   │   │   │   ├── WeatherMetricSelector.jsx
+│   │   │   │   │   │   ├── WeatherSettingsPanel.jsx
+│   │   │   │   │   │   ├── WeatherStatsRow.jsx
+│   │   │   │   │   │   └── WeatherTabsBar.jsx
+│   │   │   │   │   ├── utils
+│   │   │   │   │   │   ├── mapWeatherResponse.js
+│   │   │   │   │   │   └── weatherHelpers.jsx
+│   │   │   │   │   └── weather.css
+│   │   │   │   └── core
+│   │   │   │       ├── ModuleEditor.jsx
+│   │   │   │       ├── ModuleFrame.jsx
+│   │   │   │       ├── ModuleManager.jsx
+│   │   │   │       ├── ModuleRenderer.jsx
+│   │   │   │       └── module-frame.css
 │   │   │   ├── Settings
+│   │   │   │   ├── Components
+│   │   │   │   │   ├── LocationList.jsx
+│   │   │   │   │   ├── SettingsComponents.jsx
+│   │   │   │   │   ├── UI
+│   │   │   │   │   │   └── Dialog
+│   │   │   │   │   │       ├── Dialog.jsx
+│   │   │   │   │   │       ├── DialogContainer.jsx
+│   │   │   │   │   │       ├── DialogManager.jsx
+│   │   │   │   │   │       ├── DialogOverlay.jsx
+│   │   │   │   │   │       └── dialog.css
+│   │   │   │   │   └── settings-components.css
+│   │   │   │   ├── Content
+│   │   │   │   │   ├── SettingsContent.jsx
+│   │   │   │   │   └── settings-content.css
+│   │   │   │   ├── Dialogs
+│   │   │   │   │   ├── ConfirmDialog.jsx
+│   │   │   │   │   ├── LocationDialog.jsx
+│   │   │   │   │   ├── ThemeDialog.jsx
+│   │   │   │   │   ├── location-dialog.css
+│   │   │   │   │   └── theme-dialog.css
+│   │   │   │   ├── Pages
+│   │   │   │   │   ├── AboutSettings.jsx
+│   │   │   │   │   ├── DashboardSettings.jsx
+│   │   │   │   │   ├── InterfaceSettings.jsx
+│   │   │   │   │   ├── ModuleSettings.jsx
+│   │   │   │   │   ├── about-settings.css
+│   │   │   │   │   ├── dashboard-settings.css
+│   │   │   │   │   ├── interface-settings.css
+│   │   │   │   │   └── module-settings.css
+│   │   │   │   ├── Settings.jsx
+│   │   │   │   ├── Sidebar
+│   │   │   │   │   ├── SettingsSidebar.jsx
+│   │   │   │   │   └── settings-sidebar.css
+│   │   │   │   └── settings.css
 │   │   │   └── common
+│   │   │       └── LinearGradient.jsx
 │   │   ├── constants
 │   │   │   ├── dashboard
-│   │   │   ├── defaults
+│   │   │   │   ├── index.js
+│   │   │   │   └── layoutOptions.js
 │   │   │   ├── dialog
+│   │   │   │   ├── dialogTypes.js
+│   │   │   │   └── index.js
 │   │   │   ├── i18n
+│   │   │   │   ├── en.js
+│   │   │   │   ├── index.js
+│   │   │   │   └── ja.js
 │   │   │   ├── interface
+│   │   │   │   ├── index.js
+│   │   │   │   ├── languageOptions.js
+│   │   │   │   ├── settingsPages.js
+│   │   │   │   └── themeOptions.js
 │   │   │   └── modules
+│   │   │       ├── announcementConstants.js
+│   │   │       ├── index.js
+│   │   │       └── moduleConfig.js
 │   │   ├── context
 │   │   │   ├── AuthContext.jsx
 │   │   │   ├── DashboardContext.jsx
 │   │   │   ├── DialogContext.jsx
+│   │   │   ├── RealtimeContext.jsx
 │   │   │   └── SettingsContext.jsx
 │   │   ├── hooks
+│   │   │   ├── useAnnouncements.js
 │   │   │   ├── useAuth.js
 │   │   │   ├── useDashboard.js
 │   │   │   ├── useDialog.js
 │   │   │   ├── useLanguage.js
 │   │   │   ├── useLocation.js
+│   │   │   ├── useSchedule.js
+│   │   │   ├── useScheduleTags.js
 │   │   │   ├── useSettings.js
 │   │   │   ├── useTheme.js
+│   │   │   ├── useThemes.js
 │   │   │   └── useWeather.js
 │   │   ├── main.jsx
 │   │   ├── services
+│   │   │   ├── announcementService.js
 │   │   │   ├── apiClient.js
 │   │   │   ├── authService.js
+│   │   │   ├── dashboardService.js
+│   │   │   ├── geocodingService.js
+│   │   │   ├── locationService.js
+│   │   │   ├── scheduleService.js
 │   │   │   ├── settingsService.js
-│   │   │   ├── weatherApi.js
-│   │   │   ├── weatherFormatter.js
-│   │   │   └── weatherService.js
-│   │   ├── styles
-│   │   │   ├── global.css
-│   │   │   └── variable.css
-│   │   └── utils
-│   │       ├── weatherCodes.js
-│   │       └── weatherGradients.js
+│   │   │   ├── themeService.js
+│   │   │   └── weatherApi.js
+│   │   └── styles
+│   │       ├── global.css
+│   │       └── variable.css
 │   └── vite.config.js
+├── package-lock.json
+├── package.json
 └── shared
     └── constants
         ├── defaults
-        │   ├── defaultSettings.js
-        │   └── index.js
+        │   ├── defaultDashboard.js
+        │   └── defaultSettings.js
         ├── themes
         │   ├── darkDefault.js
-        │   ├── index.js
         │   └── lightDefault.js
         └── weather
-            └── weatherCodes.js
+            ├── weatherCodes.js
+            └── weatherGradients.js

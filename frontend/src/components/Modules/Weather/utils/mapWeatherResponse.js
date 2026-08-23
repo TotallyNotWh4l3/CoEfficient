@@ -11,8 +11,8 @@ function dateKeyOf(isoString) {
 function getDayLabel(dateStr, index, lang) {
     const forecastCopy = lang?.modules?.weather?.forecast ?? {};
 
-    if (index === 0) return forecastCopy.today ?? "Today";
-    if (index === 1) return forecastCopy.tomorrow ?? "Tomorrow";
+    // if (index === 0) return forecastCopy.today ?? "Today";
+    // if (index === 1) return forecastCopy.tomorrow ?? "Tomorrow";
 
     const d = new Date(dateStr);
     if (Number.isNaN(d.getTime())) {

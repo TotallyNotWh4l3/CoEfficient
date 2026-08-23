@@ -1,18 +1,7 @@
-import { Calendar, Plus, X, Tags } from "lucide-react";
+import { Calendar, Plus, X, Tags, Settings } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
-import ScheduleViewToggle from "./ScheduleViewToggle";
-import ScheduleLayoutToggle from "./ScheduleLayoutToggle";
 
-export default function ScheduleHeader({
-    viewMode,
-    onViewModeChange,
-    layout,
-    onLayoutChange,
-    onAdd,
-    onManageTags,
-    isAdmin,
-    onRemove,
-}) {
+export default function ScheduleHeader({ onOpenSettings, onAdd, onManageTags, isAdmin, onRemove }) {
     const lang = useLanguage();
     const t = lang.modules.schedule.header;
 
@@ -24,12 +13,12 @@ export default function ScheduleHeader({
                 </div>
                 <div>
                     <h3 className="sch-header-title">{t.title}</h3>
-                    {/* <p className="sch-header-subtitle">{t.subtitle}</p> */}
                 </div>
             </div>
             <div className="sch-header-actions">
-                <ScheduleViewToggle viewMode={viewMode} onChange={onViewModeChange} />
-                <ScheduleLayoutToggle layout={layout} onChange={onLayoutChange} />
+                <button className="sch-icon-toggle" onClick={onOpenSettings} title={t.settings}>
+                    <Settings className="icon-xs" />
+                </button>
                 {isAdmin && (
                     <button className="sch-icon-toggle" onClick={onManageTags} title={t.manageTags}>
                         <Tags className="icon-xs" />

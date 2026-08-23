@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { AlertCircle, RefreshCw, Settings } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import useSchedule from "../../../hooks/useSchedule";
 import useScheduleTags from "../../../hooks/useScheduleTags";
 import { useDashboard } from "../../../hooks/useDashboard";
@@ -11,7 +11,7 @@ import ScheduleDayListModal from "./components/ScheduleDayListModal";
 import ScheduleDetailModal from "./components/ScheduleDetailModal";
 import ScheduleEventFormModal from "./components/ScheduleEventFormModal";
 import ScheduleTagManagerModal from "./components/ScheduleTagManagerModal";
-import ScheduleRelativeSettings from "./components/ScheduleRelativeSettings";
+import ScheduleSettingsPanel from "./components/ScheduleSettingsPanel";
 import ScheduleFooter from "./components/ScheduleFooter";
 import {
     formatDateStr,
@@ -35,17 +35,18 @@ export default function ScheduleModule({ module }) {
     const [anchorDate, setAnchorDate] = useState(new Date());
     const [daysBefore, setDaysBefore] = useState(0);
     const [showRelativeSettings, setShowRelativeSettings] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
 
     // Relative view fetches a bounded range instead of the whole table.
     const relativeDays = useMemo(() => getRelativeRollingDays(daysBefore), [daysBefore]);
-    const relativeRange = useMemo(
-        () => ({
-            start: formatDateStr(relativeDays[0]),
-            end: formatDateStr(relativeDays[relativeDays.length - 1]),
-        }),
-        [relativeDays],
-    );
     const relativeWeekDays = useMemo(() => getRelativeWeekDays(daysBefore), [daysBefore]);
+    const relativeRange = useMemo(() => {
+        const activeDays = layout === "week" ? relativeWeekDays : relativeDays;
+        return {
+            start: formatDateStr(activeDays[0]),
+            end: formatDateStr(activeDays[activeDays.length - 1]),
+        };
+    }, [layout, relativeDays, relativeWeekDays]);
 
     const { events, isLoading, error, reload, createEvent, updateEvent, deleteEvent } = useSchedule(
         viewMode === "relative"
@@ -166,21 +167,12 @@ export default function ScheduleModule({ module }) {
         closeForm();
     };
 
-    // Relative view's grid is driven by relativeDays directly rather than a
-    // navigable anchorDate, so we build its own eventsByDay-compatible map —
-    // reuse ScheduleCalendarGrid by feeding it a synthetic "anchor" and days.
-    // Simplest approach: ScheduleCalendarGrid always derives its own day list
-    // from anchorDate+layout for Absolute; for Relative we pass a distinct prop.
-
     return (
         <div className="sch-card">
             <div className="sch-glow sch-glow-top" />
 
             <ScheduleHeader
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-                layout={layout}
-                onLayoutChange={setLayout}
+                onOpenSettings={() => setShowSettings(true)}
                 onAdd={() => openAddForm(todayStr)}
                 onManageTags={() => setShowTagManager(true)}
                 isAdmin={isAdmin}
@@ -203,33 +195,18 @@ export default function ScheduleModule({ module }) {
                         </button>
                     </div>
                 ) : viewMode === "relative" ? (
-                    <>
-                        <div className="sch-nav">
-                            {/* <span className="sch-nav-label">
-                                {t.viewToggle.relative} — {daysBefore}d before, {30 - daysBefore}d
-                                after
-                            </span> */}
-                            <button
-                                className="sch-nav-btn"
-                                onClick={() => setShowRelativeSettings(true)}
-                                title={t.relative.configureTitle}
-                            >
-                                <Settings className="icon-xs" />
-                            </button>
-                        </div>
-                        <ScheduleCalendarGrid
-                            anchorDate={new Date()}
-                            layout={layout}
-                            days={layout === "week" ? relativeWeekDays : relativeDays}
-                            onPrev={() => {}}
-                            onNext={() => {}}
-                            onToday={() => {}}
-                            eventsByDay={eventsByDay}
-                            tagsById={tagsById}
-                            onDayClick={openDayList}
-                            hideNav
-                        />
-                    </>
+                    <ScheduleCalendarGrid
+                        anchorDate={new Date()}
+                        layout={layout}
+                        days={layout === "week" ? relativeWeekDays : relativeDays}
+                        onPrev={() => {}}
+                        onNext={() => {}}
+                        onToday={() => {}}
+                        eventsByDay={eventsByDay}
+                        tagsById={tagsById}
+                        onDayClick={openDayList}
+                        hideNav
+                    />
                 ) : (
                     <ScheduleCalendarGrid
                         anchorDate={anchorDate}
@@ -292,8 +269,21 @@ export default function ScheduleModule({ module }) {
             {showRelativeSettings && (
                 <ScheduleRelativeSettings
                     daysBefore={daysBefore}
+                    layout={layout}
                     onChange={setDaysBefore}
                     onClose={() => setShowRelativeSettings(false)}
+                />
+            )}
+
+            {showSettings && (
+                <ScheduleSettingsPanel
+                    viewMode={viewMode}
+                    onViewModeChange={setViewMode}
+                    layout={layout}
+                    onLayoutChange={setLayout}
+                    daysBefore={daysBefore}
+                    onDaysBeforeChange={setDaysBefore}
+                    onClose={() => setShowSettings(false)}
                 />
             )}
         </div>

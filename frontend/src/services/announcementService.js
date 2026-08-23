@@ -28,7 +28,7 @@ const announcementService = {
     streamUrl() {
         const base = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
         const token = localStorage.getItem("co-efficient-token") || "";
-        return new EventSource(`${base}${BASE}/stream?token=${encodeURIComponent(token)}`);
+        return `${base}${BASE}/stream?token=${encodeURIComponent(token)}`;
     },
 };
 

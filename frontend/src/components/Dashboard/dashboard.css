@@ -1,18 +1,14 @@
 .dashboard {
     background-color: var(--color-bg);
-    height: 100vh;
-    width: 100vw;
+    width: 100%;
+    min-height: 100vh;
 }
 
 .dashboard__overlay {
     position: fixed;
-
     inset: 0;
-
     background: var(--color-overlay);
-
     z-index: 999;
-
     animation: dashboard-overlay-in 180ms ease-out;
 }
 

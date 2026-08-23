@@ -37,7 +37,9 @@ export default function ScheduleCalendarGrid({
 
     // weekdaysShort is always the fixed Sun-Sat header row; daysOverride
     // (relative view) still walks actual dates but the header stays static.
-    const weekdayLabels = weekdaysShort;
+    const weekdayLabels = daysOverride
+        ? days.slice(0, 7).map((d) => weekdaysShort[d.getDay()])
+        : weekdaysShort;
 
     return (
         <>

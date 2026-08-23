@@ -1,4 +1,4 @@
-import { Monitor, Blocks, LayoutDashboard, CircleHelp } from "lucide-react";
+import { Monitor, Blocks, LayoutDashboard, CircleHelp, Users } from "lucide-react";
 
 export const SETTINGS_PAGES = [
     {
@@ -19,9 +19,16 @@ export const SETTINGS_PAGES = [
         icon: LayoutDashboard,
     },
 
-    // {
-    //     id: "about",
-    //     title: "About",
-    //     icon: CircleHelp,
-    // },
+    {
+        id: "users",
+        title: "User Management",
+        icon: Users,
+        adminOnly: true,
+    },
+
+    {
+        id: "about",
+        title: "About",
+        icon: CircleHelp,
+    },
 ];

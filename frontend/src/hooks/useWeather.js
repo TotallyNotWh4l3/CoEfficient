@@ -29,6 +29,27 @@ export default function useWeather(locationId) {
 
     useEffect(() => {
         loadWeather();
+
+        const scheduleNextSync = () => {
+            const now = new Date();
+            const minutes = now.getMinutes();
+            const offsetMinutes = [1, 16, 31, 46];
+
+            const next = offsetMinutes.find((m) => m > minutes) ?? offsetMinutes[0] + 60;
+            const nextSync = new Date(now);
+            nextSync.setMinutes(next % 60, 0, 0);
+            if (next >= 60) nextSync.setHours(nextSync.getHours() + 1);
+
+            const delay = nextSync.getTime() - now.getTime();
+
+            return setTimeout(() => {
+                loadWeather();
+                scheduleNextSync(); // reschedule for the following slot
+            }, delay);
+        };
+
+        const timer = scheduleNextSync();
+        return () => clearTimeout(timer);
     }, [loadWeather]);
 
     return {

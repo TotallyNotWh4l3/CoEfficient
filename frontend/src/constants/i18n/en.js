@@ -179,9 +179,48 @@ export default {
                 title: "Announcements",
             },
         },
+        users: {
+            title: "User Management",
+            description: "Create accounts and manage roles for other users.",
+            addUser: {
+                title: "Add User",
+                usernameLabel: "Username",
+                usernamePlaceholder: "e.g. jsmith",
+                passwordLabel: "Password",
+                passwordPlaceholder: "Temporary password",
+                roleLabel: "Role",
+                submit: "Create User",
+                submitting: "Creating…",
+                validationError: "Username and password are required.",
+                genericError: "Failed to create user.",
+            },
+            allUsers: {
+                title: "All Users",
+                loading: "Loading users…",
+                joined: "Joined {date}",
+            },
+            roles: {
+                user: "User",
+                manager: "Manager",
+                admin: "Admin",
+            },
+            delete: {
+                title: "Delete user",
+                confirm: 'Delete user "{username}"? This cannot be undone.',
+                genericError: "Failed to delete user.",
+            },
+        },
         about: {
             title: "About",
             description: "App information and credits",
+            versionTitle: "Version",
+            resetSectionTitle: "Reset",
+            resetSectionDescription: "Restore all settings to their default values.",
+            resetButton: "Reset to Defaults",
+            resetTitle: "Reset settings?",
+            resetMessage:
+                "This will reset your preferences, theme, and module defaults. This can't be undone.",
+            resetConfirm: "Reset",
         },
     },
     modules: {
@@ -251,6 +290,7 @@ export default {
                 addEvent: "Add Event",
                 manageTags: "Manage tags",
                 removeModule: "Remove module",
+                settings: "Settings",
             },
             viewToggle: {
                 absolute: "Absolute",
@@ -259,6 +299,35 @@ export default {
             layoutToggle: {
                 month: "Month",
                 week: "Week",
+            },
+            settings: {
+                title: "Schedule Settings",
+                back: "Close",
+                active: "Active",
+                viewMode: {
+                    title: "View Mode",
+                    absolute: {
+                        title: "Absolute",
+                        description:
+                            "Browse the full calendar by month or week, navigating freely between dates.",
+                    },
+                    relative: {
+                        title: "Relative",
+                        description:
+                            "Show a rolling window of days centered on today, configurable in the panel below.",
+                    },
+                },
+                layout: {
+                    title: "Layout",
+                    month: {
+                        title: "Month",
+                        description: "Display a full month grid with all days visible at once.",
+                    },
+                    week: {
+                        title: "Week",
+                        description: "Display a single week with more detail per day.",
+                    },
+                },
             },
             calendar: {
                 today: "Today",

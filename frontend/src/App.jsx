@@ -14,11 +14,11 @@ import { SettingsProvider } from "./context/SettingsContext";
 import { DashboardProvider } from "./context/DashboardContext";
 import { DialogProvider } from "./context/DialogContext";
 import { AuthProvider } from "./context/AuthContext";
+import { RealtimeProvider } from "./context/RealtimeContext";
 
 // CSS
 import "./styles/global.css";
 import "./styles/variable.css";
-import { RealtimeProvider } from "./context/RealtimeContext";
 
 function ThemeApplier() {
     useTheme();
@@ -43,24 +43,30 @@ function AppContent() {
     );
 }
 
+// Runs *inside* RealtimeProvider, so useDashboardState's internal
+// useRealtime() call resolves correctly.
+function DashboardStateProvider({ user, children }) {
+    const dashboardState = useDashboardState(user);
+
+    return <DashboardProvider value={dashboardState}>{children}</DashboardProvider>;
+}
+
 export default function App() {
     const authState = useAuthState();
-
     const settingsState = useSettingsState(authState.user);
-    const dashboardState = useDashboardState(authState.user);
-
     const dialogState = useDialogState();
+    console.log("[App] settingsState:", settingsState);
 
     return (
         <AuthProvider value={authState}>
             <SettingsProvider value={settingsState}>
-                <DashboardProvider value={dashboardState}>
-                    <DialogProvider value={dialogState}>
-                        <RealtimeProvider>
+                <DialogProvider value={dialogState}>
+                    <RealtimeProvider>
+                        <DashboardStateProvider user={authState.user}>
                             <AppContent />
-                        </RealtimeProvider>
-                    </DialogProvider>
-                </DashboardProvider>
+                        </DashboardStateProvider>
+                    </RealtimeProvider>
+                </DialogProvider>
             </SettingsProvider>
         </AuthProvider>
     );

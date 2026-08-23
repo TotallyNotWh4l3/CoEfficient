@@ -1,91 +1,75 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-
 import { useSettingsContext } from "../context/SettingsContext";
 import * as SettingsService from "../services/settingsService";
+import { DEFAULT_SETTINGS } from "../../../shared/constants/defaults/defaultSettings";
+
+const SAVE_DEBOUNCE_MS = 500;
 
 export function useSettingsState(user) {
     const [settings, setSettings] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Ref to skip auto-save on initial fetch
     const isInitialMount = useRef(true);
-
-    // =====================================================
-    // Load Settings
-    // =====================================================
+    const saveTimeoutRef = useRef(null);
 
     useEffect(() => {
         const token = localStorage.getItem("co-efficient-token");
-
-        // Check for user existence (supports user.id, user._id, or user.email)
         const hasUser = user && (user.id || user._id || user.email || Object.keys(user).length > 0);
-
         if (!hasUser || !token) {
             setLoading(false);
             setSettings(null);
             return;
         }
-
         async function loadSettings() {
             try {
                 setLoading(true);
                 const data = await SettingsService.getSettings();
                 setSettings(data);
-
             } catch (error) {
                 console.error("[Settings] Failed to load.", error);
             } finally {
                 setLoading(false);
             }
         }
-
         loadSettings();
     }, [user]);
-    // =====================================================
-    // Auto Save
-    // =====================================================
 
     useEffect(() => {
         if (!settings) return;
-
-        // 2. Prevent auto-save from immediately firing right after initial fetch
         if (isInitialMount.current) {
             isInitialMount.current = false;
             return;
         }
 
-        SettingsService.saveSettings(settings).catch((error) =>
-            console.error("[Settings] Save failed.", error),
-        );
-    }, [settings]);
+        if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+        }
 
-    // =====================================================
-    // Generic Update
-    // =====================================================
+        saveTimeoutRef.current = setTimeout(() => {
+            SettingsService.saveSettings(settings).catch((error) =>
+                console.error("[Settings] Save failed.", error),
+            );
+        }, SAVE_DEBOUNCE_MS);
+
+        return () => {
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+            }
+        };
+    }, [settings]);
 
     const updateSetting = useCallback((path, value) => {
         setSettings((previous) => {
             if (!previous) return previous;
-
             const updated = structuredClone(previous);
-
             const keys = path.split(".");
-
             let current = updated;
-
             for (let i = 0; i < keys.length - 1; i++) {
                 current = current[keys[i]];
             }
-
             current[keys[keys.length - 1]] = value;
-
             return updated;
         });
     }, []);
-
-    // =====================================================
-    // Preferences
-    // =====================================================
 
     const updatePreference = useCallback(
         (path, value) => {
@@ -94,10 +78,6 @@ export function useSettingsState(user) {
         [updateSetting],
     );
 
-    // =====================================================
-    // Module Defaults
-    // =====================================================
-
     const updateModuleDefault = useCallback(
         (module, key, value) => {
             updateSetting(`moduleDefaults.${module}.${key}`, value);
@@ -105,20 +85,12 @@ export function useSettingsState(user) {
         [updateSetting],
     );
 
-    // =====================================================
-    // Themes
-    // =====================================================
-
     const applyTheme = useCallback(
         (themeId) => {
             updateSetting("preferences.appearance.currentTheme", themeId);
         },
         [updateSetting],
     );
-
-    // =====================================================
-    // Locations
-    // =====================================================
 
     const applyLocation = useCallback(
         (locationId) => {
@@ -146,14 +118,11 @@ export function useSettingsState(user) {
     const deleteLocation = useCallback((id) => {
         setSettings((previous) => ({
             ...previous,
-
             locations: previous.locations.filter((location) => location.id !== id),
-
             preferences:
                 previous.preferences.locationId === id
                     ? {
                           ...previous.preferences,
-
                           preferences: {
                               ...previous.preferences.preferences,
                               locationId: "default-location",
@@ -163,28 +132,13 @@ export function useSettingsState(user) {
         }));
     }, []);
 
-    // =====================================================
-    // Reset
-    // =====================================================
-
-    const resetToDefaults = useCallback(async () => {
-        try {
-            const defaults = await SettingsService.getSettings();
-
-            setSettings(defaults);
-        } catch (error) {
-            console.error(error);
-        }
+    const resetToDefaults = useCallback(() => {
+        setSettings(structuredClone(DEFAULT_SETTINGS));
     }, []);
-
-    // =====================================================
-    // Getter
-    // =====================================================
 
     const getSetting = useCallback(
         (path) => {
             if (!settings) return undefined;
-
             return path.split(".").reduce((object, key) => object?.[key], settings);
         },
         [settings],
@@ -193,21 +147,15 @@ export function useSettingsState(user) {
     return {
         settings,
         loading,
-
         updateSetting,
-
         updatePreference,
         updateModuleDefault,
-
         applyTheme,
-
         applyLocation,
         saveLocation,
         updateLocation,
         deleteLocation,
-
         resetToDefaults,
-
         getSetting,
     };
 }

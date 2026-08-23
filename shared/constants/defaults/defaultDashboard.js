@@ -18,7 +18,7 @@ export const DEFAULT_DASHBOARD = {
             settings: {
                 title: "Weather",
                 location: "default-location",
-                view: "conditions",
+                view: "combined",
             },
 
             layout: {

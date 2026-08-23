@@ -177,7 +177,9 @@
 .settings__select-wrapper {
     margin-top: 0.5rem;
     position: relative;
-    width: 100%;
+    flex: 0 0 auto;
+    width: 200px;
+    max-width: 45%;
 }
 
 .settings__select {
@@ -339,4 +341,16 @@
     line-height: 1;
 
     color: var(--color-text-secondary);
+}
+
+.settings__row--stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    width: 100%;
+}
+
+.settings__row--stacked .settings__row-content {
+    flex: initial;
 }

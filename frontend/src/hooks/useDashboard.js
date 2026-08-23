@@ -1,18 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDashboardContext } from "../context/DashboardContext";
+import { useRealtime } from "../context/RealtimeContext";
 import dashboardService from "../services/dashboardService";
+
 const EMPTY_DASHBOARD = {
     id: "main",
     name: "Main Dashboard",
     layout: { columns: 3, gap: 16, padding: 16 },
     modules: [],
 };
+
 /**
  * useDashboard Hook
  *
  * Each user's dashboard now lives server-side (not localStorage), so it
  * follows them across devices/browsers, and stays live-synced between
- * their own open tabs/devices via SSE. Takes `user` as a parameter (same
+ * their own open tabs/devices via SSE (routed through RealtimeContext,
+ * same as every other live-synced hook). Takes `user` as a parameter (same
  * convention as useSettingsState(user)) since this is called before
  * AuthProvider wraps the tree in App.jsx.
  */
@@ -21,6 +25,8 @@ export function useDashboardState(user) {
     const [dashboard, setDashboard] = useState(EMPTY_DASHBOARD);
     const [loading, setLoading] = useState(true);
     const [selectedModuleId, setSelectedModuleId] = useState(null);
+    const { subscribe } = useRealtime();
+
     // =====================================================
     // Load (and reload whenever the logged-in user changes)
     // =====================================================
@@ -48,39 +54,53 @@ export function useDashboardState(user) {
             cancelled = true;
         };
     }, [userId]);
+
     // =====================================================
-    // Live sync (SSE) — reconnects whenever the user changes
+    // Live sync (SSE via RealtimeContext) — resubscribes
+    // whenever the user changes
     // =====================================================
     useEffect(() => {
         if (!userId) return undefined;
-        const source = dashboardService.openStream();
-        source.addEventListener("layout-updated", (e) => {
+
+        const url = dashboardService.streamUrl();
+
+        const unsubLayout = subscribe(url, "layout-updated", (e) => {
             const layout = JSON.parse(e.data);
             setDashboard((prev) => ({ ...prev, layout }));
         });
-        source.addEventListener("module-added", (e) => {
+
+        const unsubAdded = subscribe(url, "module-added", (e) => {
             const module = JSON.parse(e.data);
             setDashboard((prev) => {
                 if (prev.modules.some((m) => m.id === module.id)) return prev; // dedupe vs. our own optimistic add
                 return { ...prev, modules: [...prev.modules, module] };
             });
         });
-        source.addEventListener("module-updated", (e) => {
+
+        const unsubUpdated = subscribe(url, "module-updated", (e) => {
             const module = JSON.parse(e.data);
             setDashboard((prev) => ({
                 ...prev,
                 modules: prev.modules.map((m) => (m.id === module.id ? module : m)),
             }));
         });
-        source.addEventListener("module-removed", (e) => {
+
+        const unsubRemoved = subscribe(url, "module-removed", (e) => {
             const { id } = JSON.parse(e.data);
             setDashboard((prev) => ({
                 ...prev,
                 modules: prev.modules.filter((m) => m.id !== id),
             }));
         });
-        return () => source.close();
-    }, [userId]);
+
+        return () => {
+            unsubLayout();
+            unsubAdded();
+            unsubUpdated();
+            unsubRemoved();
+        };
+    }, [userId, subscribe]);
+
     // =====================================================
     // Layout
     // =====================================================
@@ -92,6 +112,7 @@ export function useDashboardState(user) {
             console.error("[useDashboard] Failed to update layout:", e);
         }
     }, []);
+
     // =====================================================
     // Local-only override — does NOT persist to the server.
     // Kept for API-compatibility with existing call sites.
@@ -99,6 +120,7 @@ export function useDashboardState(user) {
     const updateDashboard = useCallback((updater) => {
         setDashboard((prev) => (typeof updater === "function" ? updater(prev) : updater));
     }, []);
+
     // =====================================================
     // Modules
     // =====================================================
@@ -115,6 +137,7 @@ export function useDashboardState(user) {
             throw e;
         }
     }, []);
+
     const removeModule = useCallback(async (moduleId) => {
         setDashboard((prev) => ({
             ...prev,
@@ -126,6 +149,7 @@ export function useDashboardState(user) {
             console.error("[useDashboard] Failed to remove module:", e);
         }
     }, []);
+
     const updateModuleSettings = useCallback(async (moduleId, key, value) => {
         setDashboard((prev) => ({
             ...prev,
@@ -141,9 +165,11 @@ export function useDashboardState(user) {
             console.error("[useDashboard] Failed to update module settings:", e);
         }
     }, []);
+
     const selectModule = useCallback((moduleId) => {
         setSelectedModuleId(moduleId);
     }, []);
+
     return {
         dashboard,
         loading,
@@ -157,6 +183,7 @@ export function useDashboardState(user) {
         setDashboard,
     };
 }
+
 export function useDashboard() {
     return useDashboardContext();
 }

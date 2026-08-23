@@ -1,6 +1,7 @@
 import { Pencil, Trash2, MapPin, Lock } from "lucide-react";
 
 import Settings from "./SettingsComponents";
+import "./location-list.css"
 
 export default function LocationList({
     locations,

@@ -5,12 +5,16 @@ import { useMemo, useState } from "react";
 import { MapPin, Search } from "lucide-react";
 
 import { useLocation } from "../../../hooks/useLocation";
+import { useLanguage } from "../../../hooks/useLanguage";
 import geocodingService from "../../../services/geocodingService";
 
 import Settings from "../Components/SettingsComponents";
 
 export default function LocationDialog({ initialLocation = null, onClose, onSave }) {
     const { requestCurrentLocation } = useLocation();
+
+    const T = useLanguage();
+    const copy = T?.settings?.interface?.location?.dialog ?? {};
 
     // =====================================================
     // State
@@ -45,23 +49,23 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
         () => ({
             latitude:
                 latitude === ""
-                    ? "Latitude is required."
+                    ? copy?.latitude?.required
                     : Number.isNaN(latitudeNumber)
-                      ? "Latitude must be a number."
+                      ? copy?.latitude?.invalidNumber
                       : latitudeNumber < -90 || latitudeNumber > 90
-                        ? "Latitude must be between -90 and 90."
+                        ? copy?.latitude?.outOfRange
                         : null,
 
             longitude:
                 longitude === ""
-                    ? "Longitude is required."
+                    ? copy?.longitude?.required
                     : Number.isNaN(longitudeNumber)
-                      ? "Longitude must be a number."
+                      ? copy?.longitude?.invalidNumber
                       : longitudeNumber < -180 || longitudeNumber > 180
-                        ? "Longitude must be between -180 and 180."
+                        ? copy?.longitude?.outOfRange
                         : null,
         }),
-        [latitude, longitude],
+        [latitude, longitude, copy],
     );
 
     const isValid = Object.values(errors).every((error) => error === null);
@@ -115,12 +119,12 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
         try {
             const results = await geocodingService.search(query);
             if (results.length === 0) {
-                setSearchError("No matching locations found.");
+                setSearchError(copy?.search?.noResults);
             }
             setSearchResults(results);
         } catch (e) {
             console.error(e);
-            setSearchError("Search failed. Please try again.");
+            setSearchError(copy?.search?.failed);
         } finally {
             setSearching(false);
         }
@@ -169,7 +173,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
             // On success, onSave (DialogManager) closes the dialog itself.
         } catch (error) {
             console.error("[LocationDialog] Save failed:", error);
-            setSaveError(error?.message || t.footer.saveFailed);
+            setSaveError(error?.message || copy?.footer?.saveFailed);
         } finally {
             setSaving(false);
         }
@@ -178,7 +182,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
     return (
         <div className="location-dialog">
             <Settings.Title className="location-dialog__title">
-                {initialLocation ? "Edit Location" : "Add Location"}
+                {initialLocation ? copy?.titleEdit : copy?.titleAdd}
             </Settings.Title>
 
             <Settings.Divider />
@@ -195,7 +199,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                         onClick={() => setMode("search")}
                     >
                         <Search size={16} />
-                        Search Location
+                        {copy?.mode?.search}
                     </Settings.Button>
 
                     <Settings.Button
@@ -204,7 +208,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                         onClick={() => setMode("coordinates")}
                     >
                         <MapPin size={16} />
-                        Coordinates
+                        {copy?.mode?.coordinates}
                     </Settings.Button>
                 </Settings.Row>
             </Settings.Section>
@@ -219,11 +223,10 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                 <Settings.Section className="location-dialog__search">
                     <Settings.Row>
                         <Settings.RowContent>
-                            <Settings.RowLabel>Search</Settings.RowLabel>
+                            <Settings.RowLabel>{copy?.search?.label}</Settings.RowLabel>
 
                             <Settings.RowDescription>
-                                Search for a city or place — selecting a result fills in its
-                                coordinates.
+                                {copy?.search?.description}
                             </Settings.RowDescription>
                         </Settings.RowContent>
                     </Settings.Row>
@@ -233,7 +236,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                        placeholder="Tokyo"
+                        placeholder={copy?.search?.placeholder}
                     />
 
                     <Settings.Button
@@ -241,7 +244,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                         onClick={handleSearch}
                         disabled={searching || !searchQuery.trim()}
                     >
-                        {searching ? "Searching..." : "Search"}
+                        {searching ? copy?.search?.searching : copy?.search?.button}
                     </Settings.Button>
 
                     {searchError && (
@@ -283,9 +286,9 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                     <Settings.Section className="location-dialog__section">
                         <Settings.Row>
                             <Settings.RowContent>
-                                <Settings.RowLabel>Name</Settings.RowLabel>
+                                <Settings.RowLabel>{copy?.name?.label}</Settings.RowLabel>
                                 <Settings.RowDescription>
-                                    Optional — auto-filled from coordinates if left blank.
+                                    {copy?.name?.description}
                                 </Settings.RowDescription>
                             </Settings.RowContent>
                         </Settings.Row>
@@ -294,14 +297,14 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                             className="location-dialog__input"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="Auto-filled from coordinates"
+                            placeholder={copy?.name?.placeholder}
                         />
                     </Settings.Section>
 
                     <Settings.Section className="location-dialog__section">
                         <Settings.Row>
                             <Settings.RowContent>
-                                <Settings.RowLabel>Latitude</Settings.RowLabel>
+                                <Settings.RowLabel>{copy?.latitude?.label}</Settings.RowLabel>
                             </Settings.RowContent>
                         </Settings.Row>
 
@@ -321,7 +324,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                     <Settings.Section className="location-dialog__section">
                         <Settings.Row>
                             <Settings.RowContent>
-                                <Settings.RowLabel>Longitude</Settings.RowLabel>
+                                <Settings.RowLabel>{copy?.longitude?.label}</Settings.RowLabel>
                             </Settings.RowContent>
                         </Settings.Row>
 
@@ -346,7 +349,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                     >
                         <MapPin size={16} />
 
-                        {loadingGps ? "Locating..." : "Use Current Location"}
+                        {loadingGps ? copy?.gps?.locating : copy?.gps?.button}
                     </Settings.Button>
                 </>
             )}
@@ -365,7 +368,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                     variant="secondary"
                     onClick={onClose}
                 >
-                    Cancel
+                    {copy?.footer?.cancel}
                 </Settings.Button>
 
                 <Settings.Button
@@ -373,7 +376,7 @@ export default function LocationDialog({ initialLocation = null, onClose, onSave
                     onClick={handleSave}
                     disabled={!isValid || saving}
                 >
-                    {saving ? "Saving..." : "Save"}
+                    {saving ? copy?.footer?.saving : copy?.footer?.save}
                 </Settings.Button>
             </div>
         </div>

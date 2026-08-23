@@ -2,11 +2,13 @@ import "./settings-sidebar.css";
 
 import { SETTINGS_PAGES } from "../../../constants/interface";
 
-export default function SettingsSidebar({ currentPage, onPageChange }) {
+export default function SettingsSidebar({ currentPage, onPageChange, isAdmin }) {
+    const visiblePages = SETTINGS_PAGES.filter((page) => !page.adminOnly || isAdmin);
+
     return (
         <aside className="settings-sidebar">
             <nav className="settings-sidebar__navigation">
-                {SETTINGS_PAGES.map((page) => {
+                {visiblePages.map((page) => {
                     const Icon = page.icon;
 
                     return (

@@ -49,7 +49,7 @@ export default function DashboardSettings() {
                     {copy.layout?.description ?? "Spacing and column configurations"}
                 </Settings.Description>
 
-                <Settings.Row>
+                <Settings.Row className="settings__row--stacked">
                     <Settings.RowContent>
                         <Settings.RowLabel>{copy.layout?.columns ?? "Columns"}</Settings.RowLabel>
                         <Settings.RowDescription>{layout.columns}</Settings.RowDescription>
@@ -62,7 +62,7 @@ export default function DashboardSettings() {
                     />
                 </Settings.Row>
 
-                <Settings.Row>
+                <Settings.Row className="settings__row--stacked">
                     <Settings.RowContent>
                         <Settings.RowLabel>{copy.layout?.gap ?? "Spacing"}</Settings.RowLabel>
                         <Settings.RowDescription>{layout.gap}px</Settings.RowDescription>
@@ -75,7 +75,7 @@ export default function DashboardSettings() {
                     />
                 </Settings.Row>
 
-                <Settings.Row>
+                <Settings.Row className="settings__row--stacked">
                     <Settings.RowContent>
                         <Settings.RowLabel>{copy.layout?.padding ?? "Padding"}</Settings.RowLabel>
                         <Settings.RowDescription>{layout.padding}px</Settings.RowDescription>

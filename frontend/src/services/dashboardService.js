@@ -12,11 +12,11 @@ const dashboardService = {
     updateModuleSettings: (id, key, value) =>
         apiClient.patch(`${BASE}/modules/${id}/settings`, { key, value }).then((r) => r.data),
 
-    /** Same query-token workaround as announcementService/locationService. */
-    openStream() {
+    /** Returns the SSE URL string; RealtimeContext owns the actual EventSource. */
+    streamUrl() {
         const base = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
         const token = localStorage.getItem("co-efficient-token") || "";
-        return new EventSource(`${base}${BASE}/stream?token=${encodeURIComponent(token)}`);
+        return `${base}${BASE}/stream?token=${encodeURIComponent(token)}`;
     },
 };
 

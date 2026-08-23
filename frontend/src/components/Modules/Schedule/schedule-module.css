@@ -127,6 +127,7 @@
     border-radius: 6px;
     cursor: pointer;
 }
+
 .sch-btn-secondary:hover {
     background: var(--color-hover);
 }
@@ -226,7 +227,7 @@
 /* ---------- Calendar grid ---------- */
 .sch-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 1px;
     border: 1px solid var(--color-border);
     border-radius: 10px;
@@ -247,6 +248,7 @@
 .sch-grid-day {
     background: var(--color-bg-elevated);
     min-height: 64px;
+    min-width: 0;
     padding: 4px;
     cursor: pointer;
     display: flex;
@@ -696,6 +698,17 @@
     flex-direction: column;
     gap: 12px;
 }
+
+.sch-relative-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    background: var(--color-overlay-light);
+    border: 1px solid var(--color-border);
+}
 .sch-relative-hint {
     display: flex;
     align-items: flex-start;
@@ -838,4 +851,170 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* ---------- Settings overlay ---------- */
+.sch-settings {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-bg-elevated) 95%, transparent);
+    backdrop-filter: blur(12px);
+    z-index: 20;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    animation: sch-fade-in 0.3s ease;
+}
+
+@keyframes sch-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.sch-settings__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.sch-settings__title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fcd34d;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-shadow: 0 1px 2.5px rgba(0, 0, 0, 0.65);
+}
+
+.sch-settings__title-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    animation: sch-spin 12s linear infinite;
+}
+
+@keyframes sch-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sch-settings__back {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.sch-settings__back:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sch-settings__body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1rem;
+    overflow-y: auto;
+}
+
+.sch-settings__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.sch-settings__group-label {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sch-settings__options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sch-settings__option {
+    text-align: left;
+    transition: all 0.2s ease;
+    padding: 0.625rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-overlay-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.sch-settings__option--active {
+    background: var(--color-selected);
+    border-color: var(--color-border-active);
+}
+
+.sch-settings__option-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.sch-settings__option-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.sch-settings__option--active .sch-settings__option-name {
+    color: var(--color-text);
+}
+
+.sch-settings__option-active-tag {
+    font-size: 0.625rem;
+    font-weight: 700;
+    font-family: "JetBrains Mono", monospace;
+    color: var(--color-text-accent);
+}
+
+.sch-settings__option-desc {
+    font-size: 0.5625rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+.sch-settings__tip {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.5625rem;
+    line-height: 1.5;
+    flex-shrink: 0;
+    background: var(--color-overlay-light);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
 }
