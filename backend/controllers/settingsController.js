@@ -11,6 +11,9 @@ async function getSettings(req, res) {
                 message: "User settings not found.",
             });
         }
+
+        console.log(JSON.stringify(settings.settings, null, 2));
+
         return res.json(settings.settings);
     } catch (error) {
         console.error(error);
