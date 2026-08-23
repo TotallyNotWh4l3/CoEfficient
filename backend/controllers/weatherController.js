@@ -4,8 +4,8 @@ import { getWeather } from "../services/weatherService.js";
 
 export async function getWeatherController(req, res) {
     try {
-        console.log("========== WEATHER REQUEST ==========");
-        console.log("[Weather] User:", req.user);
+        // console.log("========== WEATHER REQUEST ==========");
+        // console.log("[Weather] User:", req.user);
 
         const requestedLocationId = req.query.locationId;
 
@@ -52,7 +52,7 @@ export async function getWeatherController(req, res) {
             location = locations.find((l) => l.builtIn) ?? locations[0] ?? null;
         }
 
-        console.log("[Weather] Selected Location:", location);
+        // console.log("[Weather] Selected Location:", location);
 
         if (!location) {
             return res.status(404).json({
@@ -68,8 +68,8 @@ export async function getWeatherController(req, res) {
             name: location.name,
         };
 
-        console.log("[Weather] Weather fetched successfully.");
-        console.log("=====================================");
+        // console.log("[Weather] Weather fetched successfully.");
+        // console.log("=====================================");
 
         res.json(weather);
     } catch (error) {
