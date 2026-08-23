@@ -50,9 +50,15 @@ export async function getWeather(location) {
     const cached = await getCachedWeather(locationId);
 
     if (cached) {
-        console.log("[Weather] Cache hit.");
+        const ageMs = Date.now() - new Date(cached.fetched_at).getTime();
+        const FIFTEEN_MIN = 15 * 60 * 1000;
 
-        return cached;
+        if (ageMs <= FIFTEEN_MIN) {
+            console.log("[Weather] Cache hit.");
+            return cached;
+        }
+
+        console.log("[Weather] Cache stale, refetching...");
     }
 
     console.log("[Weather] Fetching Open-Meteo...");
