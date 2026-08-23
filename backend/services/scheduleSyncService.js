@@ -1,6 +1,5 @@
 // backend/services/scheduleSyncService.js
-// SSE pub/sub for real-time schedule updates — mirrors announcementSyncService.js.
-// ⚠️ Placeholder shape — verify against the real announcementSyncService.js before testing.
+// SSE pub/sub for real-time schedule updates.
 
 const clients = new Set();
 
@@ -14,16 +13,18 @@ export function subscribe(res) {
 
     clients.add(res);
 
-    req_cleanup: {
-        res.req?.on("close", () => {
-            clients.delete(res);
-        });
-    }
+    res.req?.on("close", () => {
+        clients.delete(res);
+    });
 }
 
 export function broadcast(event, data) {
     const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
     for (const client of clients) {
-        client.write(payload);
+        try {
+            client.write(payload);
+        } catch {
+            clients.delete(client);
+        }
     }
 }

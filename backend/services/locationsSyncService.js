@@ -1,5 +1,5 @@
 // backend/services/locationSyncService.js
-// SSE pub/sub for real-time location updates — mirrors scheduleSyncService.js.
+// SSE pub/sub for real-time location updates.
 
 const clients = new Set();
 
@@ -21,6 +21,10 @@ export function subscribe(res) {
 export function broadcast(event, data) {
     const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
     for (const client of clients) {
-        client.write(payload);
+        try {
+            client.write(payload);
+        } catch {
+            clients.delete(client);
+        }
     }
 }

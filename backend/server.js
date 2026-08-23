@@ -12,6 +12,7 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import scheduleRoutes from "./routes/scheduleRoutes.js";
 import geocodingRoutes from "./routes/geocodingRoutes.js";
 import themeRoutes from "./routes/themeRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 
 console.log("weatherRoutes loaded");
@@ -32,6 +33,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/schedule", scheduleRoutes);
 app.use("/api/geocoding", geocodingRoutes);
 app.use("/api/themes", themeRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
     res.json({

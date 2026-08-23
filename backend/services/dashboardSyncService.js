@@ -39,6 +39,12 @@ export function broadcast(userId, type, payload) {
 
     const message = `event: ${type}\ndata: ${JSON.stringify(payload)}\n\n`;
     for (const res of bucket) {
-        res.write(message);
+        try {
+            res.write(message);
+        } catch {
+            bucket.delete(res);
+        }
     }
+
+    if (bucket.size === 0) clientsByUser.delete(userId);
 }
