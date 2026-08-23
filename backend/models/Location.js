@@ -15,72 +15,48 @@ function mapRow(row) {
     };
 }
 
-function findAllByUserId(userId) {
-    return new Promise((resolve, reject) => {
-        db.all(
-            `
+async function findAllByUserId(userId) {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM locations
             WHERE user_id = ?
             ORDER BY built_in DESC, created_at ASC
-            `,
-            [userId],
-            (error, rows) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(rows.map(mapRow));
-            },
-        );
+        `,
+        args: [userId],
     });
+
+    return result.rows.map(mapRow);
 }
 
 /**
  * Locations are shared/global (one list everyone sees), not per-user —
  * user_id on the row just tracks who created it. This lists all of them.
  */
-function findAll() {
-    return new Promise((resolve, reject) => {
-        db.all(
-            `
+async function findAll() {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM locations
             ORDER BY built_in DESC, created_at ASC
-            `,
-            [],
-            (error, rows) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(rows.map(mapRow));
-            },
-        );
+        `,
+        args: [],
     });
+
+    return result.rows.map(mapRow);
 }
 
-function findById(id) {
-    return new Promise((resolve, reject) => {
-        db.get(
-            `
+async function findById(id) {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM locations
             WHERE id = ?
-            `,
-            [id],
-            (error, row) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(mapRow(row));
-            },
-        );
+        `,
+        args: [id],
     });
+
+    return mapRow(result.rows[0]);
 }
 
 /**
@@ -88,7 +64,7 @@ function findById(id) {
  * owner — the row is visible/usable by everyone once created. Only the
  * controller layer restricts *who* is allowed to call this (admin/manager).
  */
-function create(location) {
+async function create(location) {
     const {
         id,
         userId,
@@ -99,9 +75,8 @@ function create(location) {
         builtIn = false,
     } = location;
 
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+    await db.execute({
+        sql: `
             INSERT INTO locations (
                 id,
                 user_id,
@@ -112,21 +87,14 @@ function create(location) {
                 built_in
             )
             VALUES (?, ?, ?, ?, ?, ?, ?)
-            `,
-            [id, userId, name, latitude, longitude, timezone, builtIn ? 1 : 0],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(id);
-            },
-        );
+        `,
+        args: [id, userId, name, latitude, longitude, timezone, builtIn ? 1 : 0],
     });
+
+    return id;
 }
 
-function update(id, updates) {
+async function update(id, updates) {
     const fields = [];
     const values = [];
 
@@ -151,49 +119,33 @@ function update(id, updates) {
     }
 
     if (fields.length === 0) {
-        return Promise.resolve(0);
+        return 0;
     }
 
     values.push(id);
 
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+    const result = await db.execute({
+        sql: `
             UPDATE locations
             SET ${fields.join(", ")}
             WHERE id = ?
-            `,
-            values,
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: values,
     });
+
+    return result.rowsAffected;
 }
 
-function deleteById(id) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function deleteById(id) {
+    const result = await db.execute({
+        sql: `
             DELETE FROM locations
             WHERE id = ? AND built_in = 0
-            `,
-            [id],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: [id],
     });
+
+    return result.rowsAffected;
 }
 
 export default {

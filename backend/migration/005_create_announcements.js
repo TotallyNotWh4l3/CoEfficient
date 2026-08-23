@@ -1,13 +1,13 @@
-import announcementLogsSchema from "../database/schema/announcementLogs.js";
+// 005_create_announcements.js
+import announcementsSchema from "../database/schema/announcements.js";
 
-export default function createAnnouncementLogsTable(db) {
+export default function createAnnouncementsTable(db) {
     return new Promise((resolve, reject) => {
-        db.exec(announcementLogsSchema, (error) => {
+        db.exec(announcementsSchema, (error) => {
             if (error) {
                 reject(error);
                 return;
             }
-
             resolve();
         });
     });

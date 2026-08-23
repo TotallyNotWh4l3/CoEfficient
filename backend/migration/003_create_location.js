@@ -1,13 +1,13 @@
-import weatherDataSchema from "../database/schema/weatherData.js";
+// 003_create_location.js
+import locationsSchema from "../database/schema/locations.js";
 
-export default function createWeatherDataTable(db) {
+export default function createLocationsTable(db) {
     return new Promise((resolve, reject) => {
-        db.exec(weatherDataSchema, (error) => {
+        db.exec(locationsSchema, (error) => {
             if (error) {
                 reject(error);
                 return;
             }
-
             resolve();
         });
     });

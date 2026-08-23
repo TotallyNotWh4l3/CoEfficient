@@ -1,5 +1,5 @@
 // backend/database/init.js
-import db from "../config/database.js";
+import { exec } from "../utils/dbHelpers.js";
 
 import usersTable from "./schema/users.js";
 import userSettingsTable from "./schema/userSettings.js";
@@ -27,21 +27,18 @@ const tables = [
     { name: "Themes", sql: themes },
 ];
 
-db.serialize(() => {
-    tables.forEach(({ name, sql }) => {
-        db.run(sql, (error) => {
-            if (error) {
-                console.error(`Failed to create ${name} table:`, error.message);
-            } else {
-                console.log(`${name} table created.`);
-            }
-        });
-    });
-});
-db.close((error) => {
-    if (error) {
-        console.error("Failed to close database:", error.message);
-    } else {
-        console.log("Database connection closed.");
+async function init() {
+    for (const { name, sql } of tables) {
+        try {
+            await exec(sql);
+            console.log(`${name} table created.`);
+        } catch (error) {
+            console.error(`Failed to create ${name} table:`, error.message);
+        }
     }
-});
+
+    console.log("Database initialization complete.");
+}
+
+init().then(() => process.exit(0));
+

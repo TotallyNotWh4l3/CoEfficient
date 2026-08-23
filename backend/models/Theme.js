@@ -14,52 +14,37 @@ function mapRow(row) {
     };
 }
 
-function findAll() {
-    return new Promise((resolve, reject) => {
-        db.all(
-            `
+async function findAll() {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM themes
             ORDER BY built_in DESC, created_at ASC
-            `,
-            [],
-            (error, rows) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(rows.map(mapRow));
-            },
-        );
+        `,
+        args: [],
     });
+
+    return result.rows.map(mapRow);
 }
 
-function findById(id) {
-    return new Promise((resolve, reject) => {
-        db.get(
-            `
+async function findById(id) {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM themes
             WHERE id = ?
-            `,
-            [id],
-            (error, row) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(mapRow(row));
-            },
-        );
+        `,
+        args: [id],
     });
+
+    return mapRow(result.rows[0]);
 }
 
-function create(theme) {
+async function create(theme) {
     const { id, userId, name, builtIn = false, basedOn = null, appearance } = theme;
 
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+    await db.execute({
+        sql: `
             INSERT INTO themes (
                 id,
                 user_id,
@@ -69,20 +54,14 @@ function create(theme) {
                 appearance
             )
             VALUES (?, ?, ?, ?, ?, ?)
-            `,
-            [id, userId, name, builtIn ? 1 : 0, basedOn, JSON.stringify(appearance)],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(id);
-            },
-        );
+        `,
+        args: [id, userId, name, builtIn ? 1 : 0, basedOn, JSON.stringify(appearance)],
     });
+
+    return id;
 }
 
-function update(id, updates) {
+async function update(id, updates) {
     const fields = [];
     const values = [];
 
@@ -97,47 +76,33 @@ function update(id, updates) {
     }
 
     if (fields.length === 0) {
-        return Promise.resolve(0);
+        return 0;
     }
 
     values.push(id);
 
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+    const result = await db.execute({
+        sql: `
             UPDATE themes
             SET ${fields.join(", ")}
             WHERE id = ? AND built_in = 0
-            `,
-            values,
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: values,
     });
+
+    return result.rowsAffected;
 }
 
-function deleteById(id) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function deleteById(id) {
+    const result = await db.execute({
+        sql: `
             DELETE FROM themes
             WHERE id = ? AND built_in = 0
-            `,
-            [id],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: [id],
     });
+
+    return result.rowsAffected;
 }
 
 export default {

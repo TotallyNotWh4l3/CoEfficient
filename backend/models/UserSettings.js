@@ -1,99 +1,65 @@
 import db from "../config/database.js";
 
-function findByUserId(userId) {
-    return new Promise((resolve, reject) => {
-        db.get(
-            `
+async function findByUserId(userId) {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM user_settings
             WHERE user_id = ?
-            `,
-            [userId],
-            (error, row) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                if (!row) {
-                    resolve(null);
-                    return;
-                }
-
-                resolve({
-                    ...row,
-                    settings: JSON.parse(row.settings_json),
-                });
-            },
-        );
+        `,
+        args: [userId],
     });
+
+    const row = result.rows[0];
+    if (!row) return null;
+
+    return {
+        ...row,
+        settings: JSON.parse(row.settings_json),
+    };
 }
 
-function create(userId, settings) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function create(userId, settings) {
+    const result = await db.execute({
+        sql: `
             INSERT INTO user_settings (
                 user_id,
                 settings_json
             )
             VALUES (?, ?)
-            `,
-            [userId, JSON.stringify(settings)],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.lastID);
-            },
-        );
+        `,
+        args: [userId, JSON.stringify(settings)],
     });
+
+    return Number(result.lastInsertRowid);
 }
 
-function updateByUserId(userId, settings) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function updateByUserId(userId, settings) {
+    const result = await db.execute({
+        sql: `
             UPDATE user_settings
             SET
                 settings_json = ?,
                 updated_at = CURRENT_TIMESTAMP
             WHERE
                 user_id = ?
-            `,
-            [JSON.stringify(settings), userId],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: [JSON.stringify(settings), userId],
     });
+
+    return result.rowsAffected;
 }
 
-function deleteByUserId(userId) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function deleteByUserId(userId) {
+    const result = await db.execute({
+        sql: `
             DELETE FROM user_settings
             WHERE user_id = ?
-            `,
-            [userId],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: [userId],
     });
+
+    return result.rowsAffected;
 }
 
 async function upsert(userId, settings) {

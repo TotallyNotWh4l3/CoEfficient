@@ -1,41 +1,43 @@
 // backend/utils/dbHelpers.js
-// sqlite3 (the npm package used in backend/config/database.js) is callback-based.
-// These helpers wrap it in promises so models can use async/await.
+// Thin compatibility layer over @libsql/client that preserves the
+// sqlite3-style run/get/all/exec interface the models and migration/
+// init scripts were written against — so callers don't need changes.
 
 import db from "../config/database.js";
 
-export function run(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.run(sql, params, function (err) {
-            if (err) return reject(err);
-            resolve({ lastID: this.lastID, changes: this.changes });
-        });
-    });
+/**
+ * INSERT/UPDATE/DELETE. Returns { lastID, changes } to match sqlite3's
+ * `this.lastID` / `this.changes` shape used throughout the models.
+ */
+export async function run(sql, params = []) {
+    const result = await db.execute({ sql, args: params });
+
+    return {
+        lastID:
+            result.lastInsertRowid !== undefined && result.lastInsertRowid !== null
+                ? Number(result.lastInsertRowid)
+                : undefined,
+        changes: result.rowsAffected,
+    };
 }
 
-export function get(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.get(sql, params, (err, row) => {
-            if (err) return reject(err);
-            resolve(row);
-        });
-    });
+/** Single row, or undefined if no match (matches sqlite3's db.get behavior). */
+export async function get(sql, params = []) {
+    const result = await db.execute({ sql, args: params });
+    return result.rows[0];
 }
 
-export function all(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.all(sql, params, (err, rows) => {
-            if (err) return reject(err);
-            resolve(rows);
-        });
-    });
+/** All matching rows as an array. */
+export async function all(sql, params = []) {
+    const result = await db.execute({ sql, args: params });
+    return result.rows;
 }
 
-export function exec(sql) {
-    return new Promise((resolve, reject) => {
-        db.exec(sql, (err) => {
-            if (err) return reject(err);
-            resolve();
-        });
-    });
+/**
+ * Runs a block of raw, multi-statement SQL with no bound params — used by
+ * init.js / migrate.js for schema creation (CREATE TABLE blocks, etc).
+ * libSQL's equivalent of sqlite3's db.exec() is executeMultiple().
+ */
+export async function exec(sql) {
+    await db.executeMultiple(sql);
 }

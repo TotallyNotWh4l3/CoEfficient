@@ -1,42 +1,31 @@
 import db from "../config/database.js";
 
-function findByLocationId(locationId) {
-    return new Promise((resolve, reject) => {
-        db.get(
-            `
+async function findByLocationId(locationId) {
+    const result = await db.execute({
+        sql: `
             SELECT *
             FROM weather_data
             WHERE location_id = ?
-            `,
-            [locationId],
-            (error, row) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                if (!row) {
-                    resolve(null);
-                    return;
-                }
-
-                resolve({
-                    ...row,
-                    payload: JSON.parse(row.payload_json),
-                });
-            },
-        );
+        `,
+        args: [locationId],
     });
+
+    const row = result.rows[0];
+    if (!row) return null;
+
+    return {
+        ...row,
+        payload: JSON.parse(row.payload_json),
+    };
 }
 
 /**
  * Upserts the single cached row for a location — we only ever need the
  * latest cached forecast per location, not a history.
  */
-function upsert(locationId, weatherTimestamp, payload) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function upsert(locationId, weatherTimestamp, payload) {
+    const result = await db.execute({
+        sql: `
             INSERT INTO weather_data (
                 location_id,
                 weather_timestamp,
@@ -48,38 +37,23 @@ function upsert(locationId, weatherTimestamp, payload) {
                 weather_timestamp = excluded.weather_timestamp,
                 payload_json = excluded.payload_json,
                 fetched_at = CURRENT_TIMESTAMP
-            `,
-            [locationId, weatherTimestamp, JSON.stringify(payload)],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: [locationId, weatherTimestamp, JSON.stringify(payload)],
     });
+
+    return result.rowsAffected;
 }
 
-function deleteByLocationId(locationId) {
-    return new Promise((resolve, reject) => {
-        db.run(
-            `
+async function deleteByLocationId(locationId) {
+    const result = await db.execute({
+        sql: `
             DELETE FROM weather_data
             WHERE location_id = ?
-            `,
-            [locationId],
-            function (error) {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve(this.changes);
-            },
-        );
+        `,
+        args: [locationId],
     });
+
+    return result.rowsAffected;
 }
 
 export default {
