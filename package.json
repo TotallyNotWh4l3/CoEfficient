@@ -8,5 +8,8 @@
     },
     "devDependencies": {
         "concurrently": "^8.0.0"
+    },
+    "dependencies": {
+        "tree-cli": "^0.6.7"
     }
 }
