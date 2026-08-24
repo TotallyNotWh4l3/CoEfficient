@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { useRealtime } from "../context/RealtimeContext";
 import scheduleService from "../services/scheduleService";
+
+const POLL_INTERVAL_MS = 45000;
 
 export default function useSchedule({
     scope = "all",
@@ -11,7 +12,6 @@ export default function useSchedule({
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { subscribe } = useRealtime();
 
     const load = useCallback(async () => {
         setIsLoading(true);
@@ -52,54 +52,18 @@ export default function useSchedule({
         [],
     );
 
+    // Polling replaces the old SSE-based live sync (removed to avoid holding
+    // long-lived connections open on free-tier hosting). Re-fetches the
+    // current scope's list wholesale on an interval.
     useEffect(() => {
         if (!live) return undefined;
 
-        const url = scheduleService.streamUrl();
-        const todayIso = () => new Date().toISOString().slice(0, 10);
+        const interval = setInterval(() => {
+            load();
+        }, POLL_INTERVAL_MS);
 
-        const belongsInScope = (item) => {
-            if (scope === "today") return item.eventDate === todayIso();
-            if (scope === "upcoming") return item.eventDate >= todayIso();
-            if (scope === "range" && range?.start && range?.end) {
-                return item.eventDate >= range.start && item.eventDate <= range.end;
-            }
-            return true;
-        };
-
-        const upsert = (item) => {
-            setEvents((prev) => {
-                const list = Array.isArray(prev) ? prev : [];
-                const exists = list.some((e) => e.id === item.id);
-
-                if (item.isDeleted || !belongsInScope(item)) {
-                    return list.filter((e) => e.id !== item.id);
-                }
-
-                const next = exists
-                    ? list.map((e) => (e.id === item.id ? item : e))
-                    : [item, ...list];
-
-                const sorted = sortEvents(next);
-                return scope === "upcoming" && limit ? sorted.slice(0, limit) : sorted;
-            });
-        };
-
-        const remove = (item) => {
-            setEvents((prev) => (Array.isArray(prev) ? prev.filter((e) => e.id !== item.id) : []));
-        };
-
-        const unsub1 = subscribe(url, "created", (e) => upsert(JSON.parse(e.data)));
-        const unsub2 = subscribe(url, "updated", (e) => upsert(JSON.parse(e.data)));
-        const unsub3 = subscribe(url, "deleted", (e) => remove(JSON.parse(e.data)));
-
-        return () => {
-            unsub1();
-            unsub2();
-            unsub3();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [live, scope, limit, range?.start, range?.end, sortEvents, subscribe]);
+        return () => clearInterval(interval);
+    }, [live, load]);
 
     const createEvent = useCallback(
         async (payload) => {

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSettings } from "./useSettings";
 import { useAuth } from "./useAuth";
-import { useRealtime } from "../context/RealtimeContext";
 import locationService from "../services/locationService";
+
+const POLL_INTERVAL_MS = 45000;
 
 export function useLocation({ live = true } = {}) {
     const { settings, loading: settingsLoading } = useSettings();
     const { user } = useAuth();
-    const { subscribe } = useRealtime();
 
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -35,35 +35,17 @@ export function useLocation({ live = true } = {}) {
         load();
     }, [user, load]);
 
+    // Polling replaces the old SSE-based live sync (removed to avoid holding
+    // long-lived connections open on free-tier hosting).
     useEffect(() => {
         if (!live || !user) return undefined;
 
-        const url = locationService.streamUrl();
+        const interval = setInterval(() => {
+            load();
+        }, POLL_INTERVAL_MS);
 
-        const upsert = (e) => {
-            const location = JSON.parse(e.data);
-            setLocations((prev) => {
-                const exists = prev.some((l) => l.id === location.id);
-                return exists
-                    ? prev.map((l) => (l.id === location.id ? location : l))
-                    : [...prev, location];
-            });
-        };
-        const remove = (e) => {
-            const { id } = JSON.parse(e.data);
-            setLocations((prev) => prev.filter((l) => l.id !== id));
-        };
-
-        const unsub1 = subscribe(url, "location-created", upsert);
-        const unsub2 = subscribe(url, "location-updated", upsert);
-        const unsub3 = subscribe(url, "location-removed", remove);
-
-        return () => {
-            unsub1();
-            unsub2();
-            unsub3();
-        };
-    }, [live, user, subscribe]);
+        return () => clearInterval(interval);
+    }, [live, user, load]);
 
     const currentLocation = useMemo(() => {
         if (!settings) return null;

@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDashboardContext } from "../context/DashboardContext";
-import { useRealtime } from "../context/RealtimeContext";
 import dashboardService from "../services/dashboardService";
 
 const EMPTY_DASHBOARD = {
@@ -10,22 +9,34 @@ const EMPTY_DASHBOARD = {
     modules: [],
 };
 
+const POLL_INTERVAL_MS = 45000;
+
 /**
  * useDashboard Hook
  *
- * Each user's dashboard now lives server-side (not localStorage), so it
- * follows them across devices/browsers, and stays live-synced between
- * their own open tabs/devices via SSE (routed through RealtimeContext,
- * same as every other live-synced hook). Takes `user` as a parameter (same
- * convention as useSettingsState(user)) since this is called before
- * AuthProvider wraps the tree in App.jsx.
+ * Each user's dashboard lives server-side (not localStorage), so it follows
+ * them across devices/browsers. Live sync now polls the server on an
+ * interval rather than holding an SSE connection open — the previous SSE
+ * setup was causing the free-tier backend host to degrade under sustained
+ * load from multiple long-lived connections.
  */
 export function useDashboardState(user) {
     const userId = user?.id ?? user?._id ?? null;
     const [dashboard, setDashboard] = useState(EMPTY_DASHBOARD);
     const [loading, setLoading] = useState(true);
     const [selectedModuleId, setSelectedModuleId] = useState(null);
-    const { subscribe } = useRealtime();
+
+    const load = useCallback(async ({ silent = false } = {}) => {
+        if (!silent) setLoading(true);
+        try {
+            const state = await dashboardService.getState();
+            setDashboard(state);
+        } catch (e) {
+            console.error("[useDashboard] Failed to load dashboard:", e);
+        } finally {
+            if (!silent) setLoading(false);
+        }
+    }, []);
 
     // =====================================================
     // Load (and reload whenever the logged-in user changes)
@@ -34,7 +45,7 @@ export function useDashboardState(user) {
         if (!userId) {
             setDashboard(EMPTY_DASHBOARD);
             setLoading(false);
-            return;
+            return undefined;
         }
         let cancelled = false;
         setLoading(true);
@@ -56,50 +67,19 @@ export function useDashboardState(user) {
     }, [userId]);
 
     // =====================================================
-    // Live sync (SSE via RealtimeContext) — resubscribes
-    // whenever the user changes
+    // Live sync via polling — re-fetches the whole dashboard
+    // state on an interval instead of listening for individual
+    // module/layout events over SSE.
     // =====================================================
     useEffect(() => {
         if (!userId) return undefined;
 
-        const url = dashboardService.streamUrl();
+        const interval = setInterval(() => {
+            load({ silent: true });
+        }, POLL_INTERVAL_MS);
 
-        const unsubLayout = subscribe(url, "layout-updated", (e) => {
-            const layout = JSON.parse(e.data);
-            setDashboard((prev) => ({ ...prev, layout }));
-        });
-
-        const unsubAdded = subscribe(url, "module-added", (e) => {
-            const module = JSON.parse(e.data);
-            setDashboard((prev) => {
-                if (prev.modules.some((m) => m.id === module.id)) return prev; // dedupe vs. our own optimistic add
-                return { ...prev, modules: [...prev.modules, module] };
-            });
-        });
-
-        const unsubUpdated = subscribe(url, "module-updated", (e) => {
-            const module = JSON.parse(e.data);
-            setDashboard((prev) => ({
-                ...prev,
-                modules: prev.modules.map((m) => (m.id === module.id ? module : m)),
-            }));
-        });
-
-        const unsubRemoved = subscribe(url, "module-removed", (e) => {
-            const { id } = JSON.parse(e.data);
-            setDashboard((prev) => ({
-                ...prev,
-                modules: prev.modules.filter((m) => m.id !== id),
-            }));
-        });
-
-        return () => {
-            unsubLayout();
-            unsubAdded();
-            unsubUpdated();
-            unsubRemoved();
-        };
-    }, [userId, subscribe]);
+        return () => clearInterval(interval);
+    }, [userId, load]);
 
     // =====================================================
     // Layout

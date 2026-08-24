@@ -21,6 +21,10 @@ export default function useWeather(locationId) {
             setError(null);
         } catch (error) {
             console.error(error);
+            // Keep showing the last-known weather rather than clearing it —
+            // a transient failure (e.g. backend cold start) shouldn't blank
+            // the module — but surface the error so it's visible that the
+            // data on screen may be stale, rather than looking up to date.
             setError(error);
         } finally {
             setLoading(false);

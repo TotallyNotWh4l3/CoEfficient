@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { useRealtime } from "../context/RealtimeContext";
 import announcementService from "../services/announcementService";
+
+const POLL_INTERVAL_MS = 45000;
 
 export default function useAnnouncements({ recentOnly = true, live = true } = {}) {
     const [announcements, setAnnouncements] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { subscribe } = useRealtime();
 
     const load = useCallback(async () => {
         setIsLoading(true);
@@ -30,47 +30,19 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
         load();
     }, [load]);
 
+    // Polling replaces the old SSE-based live sync (removed to avoid holding
+    // long-lived connections open on free-tier hosting, which was causing
+    // the backend to degrade under sustained load). Re-fetches the full
+    // list on an interval instead of listening for individual item events.
     useEffect(() => {
         if (!live) return undefined;
 
-        const url = announcementService.streamUrl();
+        const interval = setInterval(() => {
+            load();
+        }, POLL_INTERVAL_MS);
 
-        const upsert = (item) => {
-            setAnnouncements((prev) => {
-                const list = Array.isArray(prev) ? prev : [];
-                const exists = list.some((a) => a.id === item.id);
-                const next = exists
-                    ? list.map((a) => (a.id === item.id ? item : a))
-                    : [item, ...list];
-                return next
-                    .filter((a) => !a.isDeleted && !a.isArchived)
-                    .sort((a, b) => {
-                        if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
-                        return new Date(b.createdAt) - new Date(a.createdAt);
-                    })
-                    .slice(0, recentOnly ? 5 : undefined);
-            });
-        };
-        const remove = (item) => {
-            setAnnouncements((prev) =>
-                Array.isArray(prev) ? prev.filter((a) => a.id !== item.id) : [],
-            );
-        };
-
-        const unsub1 = subscribe(url, "created", (e) => upsert(JSON.parse(e.data)));
-        const unsub2 = subscribe(url, "updated", (e) => upsert(JSON.parse(e.data)));
-        const unsub3 = subscribe(url, "restored", (e) => upsert(JSON.parse(e.data)));
-        const unsub4 = subscribe(url, "deleted", (e) => remove(JSON.parse(e.data)));
-        const unsub5 = subscribe(url, "archived", (e) => remove(JSON.parse(e.data)));
-
-        return () => {
-            unsub1();
-            unsub2();
-            unsub3();
-            unsub4();
-            unsub5();
-        };
-    }, [live, recentOnly, subscribe]);
+        return () => clearInterval(interval);
+    }, [live, load]);
 
     const createAnnouncement = useCallback(async (payload) => {
         const created = await announcementService.create(payload);

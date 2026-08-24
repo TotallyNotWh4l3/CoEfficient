@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { useRealtime } from "../context/RealtimeContext";
 import scheduleService from "../services/scheduleService";
+
+const POLL_INTERVAL_MS = 45000;
 
 export default function useScheduleTags({ live = true } = {}) {
     const [tags, setTags] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { subscribe } = useRealtime();
 
     const load = useCallback(async () => {
         setIsLoading(true);
@@ -25,31 +25,17 @@ export default function useScheduleTags({ live = true } = {}) {
         load();
     }, [load]);
 
+    // Polling replaces the old SSE-based live sync (removed to avoid holding
+    // long-lived connections open on free-tier hosting).
     useEffect(() => {
         if (!live) return undefined;
 
-        const url = scheduleService.streamUrl();
+        const interval = setInterval(() => {
+            load();
+        }, POLL_INTERVAL_MS);
 
-        const upsert = (e) => {
-            const tag = JSON.parse(e.data);
-            setTags((prev) => {
-                const exists = prev.some((t) => t.id === tag.id);
-                return exists ? prev.map((t) => (t.id === tag.id ? tag : t)) : [...prev, tag];
-            });
-        };
-        const remove = (e) => {
-            const payload = JSON.parse(e.data);
-            setTags((prev) => prev.filter((t) => t.id !== payload.id));
-        };
-
-        const unsub1 = subscribe(url, "tag-updated", upsert);
-        const unsub2 = subscribe(url, "tag-removed", remove);
-
-        return () => {
-            unsub1();
-            unsub2();
-        };
-    }, [live, subscribe]);
+        return () => clearInterval(interval);
+    }, [live, load]);
 
     const upsertTag = useCallback(async (id, color) => {
         const tag = await scheduleService.upsertTag(id, color);

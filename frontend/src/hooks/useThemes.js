@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
-import { useRealtime } from "../context/RealtimeContext";
 import themeService from "../services/themeService";
+
+const POLL_INTERVAL_MS = 45000;
 
 export function useThemes({ live = true } = {}) {
     const { user } = useAuth();
-    const { subscribe } = useRealtime();
 
     const [themes, setThemes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,33 +33,17 @@ export function useThemes({ live = true } = {}) {
         load();
     }, [user, load]);
 
+    // Polling replaces the old SSE-based live sync (removed to avoid holding
+    // long-lived connections open on free-tier hosting).
     useEffect(() => {
         if (!live || !user) return undefined;
 
-        const url = themeService.streamUrl();
+        const interval = setInterval(() => {
+            load();
+        }, POLL_INTERVAL_MS);
 
-        const upsert = (e) => {
-            const theme = JSON.parse(e.data);
-            setThemes((prev) => {
-                const exists = prev.some((t) => t.id === theme.id);
-                return exists ? prev.map((t) => (t.id === theme.id ? theme : t)) : [...prev, theme];
-            });
-        };
-        const remove = (e) => {
-            const { id } = JSON.parse(e.data);
-            setThemes((prev) => prev.filter((t) => t.id !== id));
-        };
-
-        const unsub1 = subscribe(url, "theme-created", upsert);
-        const unsub2 = subscribe(url, "theme-updated", upsert);
-        const unsub3 = subscribe(url, "theme-removed", remove);
-
-        return () => {
-            unsub1();
-            unsub2();
-            unsub3();
-        };
-    }, [live, user, subscribe]);
+        return () => clearInterval(interval);
+    }, [live, user, load]);
 
     const createTheme = useCallback(async (payload) => {
         const created = await themeService.create(payload);
