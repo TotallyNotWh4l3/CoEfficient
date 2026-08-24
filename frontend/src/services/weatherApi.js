@@ -11,7 +11,7 @@ import apiClient from "./apiClient";
  * which produces a transient network-level failure (not a real API error).
  * A short retry absorbs that without surfacing an error to the user.
  */
-export async function getWeather(locationId, { retries = 1, retryDelayMs = 2500 } = {}) {
+export async function getWeather(locationId, { retries = 1, retryDelayMs = 5000 } = {}) {
     try {
         const { data } = await apiClient.get("/weather", {
             params: locationId ? { locationId } : undefined,
