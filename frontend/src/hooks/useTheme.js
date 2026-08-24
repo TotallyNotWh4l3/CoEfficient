@@ -1,71 +1,36 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
-import themeService from "../services/themeService";
+import { useEffect } from "react";
+import { useSettings } from "./useSettings";
+import { useThemes } from "./useThemes";
 
-const POLL_INTERVAL_MS = 45000;
+function toKebabCase(value) {
+    return value.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+}
 
-export function useThemes({ live = true } = {}) {
-    const { user } = useAuth();
-
-    const [themes, setThemes] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const load = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const data = await themeService.getAll();
-            setThemes(Array.isArray(data) ? data : []);
-        } catch (e) {
-            setError(e.message || "Failed to load themes.");
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+export function useTheme() {
+    const { settings, loading: settingsLoading } = useSettings();
+    const { themes, loading: themesLoading } = useThemes();
 
     useEffect(() => {
-        if (!user) {
-            setThemes([]);
-            setLoading(false);
+        if (settingsLoading || themesLoading || !settings) return;
+
+        const themeId = settings?.preferences?.appearance?.currentTheme;
+        const theme = themes.find((t) => t.id === themeId);
+
+        if (!theme) {
+            console.warn("[Theme] Theme not found:", themeId);
             return;
         }
-        load();
-    }, [user, load]);
 
-    // Polling replaces the old SSE-based live sync (removed to avoid holding
-    // long-lived connections open on free-tier hosting).
-    useEffect(() => {
-        if (!live || !user) return undefined;
+        const root = document.documentElement;
 
-        const interval = setInterval(() => {
-            load();
-        }, POLL_INTERVAL_MS);
+        const applyGroup = (prefix, values) => {
+            if (!values) return;
+            Object.entries(values).forEach(([key, value]) => {
+                root.style.setProperty(`--${prefix}-${toKebabCase(key)}`, value);
+            });
+        };
 
-        return () => clearInterval(interval);
-    }, [live, user, load]);
-
-    const createTheme = useCallback(async (payload) => {
-        const created = await themeService.create(payload);
-        setThemes((prev) => {
-            const exists = prev.some((t) => t.id === created.id);
-            return exists
-                ? prev.map((t) => (t.id === created.id ? created : t))
-                : [...prev, created];
-        });
-        return created;
-    }, []);
-
-    const updateTheme = useCallback(async (id, updates) => {
-        const updated = await themeService.update(id, updates);
-        setThemes((prev) => prev.map((t) => (t.id === id ? updated : t)));
-        return updated;
-    }, []);
-
-    const deleteTheme = useCallback(async (id) => {
-        await themeService.remove(id);
-        setThemes((prev) => prev.filter((t) => t.id !== id));
-    }, []);
-
-    return { themes, loading, error, reload: load, createTheme, updateTheme, deleteTheme };
+        applyGroup("color", theme.appearance.colors);
+        applyGroup("shadow", theme.appearance.shadows);
+    }, [settings, settingsLoading, themes, themesLoading]);
 }
