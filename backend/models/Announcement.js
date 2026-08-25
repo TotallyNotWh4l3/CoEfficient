@@ -8,6 +8,12 @@ import AnnouncementLog from "./AnnouncementLog.js";
 
 const ARCHIVE_AFTER_DAYS = 30; // tweak as needed, or move to shared/constants
 
+function toIsoUtc(sqliteTimestamp) {
+    if (!sqliteTimestamp) return null;
+    // SQLite CURRENT_TIMESTAMP: "YYYY-MM-DD HH:MM:SS" (UTC, no marker)
+    return sqliteTimestamp.replace(" ", "T") + "Z";
+}
+
 function parseRow(row) {
     if (!row) return null;
     return {
@@ -23,11 +29,11 @@ function parseRow(row) {
         authorRole: row.author_role,
         isEdited: !!row.is_edited,
         isDeleted: !!row.is_deleted,
-        deletedAt: row.deleted_at,
+        deletedAt: toIsoUtc(row.deleted_at),
         isArchived: !!row.is_archived,
-        archivedAt: row.archived_at,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
+        archivedAt: toIsoUtc(row.archived_at),
+        createdAt: toIsoUtc(row.created_at),
+        updatedAt: toIsoUtc(row.updated_at),
     };
 }
 

@@ -22,6 +22,13 @@ export default function ScheduleSettingsPanel({
     const totalDays = layout === "week" ? 7 : 30;
     const daysAhead = totalDays - daysBefore;
 
+    const windowHint = rt.windowHint
+        .replace("{before}", daysBefore)
+        .replace("{beforePlural}", daysBefore === 1 ? "" : "s")
+        .replace("{after}", daysAhead)
+        .replace("{afterPlural}", daysAhead === 1 ? "" : "s")
+        .replace("{total}", totalDays);
+
     return (
         <div className="sch-settings">
             <div className="sch-settings__header">
@@ -69,9 +76,7 @@ export default function ScheduleSettingsPanel({
                         <div className="sch-relative-inline">
                             <p className="sch-relative-hint">
                                 <Info className="icon-xxs" />
-                                Showing {daysBefore} day{daysBefore === 1 ? "" : "s"} before today,
-                                and {daysAhead} day{daysAhead === 1 ? "" : "s"} ahead ({totalDays}{" "}
-                                total).
+                                {windowHint}
                             </p>
 
                             <label className="sch-label">

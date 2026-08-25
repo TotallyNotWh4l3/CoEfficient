@@ -164,6 +164,12 @@ export default {
         modules: {
             title: "モジュール",
             description: "モジュールのデフォルト動作設定",
+            available: "モジュールを追加",
+            availableDescription: "ダッシュボードに追加するモジュールを選択します。",
+            current: "現在のモジュール",
+            currentDescription: "現在ダッシュボードに配置されているモジュールです。",
+            empty: "追加されたモジュールはありません。上のリストから選択してください。",
+            remove: "削除",
             weather: {
                 title: "天気",
             },
@@ -403,6 +409,14 @@ export default {
                 loading: "スケジュールを読み込み中…",
                 errorTitle: "スケジュールの読み込みに失敗しました",
                 retry: "再試行",
+            },
+            relative: {
+                configureTitle: "表示範囲の設定",
+                settingsTitle: "相対表示の設定",
+                daysBeforeLabel: "今日より前の表示日数:",
+                windowHint:
+                    "今日より前に{before}日間、今日より後に{after}日間を表示しています（合計{total}日間）。",
+                reset: "リセット",
             },
         },
         announcement: {

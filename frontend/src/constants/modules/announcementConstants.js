@@ -53,7 +53,7 @@ export function formatTimestamp(isoDate, time, locale) {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    const join = (n, unit) => (locale === "ja" ? `${n}${unit}` : `${n}${unit}`);
+    const join = (n, unit) => (locale === "ja" ? `${n}${unit}` : `${n} ${unit}`);
 
     if (diffDays >= 3) {
         return then.toISOString().split("T")[0];

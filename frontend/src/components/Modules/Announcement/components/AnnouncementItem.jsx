@@ -24,7 +24,7 @@ export default function AnnouncementItem({
     const Icon = cfg.icon;
     const title = isJapanese ? item.titleJa || item.title : item.title;
     const desc = isJapanese ? item.contentJa || item.content : item.content;
-    const stamp = formatTimestamp(item.createdAt - 9, t.time);
+    const stamp = formatTimestamp(item.createdAt, t.time);
     const modifiable = canModify(item);
 
     return (

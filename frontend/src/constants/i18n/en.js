@@ -171,6 +171,12 @@ export default {
         modules: {
             title: "Modules",
             description: "Default behavior configs for modules",
+            available: "Add a Module",
+            availableDescription: "Pick a module to add it to your dashboard.",
+            current: "Current Modules",
+            currentDescription: "Modules currently on your dashboard.",
+            empty: "No modules added yet — pick one above to get started.",
+            remove: "Remove",
             weather: {
                 title: "Weather",
             },
@@ -409,6 +415,14 @@ export default {
                 loading: "Loading schedule…",
                 errorTitle: "Failed to load schedule",
                 retry: "Retry",
+            },
+            relative: {
+                configureTitle: "Configure rolling window",
+                settingsTitle: "Relative View Settings",
+                daysBeforeLabel: "Days before today:",
+                windowHint:
+                    "Showing {before} day{beforePlural} before today, and {after} day{afterPlural} ahead ({total} total).",
+                reset: "Reset",
             },
         },
         announcement: {
