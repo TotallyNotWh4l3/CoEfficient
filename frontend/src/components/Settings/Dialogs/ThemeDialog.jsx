@@ -40,10 +40,52 @@ const COLOR_GROUPS = [
 
 const SHADOW_FIELDS = ["sm", "md", "lg"];
 
+const HEX_COLOR_PATTERN = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+
 function ColorField({ label, value, onChange, disabled }) {
+    const colorInputRef = useRef(null);
+
+    // <input type="color"> only accepts #rrggbb — some theme values here
+    // are rgba(...) (e.g. accentMuted, accentBorder), so fall back to a
+    // neutral hex for the picker itself when the current value isn't a
+    // plain hex. Picking a new color always writes back a plain hex,
+    // which will drop any alpha component the field previously had.
+    const pickerValue = HEX_COLOR_PATTERN.test(value ?? "") ? value : "#000000";
+
+    const openPicker = () => {
+        if (disabled) return;
+        colorInputRef.current?.click();
+    };
+
     return (
         <div className="theme-dialog__color-field">
-            <span className="theme-dialog__swatch" style={{ background: value || "transparent" }} />
+            <span
+                className="theme-dialog__swatch"
+                style={{
+                    background: value || "transparent",
+                    cursor: disabled ? "default" : "pointer",
+                }}
+                onClick={openPicker}
+                role="button"
+                tabIndex={disabled ? -1 : 0}
+                aria-label={`Pick a color for ${label}`}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openPicker();
+                    }
+                }}
+            />
+            <input
+                ref={colorInputRef}
+                type="color"
+                className="theme-dialog__color-picker-input"
+                value={pickerValue}
+                onChange={(e) => onChange(e.target.value)}
+                disabled={disabled}
+                tabIndex={-1}
+                aria-hidden="true"
+            />
             <div className="theme-dialog__color-inputs">
                 <span className="theme-dialog__color-label">{label}</span>
                 <input
