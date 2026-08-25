@@ -10,6 +10,7 @@ router.use(authenticate, requireRole("admin"));
 router.get("/", UserController.list);
 router.post("/", UserController.create);
 router.patch("/:id/role", UserController.updateRole);
+router.patch("/:id/password", UserController.updatePassword);
 router.delete("/:id", UserController.remove);
 
 export default router;

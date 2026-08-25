@@ -45,6 +45,15 @@ async function updateRole(id, role) {
     return result.rowsAffected;
 }
 
+async function updatePassword(id, passwordHash) {
+    const result = await db.execute({
+        sql: `UPDATE users SET password_hash = ? WHERE id = ?`,
+        args: [passwordHash, id],
+    });
+
+    return result.rowsAffected;
+}
+
 async function deleteById(id) {
     const result = await db.execute({
         sql: `DELETE FROM users WHERE id = ?`,
@@ -60,5 +69,6 @@ export default {
     findAll,
     create,
     updateRole,
+    updatePassword,
     deleteById,
 };

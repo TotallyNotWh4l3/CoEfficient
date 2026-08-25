@@ -72,6 +72,35 @@ async function updateRole(req, res) {
     }
 }
 
+// Admin-only: set a user's password directly (no knowledge of the old
+// password required — this is an administrative override, not a
+// self-service "change my password" flow).
+async function updatePassword(req, res) {
+    try {
+        const { id } = req.params;
+        const { password } = req.body;
+
+        if (!password || password.length < 8) {
+            return res.status(400).json({
+                message: "Password must be at least 8 characters.",
+            });
+        }
+
+        const target = await User.findById(id);
+        if (!target) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        const passwordHash = await Password.hashPassword(password);
+        await User.updatePassword(id, passwordHash);
+
+        res.json({ message: "Password updated." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 async function remove(req, res) {
     try {
         const { id } = req.params;
@@ -96,5 +125,6 @@ export default {
     list,
     create,
     updateRole,
+    updatePassword,
     remove,
 };

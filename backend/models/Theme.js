@@ -61,7 +61,10 @@ async function create(theme) {
     return id;
 }
 
-async function update(id, updates) {
+// allowBuiltIn: only admins should ever pass true (enforced in the
+// controller) — lets an admin edit a built-in theme's appearance/name,
+// while everyone else remains blocked at the SQL level as before.
+async function update(id, updates, allowBuiltIn = false) {
     const fields = [];
     const values = [];
 
@@ -81,11 +84,13 @@ async function update(id, updates) {
 
     values.push(id);
 
+    const builtInClause = allowBuiltIn ? "" : "AND built_in = 0";
+
     const result = await db.execute({
         sql: `
             UPDATE themes
             SET ${fields.join(", ")}
-            WHERE id = ? AND built_in = 0
+            WHERE id = ? ${builtInClause}
         `,
         args: values,
     });

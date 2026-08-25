@@ -2,13 +2,13 @@ import User from "../models/User.js";
 import Password from "../utils/password.js";
 
 const USERS_TO_SEED = [
-    { username: "admin", password: "wasd", role: "admin" },
+    { username: "admin", password: "admin", role: "admin" },
 
-    { username: "manager1", password: "wasd", role: "manager" },
-    { username: "manager2", password: "wasd", role: "manager" },
+    { username: "manager1", password: "password", role: "manager" },
+    { username: "manager2", password: "password", role: "manager" },
 
-    { username: "user1", password: "wasd", role: "user" },
-    { username: "user2", password: "wasd", role: "user" },
+    { username: "user1", password: "password", role: "user" },
+    { username: "user2", password: "password", role: "user" },
 ];
 
 async function seed() {

@@ -4,6 +4,7 @@ import Theme from "../models/Theme.js";
 import { broadcast, subscribe } from "../services/themesSyncService.js";
 
 const isManagerOrAbove = (user) => ["manager", "admin"].includes(user.role?.toLowerCase());
+const isAdmin = (user) => user.role?.toLowerCase() === "admin";
 
 const themesController = {
     async getAll(req, res) {
@@ -60,11 +61,16 @@ const themesController = {
             if (!existing) {
                 return res.status(404).json({ message: "Theme not found." });
             }
-            if (existing.builtIn) {
-                return res.status(403).json({ message: "Built-in themes can't be edited." });
+
+            // Built-in themes can only be edited by admins — managers are
+            // still blocked, same as before, for anything marked built-in.
+            if (existing.builtIn && !isAdmin(req.user)) {
+                return res
+                    .status(403)
+                    .json({ message: "Built-in themes can only be edited by an admin." });
             }
 
-            await Theme.update(req.params.id, req.body);
+            await Theme.update(req.params.id, req.body, existing.builtIn && isAdmin(req.user));
             const updated = await Theme.findById(req.params.id);
             broadcast("theme-updated", updated);
             res.json(updated);
@@ -84,6 +90,8 @@ const themesController = {
             if (!existing) {
                 return res.status(404).json({ message: "Theme not found." });
             }
+            // Deleting a built-in theme stays blocked for everyone,
+            // including admins — only editing is allowed.
             if (existing.builtIn) {
                 return res.status(403).json({ message: "Built-in themes can't be deleted." });
             }
