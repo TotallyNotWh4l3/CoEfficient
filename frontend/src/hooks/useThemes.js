@@ -11,7 +11,7 @@ export function useThemes({ live = true } = {}) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const load = useCallback(async () => {
+    const load = useCallback(async ({ silent = false } = {}) => {
         setLoading(true);
         setError(null);
         try {
@@ -39,7 +39,7 @@ export function useThemes({ live = true } = {}) {
         if (!live || !user) return undefined;
 
         const interval = setInterval(() => {
-            load();
+            load({ silent: true });
         }, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);

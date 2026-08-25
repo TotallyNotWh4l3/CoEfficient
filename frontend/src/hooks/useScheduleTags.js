@@ -8,8 +8,8 @@ export default function useScheduleTags({ live = true } = {}) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const load = useCallback(async () => {
-        setIsLoading(true);
+    const load = useCallback(async ({ silent = false } = {}) => {
+        if (!silent) setIsLoading(true);
         setError(null);
         try {
             const data = await scheduleService.getTags();
@@ -17,7 +17,7 @@ export default function useScheduleTags({ live = true } = {}) {
         } catch (e) {
             setError(e.message || "Failed to load tags.");
         } finally {
-            setIsLoading(false);
+            if (!silent) setIsLoading(false);
         }
     }, []);
 
@@ -31,7 +31,7 @@ export default function useScheduleTags({ live = true } = {}) {
         if (!live) return undefined;
 
         const interval = setInterval(() => {
-            load();
+            load({ silent: true });
         }, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);

@@ -1,4 +1,4 @@
-CoEfficient
+CoEfficient                      
 ├── README.md
 ├── backend
 │   ├── config
@@ -12,10 +12,10 @@ CoEfficient
 │   │   ├── scheduleController.js
 │   │   ├── settingsController.js
 │   │   ├── themesController.js
+│   │   ├── userController.js
 │   │   └── weatherController.js
 │   ├── database
 │   │   ├── backfillLocations.js
-│   │   ├── coefficient.db
 │   │   ├── init.js
 │   │   ├── schema
 │   │   │   ├── announcementLogs.js
@@ -34,7 +34,8 @@ CoEfficient
 │   │   ├── seedLocations.js
 │   │   └── seedThemes.js
 │   ├── middleware
-│   │   └── authMiddleware.js
+│   │   ├── authMiddleware.js
+│   │   └── requireRole.js
 │   ├── migration
 │   │   ├── 001_create_users.js
 │   │   ├── 002_create_user_settings.js
@@ -74,6 +75,7 @@ CoEfficient
 │   │   ├── scheduleRoutes.js
 │   │   ├── settingsRoutes.js
 │   │   ├── themeRoutes.js
+│   │   ├── userRoutes.js
 │   │   └── weatherRoutes.js
 │   ├── server.js
 │   ├── services
@@ -145,7 +147,7 @@ CoEfficient
 │   │   │   │   │   │   ├── ScheduleFooter.jsx
 │   │   │   │   │   │   ├── ScheduleHeader.jsx
 │   │   │   │   │   │   ├── ScheduleLayoutToggle.jsx
-│   │   │   │   │   │   ├── ScheduleRelativeSettings.jsx
+│   │   │   │   │   │   ├── ScheduleSettingsPanel.jsx
 │   │   │   │   │   │   ├── ScheduleTagManagerModal.jsx
 │   │   │   │   │   │   ├── ScheduleTagPicker.jsx
 │   │   │   │   │   │   └── ScheduleViewToggle.jsx
@@ -186,6 +188,7 @@ CoEfficient
 │   │   │   │   │   │       ├── DialogManager.jsx
 │   │   │   │   │   │       ├── DialogOverlay.jsx
 │   │   │   │   │   │       └── dialog.css
+│   │   │   │   │   ├── location-list.css
 │   │   │   │   │   └── settings-components.css
 │   │   │   │   ├── Content
 │   │   │   │   │   ├── SettingsContent.jsx
@@ -201,10 +204,12 @@ CoEfficient
 │   │   │   │   │   ├── DashboardSettings.jsx
 │   │   │   │   │   ├── InterfaceSettings.jsx
 │   │   │   │   │   ├── ModuleSettings.jsx
+│   │   │   │   │   ├── UserManagementSettings.jsx
 │   │   │   │   │   ├── about-settings.css
 │   │   │   │   │   ├── dashboard-settings.css
 │   │   │   │   │   ├── interface-settings.css
-│   │   │   │   │   └── module-settings.css
+│   │   │   │   │   ├── module-settings.css
+│   │   │   │   │   └── user-management-settings.css
 │   │   │   │   ├── Settings.jsx
 │   │   │   │   ├── Sidebar
 │   │   │   │   │   ├── SettingsSidebar.jsx
@@ -250,6 +255,7 @@ CoEfficient
 │   │   │   ├── useSettings.js
 │   │   │   ├── useTheme.js
 │   │   │   ├── useThemes.js
+│   │   │   ├── useUsers.js
 │   │   │   └── useWeather.js
 │   │   ├── main.jsx
 │   │   ├── services
@@ -262,6 +268,7 @@ CoEfficient
 │   │   │   ├── scheduleService.js
 │   │   │   ├── settingsService.js
 │   │   │   ├── themeService.js
+│   │   │   ├── userService.js
 │   │   │   └── weatherApi.js
 │   │   └── styles
 │   │       ├── global.css
@@ -269,14 +276,15 @@ CoEfficient
 │   └── vite.config.js
 ├── package-lock.json
 ├── package.json
-└── shared
-    └── constants
-        ├── defaults
-        │   ├── defaultDashboard.js
-        │   └── defaultSettings.js
-        ├── themes
-        │   ├── darkDefault.js
-        │   └── lightDefault.js
-        └── weather
-            ├── weatherCodes.js
-            └── weatherGradients.js
+├── shared
+│   └── constants
+│       ├── defaults
+│       │   ├── defaultDashboard.js
+│       │   └── defaultSettings.js
+│       ├── themes
+│       │   ├── darkDefault.js
+│       │   └── lightDefault.js
+│       └── weather
+│           ├── weatherCodes.js
+│           └── weatherGradients.js
+└── vercel.json

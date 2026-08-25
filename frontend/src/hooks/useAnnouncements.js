@@ -8,23 +8,26 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const load = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = recentOnly
-                ? await announcementService.getRecent()
-                : await announcementService.getAll();
-            setAnnouncements(Array.isArray(data) ? data : []);
-            if (!Array.isArray(data)) {
-                console.warn("[useAnnouncements] Expected an array, got:", data);
+    const load = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!silent) setIsLoading(true);
+            setError(null);
+            try {
+                const data = recentOnly
+                    ? await announcementService.getRecent()
+                    : await announcementService.getAll();
+                setAnnouncements(Array.isArray(data) ? data : []);
+                if (!Array.isArray(data)) {
+                    console.warn("[useAnnouncements] Expected an array, got:", data);
+                }
+            } catch (e) {
+                setError(e.message || "Failed to load announcements.");
+            } finally {
+                if (!silent) setIsLoading(false);
             }
-        } catch (e) {
-            setError(e.message || "Failed to load announcements.");
-        } finally {
-            setIsLoading(false);
-        }
-    }, [recentOnly]);
+        },
+        [recentOnly],
+    );
 
     useEffect(() => {
         load();
@@ -34,11 +37,13 @@ export default function useAnnouncements({ recentOnly = true, live = true } = {}
     // long-lived connections open on free-tier hosting, which was causing
     // the backend to degrade under sustained load). Re-fetches the full
     // list on an interval instead of listening for individual item events.
+    // silent: true so a background refresh doesn't flip isLoading and
+    // flash the list back to its loading state when nothing visibly changed.
     useEffect(() => {
         if (!live) return undefined;
 
         const interval = setInterval(() => {
-            load();
+            load({ silent: true });
         }, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);

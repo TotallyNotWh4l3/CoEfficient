@@ -13,30 +13,33 @@ export default function useSchedule({
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const load = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            let data;
-            if (scope === "today") {
-                data = await scheduleService.getToday();
-            } else if (scope === "upcoming") {
-                data = await scheduleService.getUpcoming(limit);
-            } else if (scope === "range" && range?.start && range?.end) {
-                data = await scheduleService.getRange(range.start, range.end);
-            } else {
-                data = await scheduleService.getAll();
+    const load = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!silent) setIsLoading(true);
+            setError(null);
+            try {
+                let data;
+                if (scope === "today") {
+                    data = await scheduleService.getToday();
+                } else if (scope === "upcoming") {
+                    data = await scheduleService.getUpcoming(limit);
+                } else if (scope === "range" && range?.start && range?.end) {
+                    data = await scheduleService.getRange(range.start, range.end);
+                } else {
+                    data = await scheduleService.getAll();
+                }
+                setEvents(Array.isArray(data) ? data : []);
+                if (!Array.isArray(data)) {
+                    console.warn("[useSchedule] Expected an array, got:", data);
+                }
+            } catch (e) {
+                setError(e.message || "Failed to load schedule.");
+            } finally {
+                if (!silent) setIsLoading(false);
             }
-            setEvents(Array.isArray(data) ? data : []);
-            if (!Array.isArray(data)) {
-                console.warn("[useSchedule] Expected an array, got:", data);
-            }
-        } catch (e) {
-            setError(e.message || "Failed to load schedule.");
-        } finally {
-            setIsLoading(false);
-        }
-    }, [scope, limit, range?.start, range?.end]);
+        },
+        [scope, limit, range?.start, range?.end],
+    );
 
     useEffect(() => {
         load();
@@ -54,12 +57,14 @@ export default function useSchedule({
 
     // Polling replaces the old SSE-based live sync (removed to avoid holding
     // long-lived connections open on free-tier hosting). Re-fetches the
-    // current scope's list wholesale on an interval.
+    // current scope's list wholesale on an interval. silent: true so a
+    // background refresh doesn't flip isLoading and flash the list back to
+    // its loading state when nothing visibly changed.
     useEffect(() => {
         if (!live) return undefined;
 
         const interval = setInterval(() => {
-            load();
+            load({ silent: true });
         }, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);

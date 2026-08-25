@@ -1,10 +1,12 @@
 import { fetchWeather } from "./openMeteoService.js";
 import {
-    getCachedWeather,
+    getCachedWeatherRow,
     setCachedWeather,
     getLatestWeatherTimestamp,
 } from "./weatherDataStore.js";
 import { formatWeather } from "./weatherFormatter.js";
+
+const FIFTEEN_MIN_MS = 15 * 60 * 1000;
 
 /**
  * @param {{ id: string, latitude: number, longitude: number, timezone?: string }} location
@@ -47,21 +49,23 @@ export async function getWeather(location) {
     }
 
     // 1. Check cache
-    const cached = await getCachedWeather(locationId);
+    const row = await getCachedWeatherRow(locationId);
 
-    if (cached) {
-        const ageMs = Date.now() - new Date(cached.fetched_at).getTime();
-        const FIFTEEN_MIN = 15 * 60 * 1000;
+    if (row?.payload?.current?.time) {
+        // Age the cache off the data's own timestamp (Open-Meteo's
+        // current.time), not off when we happened to store it — this is
+        // what actually reflects how current the weather reading is.
+        const dataAgeMs = Date.now() - new Date(row.payload.current.time).getTime();
 
-        if (ageMs <= FIFTEEN_MIN) {
+        if (dataAgeMs <= FIFTEEN_MIN_MS) {
             console.log("[Weather] Cache hit.");
-            return cached;
+            return row.payload;
         }
 
-        console.log("[Weather] Cache stale, refetching...");
+        console.log("[Weather] Cached data older than 15min, refetching...");
+    } else {
+        console.log("[Weather] No cache, fetching Open-Meteo...");
     }
-
-    console.log("[Weather] Fetching Open-Meteo...");
 
     // 2. Fetch raw weather
     const raw = await fetchWeather(latitude, longitude, timezone);

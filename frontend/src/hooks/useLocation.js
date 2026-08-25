@@ -13,8 +13,8 @@ export function useLocation({ live = true } = {}) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const load = useCallback(async () => {
-        setLoading(true);
+    const load = useCallback(async ({ silent = false } = {}) => {
+        if (!silent) setLoading(true);
         setError(null);
         try {
             const data = await locationService.getAll();
@@ -22,7 +22,7 @@ export function useLocation({ live = true } = {}) {
         } catch (e) {
             setError(e.message || "Failed to load locations.");
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     }, []);
 
@@ -41,7 +41,7 @@ export function useLocation({ live = true } = {}) {
         if (!live || !user) return undefined;
 
         const interval = setInterval(() => {
-            load();
+            load({ silent: true });
         }, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);

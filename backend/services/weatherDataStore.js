@@ -39,14 +39,12 @@ export function getLatestWeatherTimestamp(now = new Date()) {
     return latest.toISOString();
 }
 
-export async function getCachedWeather(locationId) {
-    const row = await WeatherData.findByLocationId(locationId);
-
-    if (!row || row.weather_timestamp !== getLatestWeatherTimestamp()) {
-        return null;
-    }
-
-    return row.payload;
+// Returns the raw cache row (or null) with no freshness judgement made here —
+// callers decide staleness themselves off the payload's own data (e.g.
+// payload.current.time), since that's what actually reflects how current
+// the weather data is, as opposed to when it happened to be stored.
+export async function getCachedWeatherRow(locationId) {
+    return WeatherData.findByLocationId(locationId);
 }
 
 export async function setCachedWeather(locationId, weatherTimestamp, data) {

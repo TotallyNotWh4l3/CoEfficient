@@ -6,8 +6,8 @@ export default function useUsers() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const load = useCallback(async () => {
-        setIsLoading(true);
+    const load = useCallback(async ({ silent = false } = {}) => {
+        if (!silent) setIsLoading(true);
         setError(null);
         try {
             const data = await userService.getAll();
@@ -15,7 +15,7 @@ export default function useUsers() {
         } catch (e) {
             setError(e.response?.data?.message || e.message || "Failed to load users.");
         } finally {
-            setIsLoading(false);
+            if (!silent) setIsLoading(false);
         }
     }, []);
 
