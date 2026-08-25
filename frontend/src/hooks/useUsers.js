@@ -34,10 +34,23 @@ export default function useUsers() {
         setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role } : u)));
     }, []);
 
+    const updateUserPassword = useCallback(async (id, password) => {
+        await userService.updatePassword(id, password);
+    }, []);
+
     const deleteUser = useCallback(async (id) => {
         await userService.remove(id);
         setUsers((prev) => prev.filter((u) => u.id !== id));
     }, []);
 
-    return { users, isLoading, error, reload: load, createUser, updateUserRole, deleteUser };
+    return {
+        users,
+        isLoading,
+        error,
+        reload: load,
+        createUser,
+        updateUserRole,
+        updateUserPassword,
+        deleteUser,
+    };
 }

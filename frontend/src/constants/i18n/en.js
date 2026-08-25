@@ -76,6 +76,8 @@ export default {
                     titleCreate: "Create Theme",
                     titleEdit: "Edit Theme",
                     builtInNote: "Built-in themes can't be edited. Create a copy to customize it.",
+                    builtInAdminNote:
+                        "This is a built-in theme — as an admin, you can edit it, but it can't be deleted.",
                     nameLabel: "Name",
                     cancel: "Cancel",
                     save: "Save",
@@ -114,7 +116,7 @@ export default {
                     search: {
                         label: "Search",
                         description:
-                            "Search for a city or place — selecting a result fills in its coordinates.",
+                            "Search for a city or place — selecting a result fills in its coordinates. English Input Only.",
                         placeholder: "Tokyo",
                         button: "Search",
                         searching: "Searching...",
@@ -208,6 +210,23 @@ export default {
                 title: "Delete user",
                 confirm: 'Delete user "{username}"? This cannot be undone.',
                 genericError: "Failed to delete user.",
+            },
+            setPassword: {
+                title: "Set Password",
+                buttonTitle: "Set password",
+                description:
+                    'Set a new password for "{username}". They\'ll need to use it next time they log in.',
+                newPasswordLabel: "New Password",
+                newPasswordPlaceholder: "At least 8 characters",
+                confirmPasswordLabel: "Confirm Password",
+                confirmPasswordPlaceholder: "Re-enter password",
+                submit: "Set Password",
+                submitting: "Saving…",
+                cancel: "Cancel",
+                validationErrorLength: "Password must be at least 8 characters.",
+                validationErrorMismatch: "Passwords do not match.",
+                genericError: "Failed to update password.",
+                successToast: 'Password updated for "{username}".',
             },
         },
         about: {

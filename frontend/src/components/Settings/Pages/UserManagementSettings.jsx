@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, Trash2 } from "lucide-react";
+import { Users, Trash2, KeyRound } from "lucide-react";
 
 import "./user-management-settings.css";
 
@@ -8,14 +8,17 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useLanguage } from "../../../hooks/useLanguage";
 
 import Settings from "../Components/SettingsComponents";
+import SetPasswordDialog from "../Dialogs/SetPasswordDialog";
 
 export default function UserManagementSettings() {
-    const { users, isLoading, error, createUser, updateUserRole, deleteUser } = useUsers();
+    const { users, isLoading, error, createUser, updateUserRole, updateUserPassword, deleteUser } =
+        useUsers();
     const { user: currentUser } = useAuth();
 
     const T = useLanguage();
     const copy = T?.settings?.users ?? {};
     const roleLabels = copy.roles ?? { user: "User", manager: "Manager", admin: "Admin" };
+    const passwordCopy = copy.setPassword ?? {};
 
     const ROLE_OPTIONS = [
         { id: "user", label: roleLabels.user },
@@ -26,6 +29,8 @@ export default function UserManagementSettings() {
     const [form, setForm] = useState({ username: "", password: "", role: "user" });
     const [formError, setFormError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [passwordDialogUser, setPasswordDialogUser] = useState(null);
+    const [passwordToast, setPasswordToast] = useState("");
 
     const handleCreate = async (e) => {
         e.preventDefault();
@@ -65,6 +70,19 @@ export default function UserManagementSettings() {
                     "Failed to delete user.",
             );
         }
+    };
+
+    const handleSetPassword = async (password) => {
+        await updateUserPassword(passwordDialogUser.id, password);
+        const username = passwordDialogUser.username;
+        setPasswordDialogUser(null);
+        setPasswordToast(
+            (passwordCopy.successToast ?? 'Password updated for "{username}".').replace(
+                "{username}",
+                username,
+            ),
+        );
+        setTimeout(() => setPasswordToast(""), 3000);
     };
 
     return (
@@ -135,6 +153,12 @@ export default function UserManagementSettings() {
             <Settings.Section>
                 <Settings.SectionTitle>{copy.allUsers?.title ?? "All Users"}</Settings.SectionTitle>
 
+                {passwordToast && (
+                    <Settings.Description className="user-mgmt-settings__toast">
+                        {passwordToast}
+                    </Settings.Description>
+                )}
+
                 {isLoading ? (
                     <Settings.Description>
                         {copy.allUsers?.loading ?? "Loading users…"}
@@ -162,6 +186,14 @@ export default function UserManagementSettings() {
                             />
 
                             <button
+                                className="user-mgmt-settings__password-btn"
+                                onClick={() => setPasswordDialogUser(u)}
+                                title={passwordCopy.buttonTitle ?? "Set password"}
+                            >
+                                <KeyRound size={16} />
+                            </button>
+
+                            <button
                                 className="user-mgmt-settings__delete-btn"
                                 disabled={u.id === currentUser?.id}
                                 onClick={() => handleDelete(u.id, u.username)}
@@ -173,6 +205,14 @@ export default function UserManagementSettings() {
                     ))
                 )}
             </Settings.Section>
+
+            {passwordDialogUser && (
+                <SetPasswordDialog
+                    username={passwordDialogUser.username}
+                    onConfirm={handleSetPassword}
+                    onClose={() => setPasswordDialogUser(null)}
+                />
+            )}
         </div>
     );
 }

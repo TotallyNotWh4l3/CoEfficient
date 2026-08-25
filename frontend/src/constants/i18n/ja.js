@@ -22,7 +22,7 @@ export default {
     dashboard: {
         header: {
             title: "Co:Efficient",
-            subTitle: "アップデート",
+            subTitle: "更新情報",
         },
     },
     settings: {
@@ -32,23 +32,23 @@ export default {
             interface: "インターフェース",
             dashboard: "ダッシュボード",
             modules: "モジュール",
-            about: "アプリについて",
+            about: "このアプリについて",
         },
         interface: {
             title: "インターフェース",
             description: "アプリケーションの外観と言語の設定",
             language: {
                 title: "言語",
-                description: "アプリケーションの言語選択",
+                description: "アプリケーション言語の選択",
                 add: "場所を追加",
             },
             appearance: {
                 title: "外観",
-                description: "ビジュアルオプションとUIスタイリング",
+                description: "視覚的オプションとUIスタイリング",
                 current: "現在のテーマ",
                 themes: {
                     title: "テーマ",
-                    description: "プリセットまたはカスタムテーマ",
+                    description: "プリセットおよびカスタムテーマ",
                     builtIn: "プリセット",
                     custom: "カスタム",
                     apply: "適用",
@@ -58,18 +58,20 @@ export default {
                 },
                 customization: {
                     title: "カスタマイズ",
-                    description: "カラー、タイポグラフィ、ボーダー、エフェクト",
+                    description: "カラー、タイポグラフィ、枠線、エフェクト",
                     colors: "カラー",
                     typography: "タイポグラフィ",
-                    borders: "ボーダー",
+                    borders: "枠線",
                     effects: "エフェクト",
                 },
                 dialog: {
                     titleCreate: "テーマを作成",
                     titleEdit: "テーマを編集",
                     builtInNote:
-                        "プリセットテーマは編集できません。カスタマイズするにはコピーを作成してください。",
-                    nameLabel: "テーマ名",
+                        "プリセットテーマは編集できません。コピーを作成してカスタマイズしてください。",
+                    builtInAdminNote:
+                        "これはプリセットテーマです。管理者として編集は可能ですが、削除はできません。",
+                    nameLabel: "名前",
                     cancel: "キャンセル",
                     save: "保存",
                     saving: "保存中...",
@@ -78,11 +80,11 @@ export default {
                     deleteFailed: "テーマの削除に失敗しました。もう一度お試しください。",
                     groups: {
                         accent: "アクセント",
-                        surface: "背景 & サーフェス",
+                        surface: "背景＆サーフェス",
                         element: "エレメント",
-                        border: "ボーダー",
+                        border: "枠線",
                         text: "テキスト",
-                        input: "入力項目",
+                        input: "入力フィールド",
                         status: "ステータス",
                         shadows: "シャドウ",
                     },
@@ -90,7 +92,7 @@ export default {
             },
             location: {
                 title: "場所",
-                description: "アプリケーションで使用する場所を管理します。",
+                description: "アプリケーションで使用する場所の管理。",
                 current: {
                     title: "デフォルトの場所",
                     description: "デフォルトとして使用する場所を選択します。",
@@ -102,20 +104,21 @@ export default {
                     titleEdit: "場所を編集",
                     mode: {
                         search: "場所を検索",
-                        coordinates: "座標指定",
+                        coordinates: "座標",
                     },
                     search: {
                         label: "検索",
-                        description: "都市や場所を検索 — 選択すると自動的に座標が入力されます。※英語入力のみ可",
-                        placeholder: "東京",
+                        description:
+                            "都市や場所を検索します。結果を選択すると座標が自動入力されます（英語入力のみ）。",
+                        placeholder: "Tokyo",
                         button: "検索",
                         searching: "検索中...",
-                        noResults: "一致する場所が見つかりませんでした。",
+                        noResults: "一致する場所が見つかりません。",
                         failed: "検索に失敗しました。もう一度お試しください。",
                     },
                     name: {
                         label: "名前",
-                        description: "任意 — 空欄の場合は座標から自動入力されます。",
+                        description: "任意 — 空欄の場合、座標から自動入力されます。",
                         placeholder: "座標から自動入力",
                     },
                     latitude: {
@@ -132,7 +135,7 @@ export default {
                     },
                     gps: {
                         button: "現在地を使用",
-                        locating: "位置情報を取得中...",
+                        locating: "取得中...",
                     },
                     footer: {
                         cancel: "キャンセル",
@@ -154,7 +157,7 @@ export default {
                 padding: "パディング",
             },
             moduleDefaults: {
-                title: "モジュールのデフォルト設定",
+                title: "モジュールのデフォルト",
                 description: "ダッシュボードにモジュールを追加した際に適用される初期設定。",
             },
         },
@@ -173,15 +176,15 @@ export default {
         },
         users: {
             title: "ユーザー管理",
-            description: "他のユーザーの account 作成と権限管理を行います。",
+            description: "アカウントの作成および他ユーザーの権限管理。",
             addUser: {
-                title: "ユーザー追加",
+                title: "ユーザーを追加",
                 usernameLabel: "ユーザー名",
                 usernamePlaceholder: "例: jsmith",
                 passwordLabel: "パスワード",
                 passwordPlaceholder: "仮パスワード",
-                roleLabel: "権限",
-                submit: "ユーザー作成",
+                roleLabel: "権限（ロール）",
+                submit: "ユーザーを作成",
                 submitting: "作成中…",
                 validationError: "ユーザー名とパスワードは必須です。",
                 genericError: "ユーザーの作成に失敗しました。",
@@ -189,7 +192,7 @@ export default {
             allUsers: {
                 title: "全ユーザー",
                 loading: "ユーザーを読み込み中…",
-                joined: "{date} に登録",
+                joined: "登録日: {date}",
             },
             roles: {
                 user: "一般ユーザー",
@@ -197,21 +200,38 @@ export default {
                 admin: "管理者",
             },
             delete: {
-                title: "ユーザーの削除",
+                title: "ユーザーを削除",
                 confirm: 'ユーザー "{username}" を削除しますか？この操作は取り消せません。',
                 genericError: "ユーザーの削除に失敗しました。",
             },
+            setPassword: {
+                title: "パスワードを設定",
+                buttonTitle: "パスワードを設定",
+                description:
+                    '"{username}" の新しいパスワードを設定します。次回ログイン時から新しいパスワードが適用されます。',
+                newPasswordLabel: "新しいパスワード",
+                newPasswordPlaceholder: "8文字以上",
+                confirmPasswordLabel: "パスワードの確認",
+                confirmPasswordPlaceholder: "パスワードを再入力",
+                submit: "パスワードを設定",
+                submitting: "保存中…",
+                cancel: "キャンセル",
+                validationErrorLength: "パスワードは8文字以上である必要があります。",
+                validationErrorMismatch: "パスワードが一致しません。",
+                genericError: "パスワードの更新に失敗しました。",
+                successToast: '"{username}" のパスワードを更新しました。',
+            },
         },
         about: {
-            title: "アプリについて",
+            title: "このアプリについて",
             description: "アプリ情報とクレジット",
             versionTitle: "バージョン",
             resetSectionTitle: "リセット",
             resetSectionDescription: "すべての設定を初期値に戻します。",
-            resetButton: "初期設定に戻す",
+            resetButton: "デフォルトにリセット",
             resetTitle: "設定をリセットしますか？",
             resetMessage:
-                "環境設定、テーマ、モジュールの初期設定がすべてリセットされます。この操作は取り消せません。",
+                "環境設定、テーマ、およびモジュールの初期設定がリセットされます。この操作は取り消せません。",
             resetConfirm: "リセット",
         },
     },
@@ -226,16 +246,16 @@ export default {
                 precipitation: "降水量",
                 loading: "天気を読み込み中...",
                 error: "天気情報を取得できませんでした",
-                noData: "天気データがありません",
+                noData: "天気データを受信できませんでした",
                 retry: "再試行",
             },
             forecast: {
                 title: "予報トレンド",
                 updated: "更新日時:",
-                hourly: "時間別",
-                daily: "7日間トレンド",
+                hourly: "時間ごとの天気",
+                daily: "7日間のトレンド",
                 hourlyHint: "← 上のカードをクリックして時間を切り替え",
-                dailyHint: "7日間多変量トレンドグラフ",
+                dailyHint: "7日間の多変量トレンドグラフ",
                 today: "今日",
                 tomorrow: "明日",
                 dayFallback: "{n}日目",
@@ -249,25 +269,25 @@ export default {
                 title: "天気カードの設定",
                 back: "戻る",
                 layout: {
-                    title: "レイアウト表示モード",
+                    title: "表示レイアウトモード",
                     combined: {
-                        title: "統合表示",
+                        title: "コンバインド表示",
                         description:
-                            "リアルタイムの天気と7日間の詳細予報をマスターブロック内に両方表示します。",
+                            "現在の天気と7日間の拡張予報の両方を1つのマスターベントーブロックに表示します。",
                     },
                     current: {
                         title: "現在の天気のみ",
                         description:
-                            "予報テーブルを表示せず、現在の気象状況を高密度でコンパクトに表示します。",
+                            "現在の詳細な気象コンディションのみを表示し、予報テーブルは表示しません。",
                     },
                     forecast: {
                         title: "予報トレンドのみ",
                         description:
-                            "現在のステータス表示を最小限にし、7日間の詳細予報とSVGグラフを表示します。",
+                            "7日間の拡張予報とSVGチャートを中心に表示し、現在の状況は最小限に抑えます。",
                     },
                 },
                 active: "● アクティブ",
-                tip: "ヒント: タイルのレスポンシブ列数を変更するには、メイン設定のアドバンスト管理者コントロールを使用してください。",
+                tip: "ヒント: このタイルのレスポンシブな列数を変更するには、メイン設定のアドバンスト管理者コントロールを使用してください。",
             },
             header: {
                 selectLocation: "場所を選択",
@@ -278,14 +298,14 @@ export default {
         schedule: {
             header: {
                 title: "スケジュール",
-                subtitle: "チームイベント & 重要日程",
+                subtitle: "チームイベント＆重要な日程",
                 addEvent: "イベントを追加",
-                manageTags: "タグ管理",
+                manageTags: "タグを管理",
                 removeModule: "モジュールを削除",
                 settings: "設定",
             },
             viewToggle: {
-                absolute: "日付指定",
+                absolute: "日付固定",
                 relative: "相対表示",
             },
             layoutToggle: {
@@ -299,37 +319,37 @@ export default {
                 viewMode: {
                     title: "表示モード",
                     absolute: {
-                        title: "日付指定",
+                        title: "日付固定（カレンダー）",
                         description:
-                            "月または週単位でカレンダー全体を閲覧し、日付を自由に移動します。",
+                            "月または週単位でカレンダー全体を表示し、日付間を自由に移動できます。",
                     },
                     relative: {
-                        title: "相対表示",
+                        title: "相対表示（ローリング）",
                         description:
-                            "今日を中心としたローリングウィンドウを表示します（下のパネルで設定可能）。",
+                            "今日を中心とした動的な日数範囲を表示します。範囲は下のパネルで設定可能です。",
                     },
                 },
                 layout: {
                     title: "レイアウト",
                     month: {
-                        title: "月",
-                        description: "すべてのゾーンが表示された全月グリッドを表示します。",
+                        title: "月表示",
+                        description: "月全体のグリッドを表示し、すべての日にちを一覧できます。",
                     },
                     week: {
-                        title: "週",
-                        description: "1日あたりの詳細情報を増やした単一週を表示します。",
+                        title: "週表示",
+                        description: "1週間を表示し、日ごとの詳細をより深く確認できます。",
                     },
                 },
             },
             calendar: {
                 today: "今日",
-                weekOf: "週の開始日:",
-                conflictTitle: "時間枠が埋まっています",
+                weekOf: "週開始日:",
+                conflictTitle: "指定の時間は既に埋まっています",
             },
             relative: {
-                configureTitle: "ローリングウィンドウの設定",
-                settingsTitle: "相対表示設定",
-                daysBeforeLabel: "今日より前の日数:",
+                configureTitle: "表示範囲の設定",
+                settingsTitle: "相対表示の設定",
+                daysBeforeLabel: "今日より前の表示日数:",
                 reset: "リセット",
             },
             dayList: {
@@ -338,8 +358,9 @@ export default {
             },
             detail: {
                 title: "イベントの詳細",
-                editedBy: "作成者",
-                lockNote: "このイベントを編集できるのは作成者または上位ロールのユーザーのみです。",
+                editedBy: "作成者:",
+                lockNote:
+                    "このイベントを編集できるのは、作成者または上位の権限を持つユーザーのみです。",
                 edit: "編集",
                 delete: "削除",
                 close: "閉じる",
@@ -347,17 +368,17 @@ export default {
             },
             form: {
                 titleAdd: "新規イベント",
-                titleEdit: "イベントの編集",
+                titleEdit: "イベントを編集",
                 titleField: "タイトル *",
-                titlePlaceholder: "例：チームミーティング",
+                titlePlaceholder: "例: チームスタンドアップ",
                 subtitleField: "サブタイトル",
-                subtitlePlaceholder: "オプションの短いサブタイトル",
+                subtitlePlaceholder: "任意の短いサブタイトル",
                 dateField: "日付 *",
                 timeField: "時間 *",
                 tagsField: "タグ",
                 tagPriorityHint: "最初のタグがイベントの色を決定します。",
-                descriptionField: "説明",
-                descriptionPlaceholder: "詳細（任意）…",
+                descriptionField: "詳細説明",
+                descriptionPlaceholder: "補足情報など…",
                 addedBy: "作成者",
                 cancel: "キャンセル",
                 saveChanges: "変更を保存",
@@ -366,17 +387,17 @@ export default {
                 confirmDelete: "このイベントを削除しますか？",
             },
             tagManager: {
-                title: "タグの管理",
-                namePlaceholder: "タグ名（例：会議）",
+                title: "タグを管理",
+                namePlaceholder: "タグ名（例: 会議）",
                 add: "追加",
                 noTags: "タグはまだありません。",
                 deleteTitle: "タグを削除",
             },
             tagPicker: {
-                noTagsHint: "タグはまだありません。管理者のみが「タグ管理」から追加できます。",
+                noTagsHint: "タグはまだありません。管理者は「タグを管理」から追加できます。",
             },
             footer: {
-                liveSync: "リアルタイム同期",
+                liveSync: "ライブ同期",
             },
             status: {
                 loading: "スケジュールを読み込み中…",
@@ -386,14 +407,14 @@ export default {
         },
         announcement: {
             header: {
-                title: "社内通知・お知らせ",
-                activeNotices: "アクティブな通知:",
+                title: "社内お知らせ",
+                activeNotices: "有効なお知らせ:",
                 unread: "未読",
                 create: "作成",
-                viewerOnly: "閲覧のみ",
+                viewerOnly: "閲覧専用",
                 viewArchive: "アーカイブを表示",
                 compactView: "コンパクト表示",
-                extendView: "詳細表示",
+                extendView: "拡張表示",
                 removeModule: "モジュールを削除",
             },
             filters: {
@@ -412,7 +433,7 @@ export default {
                 loading: "読み込み中...",
                 emptyTitle: "お知らせが見つかりません",
                 emptyText:
-                    "検索条件に一致するお知らせはありません。検索ワードやカテゴリフィルターを調整してください。",
+                    "指定された条件に一致するお知らせはありません。検索条件やカテゴリを選択し直してください。",
             },
             item: {
                 unread: "未読",
@@ -421,31 +442,31 @@ export default {
                 delete: "削除",
             },
             detail: {
-                pinned: "固定されたお知らせ",
+                pinned: "ピン留めされたお知らせ",
                 edited: "編集済み",
                 closeReader: "リーダーを閉じる",
             },
             form: {
-                titleEdit: "お知らせの編集",
-                titleCreate: "お知らせの作成",
-                titleField: "タイトル",
-                titlePlaceholder: "例：空調設備メンテナンスのお知らせ",
+                titleEdit: "お知らせを編集",
+                titleCreate: "お知らせを作成",
+                titleField: "お知らせのタイトル",
+                titlePlaceholder: "例: 空調設備メンテナンスのお知らせ",
                 categoriesField: "タグ / カテゴリを選択 (複数選択可)",
-                pinAutoHint: "※ 自動固定：「緊急」タグが最優先されます",
+                pinAutoHint: "※ 自動固定: 「緊急」タグは最上部に優先表示されます",
                 pinManualHint: "このお知らせをフィードの最上部に固定する",
-                pinBulletin: "お知らせを固定",
+                pinBulletin: "お知らせをピン留め",
                 contentField: "本文",
-                contentPlaceholder: "詳細、指示事項、または緊急時の手順を記載してください…",
+                contentPlaceholder: "詳細、指示、または緊急時の対応手順などを入力してください...",
                 cancel: "キャンセル",
                 update: "更新",
-                publish: "投稿",
+                publish: "公開",
             },
             footer: {
-                liveFeed: "ライブフィード同期完了",
+                liveFeed: "ライブフィード同期中",
             },
             toast: {
                 updated: "お知らせを更新しました。",
-                published: "お知らせを投稿しました！",
+                published: "お知らせを公開しました！",
                 deleted: "お知らせを削除しました。",
                 restored: "お知らせを復元しました。",
                 saveFailed: "保存に失敗しました",
@@ -463,10 +484,10 @@ export default {
             title: "モジュール",
             description: "モジュールのデフォルト動作設定",
             available: "モジュールを追加",
-            availableDescription: "追加したいモジュールをダッシュボードに選択します。",
+            availableDescription: "ダッシュボードに追加するモジュールを選択します。",
             current: "現在のモジュール",
-            currentDescription: "現在ダッシュボードに配置されているモジュール。",
-            empty: "モジュールはまだ追加されていません — 上から追加してください。",
+            currentDescription: "現在ダッシュボードに配置されているモジュールです。",
+            empty: "追加されたモジュールはありません。上のリストから選択してください。",
             remove: "削除",
             weather: {
                 title: "天気",
