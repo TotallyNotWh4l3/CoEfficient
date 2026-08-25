@@ -54,7 +54,7 @@
     justify-content: space-between;
     padding-bottom: 14px;
     border-bottom: 1px solid var(--color-border);
-    z-index: var(--z-dashboard, 1);
+    z-index: 1;
     position: relative;
 }
 .sch-header-left {
@@ -104,10 +104,13 @@
     border: 1px solid var(--color-accent-border);
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
 .sch-btn-primary:hover {
     background: var(--color-accent-hover);
+    box-shadow: var(--shadow-sm);
 }
 .sch-btn-primary:active {
     background: var(--color-accent-active);
@@ -121,7 +124,7 @@
     padding: 6px 14px;
     font-size: 10px;
     font-weight: 700;
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     color: var(--color-text);
     border: 1px solid var(--color-border);
     border-radius: 6px;
@@ -129,7 +132,7 @@
 }
 
 .sch-btn-secondary:hover {
-    background: var(--color-hover);
+    background: var(--color-element-hover);
 }
 
 .sch-btn-danger {
@@ -139,14 +142,14 @@
     padding: 6px 12px;
     font-size: 10px;
     font-weight: 800;
-    background: var(--color-error-bg);
+    background: color-mix(in srgb, var(--color-error) 10%, transparent);
     color: var(--color-error);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
     border-radius: 6px;
     cursor: pointer;
 }
 .sch-btn-danger:hover {
-    background: rgba(239, 68, 68, 0.25);
+    background: color-mix(in srgb, var(--color-error) 18%, transparent);
 }
 .sch-btn-danger:disabled {
     opacity: 0.5;
@@ -160,7 +163,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: var(--color-overlay);
+    background: var(--color-element-active);
     color: var(--color-text-secondary);
     border: 1px solid transparent;
     cursor: pointer;
@@ -168,7 +171,25 @@
 }
 .sch-icon-toggle:hover {
     color: var(--color-error);
-    background: var(--color-hover);
+    background: var(--color-element-hover);
+}
+
+/* ---------- Accessible focus ---------- */
+.sch-btn-primary:focus-visible,
+.sch-btn-secondary:focus-visible,
+.sch-btn-danger:focus-visible,
+.sch-icon-toggle:focus-visible,
+.sch-nav-btn:focus-visible,
+.sch-icon-btn:focus-visible,
+.sch-input:focus-visible,
+.sch-textarea:focus-visible,
+.sch-view-toggle-btn:focus-visible,
+.sch-layout-toggle-btn:focus-visible,
+.sch-tag-pick:focus-visible,
+.sch-settings__back:focus-visible,
+.sch-settings__option:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
 }
 
 /* ---------- Body ---------- */
@@ -198,7 +219,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    background: var(--color-overlay);
+    background: var(--color-element-active);
     border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 2px;
@@ -217,7 +238,7 @@
 }
 .sch-nav-btn:hover {
     color: var(--color-text);
-    background: var(--color-hover);
+    background: var(--color-element-hover);
 }
 .sch-nav-today {
     text-transform: uppercase;
@@ -373,9 +394,9 @@
 .sch-overlay {
     position: fixed;
     inset: 0;
-    background: var(--color-overlay);
+    background: var(--color-element-active);
     backdrop-filter: blur(6px);
-    z-index: var(--z-dialog, 1100);
+    z-index: 1100;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -414,14 +435,14 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
     cursor: pointer;
 }
 .sch-icon-btn:hover {
     color: var(--color-text);
-    background: var(--color-hover);
+    background: var(--color-element-hover);
 }
 .sch-overlay-footer {
     padding-top: 12px;
@@ -549,7 +570,7 @@
 .sch-textarea:focus {
     outline: none;
     border-color: var(--color-border-focus);
-    box-shadow: 0 0 0 2px var(--color-focus);
+    box-shadow: 0 0 0 2px var(--color-accent-muted);
 }
 .sch-input:disabled,
 .sch-textarea:disabled {
@@ -571,8 +592,8 @@
 .sch-lock-note {
     font-size: 9.5px;
     color: var(--color-error);
-    background: var(--color-error-bg);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: color-mix(in srgb, var(--color-error) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
     padding: 6px 8px;
     border-radius: 8px;
 }
@@ -596,7 +617,7 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    background: var(--color-overlay);
+    background: var(--color-element-active);
     border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 2px;
@@ -619,7 +640,7 @@
 .sch-view-toggle-btn:hover,
 .sch-layout-toggle-btn:hover {
     color: var(--color-text);
-    background: var(--color-hover);
+    background: var(--color-element-hover);
 }
 .sch-view-toggle-btn.active,
 .sch-layout-toggle-btn.active {
@@ -706,7 +727,7 @@
     margin-top: 0.5rem;
     padding: 0.75rem;
     border-radius: 0.75rem;
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     border: 1px solid var(--color-border);
 }
 .sch-relative-hint {
@@ -715,7 +736,7 @@
     gap: 6px;
     font-size: 10px;
     color: var(--color-text-secondary);
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 8px 10px;
@@ -745,14 +766,14 @@
     font-weight: 700;
     border-radius: 999px;
     border: 1px solid var(--color-border);
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: all 0.15s ease;
 }
 .sch-tag-pick:hover {
     color: var(--color-text-secondary);
-    background: var(--color-hover);
+    background: var(--color-element-hover);
 }
 .sch-tag-pick:disabled {
     opacity: 0.5;
@@ -857,7 +878,7 @@
 .sch-settings {
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--color-bg-elevated) 95%, transparent);
+    background: color-mix(in srgb, var(--color-bg-elevated) 95%, var(--color-bg));
     backdrop-filter: blur(12px);
     z-index: 20;
     padding: 1.25rem;
@@ -881,7 +902,7 @@
     align-items: center;
     justify-content: space-between;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--color-border);
     margin-bottom: 1rem;
     flex-shrink: 0;
 }
@@ -891,11 +912,11 @@
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: #fcd34d;
+    color: var(--color-text-accent);
     display: flex;
     align-items: center;
     gap: 0.375rem;
-    text-shadow: 0 1px 2.5px rgba(0, 0, 0, 0.65);
+    text-shadow: 0 1px 2.5px color-mix(in srgb, var(--color-text) 25%, transparent);
 }
 
 .sch-settings__title-icon {
@@ -916,18 +937,18 @@
 .sch-settings__back {
     font-size: 0.625rem;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-secondary);
+    background: var(--color-element-hover);
     padding: 0.125rem 0.5rem;
     border-radius: 0.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-border);
     transition: all 0.2s ease;
     cursor: pointer;
 }
 
 .sch-settings__back:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    background: var(--color-element-active);
 }
 
 .sch-settings__body {
@@ -950,7 +971,7 @@
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.03em;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--color-text-muted);
 }
 
 .sch-settings__options {
@@ -965,7 +986,7 @@
     padding: 0.625rem;
     border-radius: 0.75rem;
     border: 1px solid var(--color-border);
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
@@ -974,7 +995,7 @@
 }
 
 .sch-settings__option--active {
-    background: var(--color-selected);
+    background: var(--color-element-selected);
     border-color: var(--color-border-active);
 }
 
@@ -1014,7 +1035,7 @@
     font-size: 0.5625rem;
     line-height: 1.5;
     flex-shrink: 0;
-    background: var(--color-overlay-light);
+    background: var(--color-element-hover);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
 }
