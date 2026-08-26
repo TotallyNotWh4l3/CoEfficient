@@ -1,4 +1,5 @@
 import Settings from "../Components/SettingsComponents";
+import "./confirm-dialog.css";
 
 export default function ConfirmDialog({
     title,
