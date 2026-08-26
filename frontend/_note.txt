@@ -1,4 +1,4 @@
-CoEfficient                      
+CoEfficient                                
 ├── README.md
 ├── backend
 │   ├── config
@@ -196,6 +196,7 @@ CoEfficient
 │   │   │   │   ├── Dialogs
 │   │   │   │   │   ├── ConfirmDialog.jsx
 │   │   │   │   │   ├── LocationDialog.jsx
+│   │   │   │   │   ├── SetPasswordDialog.jsx
 │   │   │   │   │   ├── ThemeDialog.jsx
 │   │   │   │   │   ├── location-dialog.css
 │   │   │   │   │   └── theme-dialog.css
