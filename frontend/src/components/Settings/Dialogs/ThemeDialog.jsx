@@ -8,6 +8,14 @@ import { useAuth } from "../../../hooks/useAuth";
 import Settings from "../Components/SettingsComponents";
 import { useRef } from "react";
 
+import {
+    HEX_COLOR_PATTERN,
+    hexToRgb,
+    parseRgbString,
+    rgbToHex,
+    valueToRgbText,
+} from "./utils/colorUtils";
+
 const COLOR_GROUPS = [
     {
         key: "accent",
@@ -16,7 +24,7 @@ const COLOR_GROUPS = [
     {
         key: "surface",
         fields: ["bg", "bgElevated", "surface", "surfaceElevated", "surfaceFloating"],
-    },
+    },  
     {
         key: "element",
         fields: ["element", "elementHover", "elementActive", "elementSelected", "elementDisabled"],
@@ -41,10 +49,9 @@ const COLOR_GROUPS = [
 
 const SHADOW_FIELDS = ["sm", "md", "lg"];
 
-const HEX_COLOR_PATTERN = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
-
 function ColorField({ label, value, onChange, disabled }) {
     const colorInputRef = useRef(null);
+    const [format, setFormat] = useState("hex"); // "hex" | "rgb"
 
     // <input type="color"> only accepts #rrggbb — some theme values here
     // are rgba(...) (e.g. accentMuted, accentBorder), so fall back to a
@@ -58,25 +65,47 @@ function ColorField({ label, value, onChange, disabled }) {
         colorInputRef.current?.click();
     };
 
+    const toggleFormat = () => {
+        if (disabled) return;
+        setFormat((prev) => (prev === "hex" ? "rgb" : "hex"));
+    };
+
+    // What the text input shows, given the current format.
+    const hexDisplay = HEX_COLOR_PATTERN.test(value ?? "")
+        ? value.slice(1)
+        : (value ?? "").replace(/^#/, "");
+    const rgbDisplay = valueToRgbText(value) || "";
+
+    const displayValue = format === "hex" ? hexDisplay : rgbDisplay;
+
+    const handleTextChange = (raw) => {
+        if (format === "hex") {
+            // "#" prefix is fixed/rendered separately and can't be
+            // backspaced — raw here is just whatever follows it.
+            const cleaned = raw.replace(/^#/, "");
+            onChange(`#${cleaned}`);
+        } else {
+            // Keep the raw "r, g, b" text as typed; only commit a real
+            // color once it parses to three valid components.
+            const rgb = parseRgbString(raw);
+            if (rgb) {
+                onChange(rgbToHex(rgb));
+            } else {
+                // Not fully valid yet (mid-typing) — still reflect what
+                // they've typed so the field doesn't fight the user.
+                onChange(raw);
+            }
+        }
+    };
+
     return (
         <div className="theme-dialog__color-field">
             <span
                 className="theme-dialog__swatch"
-                style={{
-                    background: value || "transparent",
-                    cursor: disabled ? "default" : "pointer",
-                }}
-                onClick={openPicker}
-                role="button"
-                tabIndex={disabled ? -1 : 0}
-                aria-label={`Pick a color for ${label}`}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        openPicker();
-                    }
-                }}
+                style={{ background: value || "transparent" }}
+                aria-hidden="true"
             />
+
             <input
                 ref={colorInputRef}
                 type="color"
@@ -87,16 +116,69 @@ function ColorField({ label, value, onChange, disabled }) {
                 tabIndex={-1}
                 aria-hidden="true"
             />
+
+            <button
+                type="button"
+                className="theme-dialog__picker-btn"
+                onClick={openPicker}
+                disabled={disabled}
+                aria-label={`Pick a color for ${label}`}
+                title="Pick color"
+            >
+                {/* eyedropper icon */}
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <path
+                        fill="currentColor"
+                        d="M19.23 3.55a2.5 2.5 0 0 1 0 3.54l-1.94 1.94 1.06 1.06a1 1 0 0 1-1.41 1.41l-.3-.3-8.4 8.4a1 1 0 0 1-.53.28l-4.24.85a.75.75 0 0 1-.88-.88l.85-4.24a1 1 0 0 1 .28-.53l8.4-8.4-.3-.3a1 1 0 1 1 1.41-1.41l1.06 1.06 1.94-1.94a2.5 2.5 0 0 1 3.54 0Z"
+                    />
+                </svg>
+            </button>
+
             <div className="theme-dialog__color-inputs">
                 <span className="theme-dialog__color-label">{label}</span>
-                <input
-                    type="text"
-                    className="theme-dialog__color-text"
-                    value={value ?? ""}
-                    onChange={(e) => onChange(e.target.value)}
-                    spellCheck={false}
+
+                <div className="theme-dialog__color-text-wrap">
+                    {format === "hex" && (
+                        <span className="theme-dialog__color-hash" aria-hidden="true">
+                            #
+                        </span>
+                    )}
+                    <input
+                        type="text"
+                        className="theme-dialog__color-text"
+                        value={displayValue}
+                        onChange={(e) => handleTextChange(e.target.value)}
+                        onKeyDown={(e) => {
+                            // Prevent backspacing the "#" itself in hex mode:
+                            // if selection is at position 0 and backspace is
+                            // pressed with nothing before the caret to delete,
+                            // just no-op (there's nothing left to remove since
+                            // the "#" isn't part of the input's own value).
+                            if (
+                                format === "hex" &&
+                                e.key === "Backspace" &&
+                                e.currentTarget.selectionStart === 0 &&
+                                e.currentTarget.selectionEnd === 0
+                            ) {
+                                e.preventDefault();
+                            }
+                        }}
+                        spellCheck={false}
+                        disabled={disabled}
+                        placeholder={format === "hex" ? "rrggbb" : "r, g, b"}
+                    />
+                </div>
+
+                <button
+                    type="button"
+                    className="theme-dialog__format-toggle"
+                    onClick={toggleFormat}
                     disabled={disabled}
-                />
+                    aria-label={`Switch to ${format === "hex" ? "RGB" : "HEX"}`}
+                    title={`Switch to ${format === "hex" ? "RGB" : "HEX"}`}
+                >
+                    {format === "hex" ? "HEX" : "RGB"}
+                </button>
             </div>
         </div>
     );
