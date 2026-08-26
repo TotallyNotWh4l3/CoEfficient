@@ -41,8 +41,8 @@ export function getLatestWeatherTimestamp(now = new Date()) {
 
 // Returns the raw cache row (or null) with no freshness judgement made here —
 // callers decide staleness themselves off the payload's own data (e.g.
-// payload.current.time), since that's what actually reflects how current
-// the weather data is, as opposed to when it happened to be stored.
+// payload._dataTimestampUtc), since that's what actually reflects how
+// current the weather data is, as opposed to when it happened to be stored.
 export async function getCachedWeatherRow(locationId) {
     return WeatherData.findByLocationId(locationId);
 }
@@ -53,4 +53,19 @@ export async function setCachedWeather(locationId, weatherTimestamp, data) {
 
 export async function clearCachedWeather(locationId) {
     return WeatherData.deleteByLocationId(locationId);
+}
+
+// Cross-instance lock: attempts to atomically claim the right to refetch
+// this location. Only one concurrent caller (across however many separate
+// Vercel serverless instances happen to be handling requests at once) can
+// win — everyone else should fall back to serving the existing cached
+// payload rather than also hitting Open-Meteo. The claim auto-expires
+// after claimTimeoutSeconds so a caller that crashes or times out mid-fetch
+// can't permanently block future refreshes for that location.
+export async function claimFetch(locationId, claimTimeoutSeconds = 8) {
+    return WeatherData.claim(locationId, claimTimeoutSeconds);
+}
+
+export async function releaseFetchClaim(locationId) {
+    return WeatherData.releaseClaim(locationId);
 }

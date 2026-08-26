@@ -13,7 +13,7 @@ import createDashboardModulesTable from "./010_create_dashboard_modules.js";
 import createScheduleTagsTable from "./011_create_schedule_tags.js";
 import addScheduleSubtitleAndTags from "./012_add_schedule_subtitle_and_tags_column.js";
 import createThemesTable from "./013_create_themes.js";
-
+import addWeatherFetchClaimColumn from "./014_create_weather_fetch_claim_column.js";
 
 const migrations = [
     { name: "001_create_users", up: createUsersTable },
@@ -29,6 +29,7 @@ const migrations = [
     { name: "011_create_schedule_tags", up: createScheduleTagsTable },
     { name: "012_add_schedule_subtitle_and_tags_column", up: addScheduleSubtitleAndTags },
     { name: "013_create_themes", up: createThemesTable },
+    { name: "014_add_weather_fetch_claim", up: addWeatherFetchClaimColumn },
 ];
 
 async function runMigrations() {
