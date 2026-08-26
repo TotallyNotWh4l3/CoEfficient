@@ -6,6 +6,7 @@ import { useLanguage } from "../../../hooks/useLanguage";
 import { useAuth } from "../../../hooks/useAuth";
 
 import Settings from "../Components/SettingsComponents";
+import { useRef } from "react";
 
 const COLOR_GROUPS = [
     {
