@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../weather.css";
 
 import { useLanguage } from "../../../../hooks/useLanguage";
@@ -7,7 +7,7 @@ import { useLanguage } from "../../../../hooks/useLanguage";
 // How "curvy" the line is. 0 = straight lines between points.
 // 0.333 (1/3) = the original bezier smoothness. 0.5 = max smooth/rounded.
 // Keep it between 0 and 0.5 — going higher starts creating loops/overshoot.
-const CURVE_SMOOTHNESS = 0.333;
+const CURVE_SMOOTHNESS = 0;
 
 // Extra breathing room added above/below the min/max, in the metric's own
 // units (e.g. 1 = 1°C of padding above the hottest point, 1 below the coldest).
@@ -34,6 +34,7 @@ export default function WeatherChart({
     allDaysDataset,
 }) {
     const [hoveredIdx, setHoveredIdx] = useState(null);
+    const svgRef = useRef(null);
     const lang = useLanguage();
     const t = lang.modules.weather.chart;
 
@@ -51,6 +52,8 @@ export default function WeatherChart({
 
     // For the hourly view, pull values from every day (when provided) so the
     // axis range reflects the whole week, not just whichever day is showing.
+    // This is what makes the curve shapes directly comparable when clicking
+    // between days — the scale doesn't jump around per-day.
     const rangeSourceDatasets =
         isHourly && allDaysDataset && allDaysDataset.length > 0 ? allDaysDataset : [dataset];
 
@@ -100,6 +103,11 @@ export default function WeatherChart({
     const pointsMin = isDual ? toPoints((d) => d.valueMin ?? d.value) : [];
     const pointsSingle = !isDual ? toPoints((d) => d.value) : [];
 
+    // Shared x-grid used for hit-testing mouse position — identical whether
+    // we're in dual (max/min) or single-line mode, since both are built from
+    // the same idx/dataset.length formula in toPoints.
+    const xGridPoints = isDual ? pointsMax : pointsSingle;
+
     const getBezierPath = (pts) => {
         if (pts.length === 0) return "";
         let pathD = `M ${pts[0].x} ${pts[0].y}`;
@@ -127,6 +135,11 @@ export default function WeatherChart({
     const pathSingleD = getBezierPath(pointsSingle);
     const areaSingleD = getAreaPath(pointsSingle, pathSingleD);
 
+    // Dots are only ever shown on the daily (7-day) view. On the hourly view
+    // there are too many points for individual dots to read well, so only
+    // the hover indicator (vertical line + tooltip) is used instead.
+    const showDots = !isHourly;
+
     const renderPoints = isDual
         ? [
               ...pointsMax.map((p, i) => ({ ...p, color: "#f87171", isMax: true, origIdx: i })),
@@ -138,6 +151,30 @@ export default function WeatherChart({
               isSingle: true,
               origIdx: i,
           }));
+
+    // Finds the nearest x-index to the mouse position anywhere over the
+    // chart, not just when hovering the dot/line itself.
+    const handlePointerMove = (e) => {
+        const svg = svgRef.current;
+        if (!svg || xGridPoints.length === 0) return;
+        const rect = svg.getBoundingClientRect();
+        if (rect.width === 0) return;
+        const scale = width / rect.width;
+        const relX = (e.clientX - rect.left) * scale;
+
+        let nearestIdx = 0;
+        let nearestDist = Infinity;
+        xGridPoints.forEach((p, i) => {
+            const dist = Math.abs(p.x - relX);
+            if (dist < nearestDist) {
+                nearestDist = dist;
+                nearestIdx = i;
+            }
+        });
+        setHoveredIdx(nearestIdx);
+    };
+
+    const handlePointerLeave = () => setHoveredIdx(null);
 
     return (
         <div className="weather-chart">
@@ -158,7 +195,7 @@ export default function WeatherChart({
             </div>
 
             <div className="weather-chart__svg-wrap">
-                <svg viewBox={`0 0 ${width} ${height}`} className="weather-chart__svg">
+                <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} className="weather-chart__svg">
                     <defs>
                         <linearGradient id="grad-temp-max" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#f87171" stopOpacity="0.3" />
@@ -289,26 +326,28 @@ export default function WeatherChart({
                                         strokeDasharray="2 2"
                                     />
                                 )}
-                                {isHovered && (
-                                    <circle
-                                        cx={pt.x}
-                                        cy={pt.y}
-                                        r="6"
-                                        fill={pt.color}
-                                        opacity="0.3"
-                                    />
+                                {showDots && (
+                                    <>
+                                        {isHovered && (
+                                            <circle
+                                                cx={pt.x}
+                                                cy={pt.y}
+                                                r="6"
+                                                fill={pt.color}
+                                                opacity="0.3"
+                                            />
+                                        )}
+                                        <circle
+                                            cx={pt.x}
+                                            cy={pt.y}
+                                            r={isHovered ? "4" : "2.5"}
+                                            fill={isHovered ? "#fff" : pt.color}
+                                            stroke={isHovered ? pt.color : "rgba(0,0,0,0.4)"}
+                                            strokeWidth="1.2"
+                                            style={{ transition: "all 0.1s ease" }}
+                                        />
+                                    </>
                                 )}
-                                <circle
-                                    cx={pt.x}
-                                    cy={pt.y}
-                                    r={isHovered ? "4" : "2.5"}
-                                    fill={isHovered ? "#fff" : pt.color}
-                                    stroke={isHovered ? pt.color : "rgba(0,0,0,0.4)"}
-                                    strokeWidth="1.2"
-                                    style={{ cursor: "pointer", transition: "all 0.1s ease" }}
-                                    onMouseEnter={() => setHoveredIdx(pt.origIdx)}
-                                    onMouseLeave={() => setHoveredIdx(null)}
-                                />
                                 {(pt.isMax || pt.isSingle) && (
                                     <text
                                         x={pt.x}
@@ -324,6 +363,22 @@ export default function WeatherChart({
                             </g>
                         );
                     })}
+
+                    {/* Invisible overlay — captures the mouse position across the
+                        WHOLE plot area so the tooltip tracks whichever x-column the
+                        cursor is over, rather than requiring a hover directly on a
+                        dot or the line itself. Kept last so it sits on top and isn't
+                        blocked by any of the drawn shapes above it. */}
+                    <rect
+                        x={paddingX + paddingLeft}
+                        y={0}
+                        width={width - paddingX - paddingLeft}
+                        height={height}
+                        fill="transparent"
+                        style={{ cursor: "crosshair" }}
+                        onMouseMove={handlePointerMove}
+                        onMouseLeave={handlePointerLeave}
+                    />
                 </svg>
 
                 {hoveredIdx !== null && dataset[hoveredIdx] && (
