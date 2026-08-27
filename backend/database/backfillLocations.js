@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: backfillLocations.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 既存のユーザー設定から位置情報をバックフィルする
+// ===================================================
+
+
 import db from "../config/database.js";
 
 db.all(`SELECT id, user_id, settings_json FROM user_settings`, [], (error, rows) => {

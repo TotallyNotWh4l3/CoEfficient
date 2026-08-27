@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: weatherService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気情報サービス
+// ===================================================
+
 import { fetchWeather } from "./openMeteoService.js";
 import {
     getCachedWeatherRow,
@@ -10,13 +17,7 @@ import { formatWeather } from "./weatherFormatter.js";
 
 const FIFTEEN_MIN_MS = 15 * 60 * 1000;
 
-// Same-instance dedup: if two requests for the same location arrive while
-// a fetch is already in flight on this warm serverless instance, the
-// second one awaits the first's result instead of starting a duplicate
-// Open-Meteo call. This only helps when Vercel happens to route both
-// requests to the same instance — it does NOT protect against separate
-// concurrent instances, which share no memory. That cross-instance case
-// is handled by the DB-level claim below.
+
 const inFlightFetches = new Map();
 
 /**
@@ -28,8 +29,6 @@ export async function getWeather(location) {
     const latitude = Number(location.latitude);
     const longitude = Number(location.longitude);
 
-    // Still nothing — fall back to the user's built-in default, then
-    // to whatever's first. If the table is empty, sync from settings.
     if (!location) {
         let locations = await Location.findAllByUserId(req.user.id);
 
@@ -59,7 +58,6 @@ export async function getWeather(location) {
         throw new Error("Invalid coordinates.");
     }
 
-    // 1. Check cache
     const row = await getCachedWeatherRow(locationId);
 
     if (row?.payload?._dataTimestampUtc) {
@@ -75,7 +73,6 @@ export async function getWeather(location) {
         console.log("[Weather] No cache, fetching Open-Meteo...");
     }
 
-    // 2. Dedup concurrent refetches for the same location on this instance
     if (inFlightFetches.has(locationId)) {
         console.log("[Weather] Refetch already in flight on this instance, joining it.");
         return inFlightFetches.get(locationId);
@@ -90,8 +87,6 @@ export async function getWeather(location) {
 }
 
 async function refetchAndCache(locationId, latitude, longitude, timezone) {
-    // 3. Cross-instance claim — only one concurrent request across all
-    // Vercel instances should actually hit Open-Meteo for this location.
     const wonClaim = await claimFetch(locationId);
 
     if (!wonClaim) {
@@ -103,9 +98,6 @@ async function refetchAndCache(locationId, latitude, longitude, timezone) {
             return stripInternalFields(existing.payload);
         }
 
-        // No usable cache exists yet (e.g. very first request for this
-        // location racing another) — fetch anyway rather than returning
-        // nothing, just without holding the claim ourselves.
         console.log("[Weather] Lost the claim but no usable cache exists yet — fetching anyway.");
     }
 
@@ -113,15 +105,6 @@ async function refetchAndCache(locationId, latitude, longitude, timezone) {
         const raw = await fetchWeather(latitude, longitude, timezone);
         const formatted = formatWeather(raw);
 
-        // Open-Meteo's current.time is a naive local-time string in the
-        // requested timezone (e.g. "2026-08-26T23:45" for Asia/Tokyo) — it
-        // has no UTC offset attached. Parsing that directly with
-        // `new Date(...)` on a UTC-running server (Vercel) silently treats
-        // it as if it were already UTC, which is wrong by the location's
-        // UTC offset. Convert using utc_offset_seconds (top-level on every
-        // Open-Meteo response) for internal cache-freshness checks only —
-        // current.time itself is left untouched so existing frontend
-        // display logic isn't affected.
         const utcOffsetSeconds = raw.utc_offset_seconds ?? 0;
         const dataTimestampMs = Date.parse(`${raw.current.time}Z`) - utcOffsetSeconds * 1000;
         formatted._dataTimestampUtc = new Date(dataTimestampMs).toISOString();

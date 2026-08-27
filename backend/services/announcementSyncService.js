@@ -1,7 +1,9 @@
-// backend/services/announcementSyncService.js
-//
-// Lightweight Server-Sent-Events (SSE) hub so Sub-Devices get pushed
-// create/edit/delete/archive/restore events instead of having to poll.
+// ===================================================
+// ファイル名: announcementSyncService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせ同期サービス
+// ===================================================
 
 const clients = new Set();
 

@@ -1,5 +1,4 @@
-// Functions
-import { useState } from "react";
+
 
 // Designs
 import { Settings } from "lucide-react";

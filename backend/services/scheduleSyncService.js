@@ -1,5 +1,10 @@
-// backend/services/scheduleSyncService.js
-// SSE pub/sub for real-time schedule updates.
+// ===================================================
+// ファイル名: scheduleSyncService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュール同期サービス
+// ===================================================
+
 
 const clients = new Set();
 

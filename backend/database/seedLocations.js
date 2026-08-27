@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: seedLocations.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: デフォルトの位置情報をデータベースにシードするスクリプト。
+// ===================================================
+
+
 import Location from "../models/Location.js";
 import User from "../models/User.js";
 import { DEFAULT_SETTINGS } from "../../shared/constants/defaults/defaultSettings.js";

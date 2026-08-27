@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: authRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 認証ルート — CRUD、認証管理
+// ===================================================
+
 import express from "express";
 import AuthController from "../controllers/authController.js";
 import authenticate from "../middleware/authMiddleware.js";

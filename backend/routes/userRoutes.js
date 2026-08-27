@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: userRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ユーザールート — CRUD、ロール管理
+// ===================================================
+
 import express from "express";
 import UserController from "../controllers/userController.js";
 import authenticate from "../middleware/authMiddleware.js";

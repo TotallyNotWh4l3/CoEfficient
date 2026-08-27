@@ -1,4 +1,10 @@
-// 003_create_location.js
+// ===================================================
+// ファイル名: 003_create_location.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ロケーションテーブルを作成するマイグレーション
+// ===================================================
+
 import locationsSchema from "../database/schema/locations.js";
 
 export default function createLocationsTable(db) {

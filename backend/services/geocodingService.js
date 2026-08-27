@@ -1,7 +1,9 @@
-// backend/services/geocodingService.js
-// Forward geocoding (name -> coordinates) via Open-Meteo, same provider the
-// weather module already talks to. Reverse geocoding (coordinates -> name)
-// via Nominatim, since Open-Meteo's geocoding API doesn't offer reverse.
+// ===================================================
+// ファイル名: geocodingService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 逆地理コーディングサービス
+// ===================================================
 
 const OPEN_METEO_GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const NOMINATIM_REVERSE_URL = "https://nominatim.openstreetmap.org/reverse";

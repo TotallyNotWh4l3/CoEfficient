@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: UserButton.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ユーザーボタンコンポーネント
+// ===================================================
+
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { User, LogIn, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";

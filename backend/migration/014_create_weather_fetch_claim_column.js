@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: 014_create_weather_fetch_claim_column.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気データテーブルにfetch_claimed_at列を追加するマイグレーション
+// ===================================================
+
+
 const sql = `
 ALTER TABLE weather_data ADD COLUMN fetch_claimed_at DATETIME;
 `;

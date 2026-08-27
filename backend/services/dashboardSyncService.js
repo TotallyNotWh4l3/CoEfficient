@@ -1,9 +1,9 @@
-// backend/services/dashboardSyncService.js
-//
-// Unlike announcementSyncService (broadcasts to everyone), this MUST be
-// scoped per-user — the whole point of a per-user dashboard is that other
-// users don't see it, so a global broadcast would leak changes across
-// accounts. Each user's own devices/tabs share one bucket in this map.
+// ===================================================
+// ファイル名: dashboardSyncService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボード同期サービス
+// ===================================================
 
 const clientsByUser = new Map(); // userId -> Set<res>
 

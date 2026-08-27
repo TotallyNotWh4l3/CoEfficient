@@ -1,4 +1,11 @@
-// backend/models/AnnouncementRead.js
+
+// ===================================================
+// ファイル名: AnnouncementRead.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせ既読モデル — CRUD、既読状態管理
+// ===================================================
+
 import { run, all } from "../utils/dbHelpers.js";
 
 const AnnouncementRead = {

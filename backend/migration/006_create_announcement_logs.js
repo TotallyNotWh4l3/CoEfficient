@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: 006_create_announcement_logs.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせログテーブルを作成するマイグレーション
+// ===================================================
+
+
 import announcementLogsSchema from "../database/schema/announcementLogs.js";
 
 export default function createAnnouncementLogsTable(db) {

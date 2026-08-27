@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: announcements.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: アナウンスメント情報を記録するためのデータベーススキーマ。
+// ===================================================
+
 export default `
 CREATE TABLE IF NOT EXISTS announcements (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,

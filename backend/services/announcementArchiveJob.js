@@ -1,5 +1,9 @@
-// backend/services/announcementArchiveJob.js
-// Call startAnnouncementArchiveJob() once from server.js on boot.
+// ===================================================
+// ファイル名: announcementArchiveJob.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせアーカイブジョブ
+// ===================================================
 
 import Announcement from "../models/Announcement.js";
 import { broadcast } from "./announcementSyncService.js";

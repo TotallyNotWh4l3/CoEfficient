@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: themesController.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: テーマの管理を行うAPIコントローラー。テーマの作成、更新、削除、および取得などの機能を提供します。
+// ===================================================
+
+
 // backend/controllers/themesController.js
 import crypto from "node:crypto";
 import Theme from "../models/Theme.js";

@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: locationsController.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 位置情報の管理を行うAPIコントローラー。位置情報の作成、更新、削除、および取得などの機能を提供します。
+// ===================================================
+
+
 // backend/controllers/locationsController.js
 import crypto from "node:crypto";
 import Location from "../models/Location.js";

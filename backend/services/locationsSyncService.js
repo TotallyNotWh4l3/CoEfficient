@@ -1,5 +1,10 @@
-// backend/services/locationSyncService.js
-// SSE pub/sub for real-time location updates.
+// ===================================================
+// ファイル名: locationsSyncService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 位置情報同期サービス
+// ===================================================
+
 
 const clients = new Set();
 

@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: dashboardSettings.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボード設定情報を記録するためのデータベーススキーマ。
+// ===================================================
+
+
 export default `
 CREATE TABLE IF NOT EXISTS dashboard_settings (
     user_id     INTEGER PRIMARY KEY,
