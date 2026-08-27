@@ -394,8 +394,9 @@
 .sch-overlay {
     position: fixed;
     inset: 0;
-    background: var(--color-element-active);
-    backdrop-filter: blur(6px);
+    background: transparent; /* Makes the background invisible */
+    backdrop-filter: blur(6px); /* Blurs content behind the overlay */
+    -webkit-backdrop-filter: blur(6px); /* Safari support */
     z-index: 1100;
     display: flex;
     align-items: center;
