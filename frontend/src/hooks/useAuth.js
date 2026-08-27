@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: useAuth.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 認証フック
+// ===================================================
+
 import { useState, useEffect, useCallback } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import * as AuthService from "../services/authService";

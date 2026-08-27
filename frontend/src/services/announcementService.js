@@ -1,4 +1,10 @@
-// frontend/src/services/announcementService.js
+// ===================================================
+// ファイル名: announcementService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせAPIサービス
+// ===================================================
+
 import apiClient from "./apiClient";
 
 const BASE = "/announcements";

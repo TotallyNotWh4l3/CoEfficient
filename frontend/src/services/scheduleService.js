@@ -1,4 +1,11 @@
-// frontend/src/services/scheduleService.js
+
+// ===================================================
+// ファイル名: scheduleService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールAPIサービス
+// ===================================================
+
 import apiClient from "./apiClient";
 
 const BASE = "/schedule";

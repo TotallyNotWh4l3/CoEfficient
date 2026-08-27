@@ -1,4 +1,10 @@
-// hooks/useLanguage.js
+// ===================================================
+// ファイル名: useLanguage.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 言語情報を取得・管理するカスタムフック
+// ===================================================
+
 import { useSettings } from "./useSettings";
 import { LANGUAGES } from "../constants/i18n";
 

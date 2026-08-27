@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: useThemes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: テーマ情報を取得するカスタムフック
+// ===================================================
+
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import themeService from "../services/themeService";

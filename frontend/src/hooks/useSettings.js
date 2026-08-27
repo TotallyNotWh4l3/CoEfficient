@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: useSettings.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 設定情報を取得・更新するカスタムフック
+// ===================================================
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSettingsContext } from "../context/SettingsContext";
 import * as SettingsService from "../services/settingsService";

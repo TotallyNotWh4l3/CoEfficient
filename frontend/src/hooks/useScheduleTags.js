@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: useScheduleTags.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールタグを管理するカスタムフック
+// ===================================================
+
 import { useCallback, useEffect, useState } from "react";
 import scheduleService from "../services/scheduleService";
 

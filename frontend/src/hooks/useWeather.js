@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: useWeather.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気情報を取得するカスタムフック
+// ===================================================
+
 import { useCallback, useEffect, useState } from "react";
 import { getWeather } from "../services/weatherApi";
 
