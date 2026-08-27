@@ -239,6 +239,18 @@ export default {
             title: "About",
             description: "App information and credits",
             versionTitle: "Version",
+            stack: {
+                title: "Built With",
+                description: "Services and technologies powering this app.",
+                roles: {
+                    frontend: "Frontend",
+                    backend: "Backend",
+                    runtime: "Runtime",
+                    database: "Database",
+                    hosting: "Hosting",
+                    "database hosting": "Database hosting",
+                },
+            },
             resetSectionTitle: "Reset",
             resetSectionDescription: "Restore all settings to their default values.",
             resetButton: "Reset to Defaults",
