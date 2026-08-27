@@ -260,14 +260,27 @@ export default {
         },
 
         about: {
-            title: "このアプリについて",
-            description: "アプリ情報・クレジット",
+            title: "アプリについて",
+            description: "アプリ情報とクレジット",
             versionTitle: "バージョン",
+            stack: {
+                title: "使用技術",
+                description: "このアプリを支えるサービスと技術",
+                roles: {
+                    frontend: "フロントエンド",
+                    backend: "バックエンド",
+                    runtime: "ランタイム",
+                    database: "データベース",
+                    hosting: "ホスティング",
+                    "database hosting": "DBホスティング",
+                },
+            },
             resetSectionTitle: "リセット",
-            resetSectionDescription: "設定を初期値に戻します",
-            resetButton: "デフォルトにリセット",
+            resetSectionDescription: "すべての設定を初期値に戻します。",
+            resetButton: "初期値に戻す",
             resetTitle: "設定をリセットしますか？",
-            resetMessage: "設定・テーマ・モジュールを初期化します。元に戻せません。",
+            resetMessage:
+                "設定、テーマ、モジュールの初期値がリセットされます。この操作は取り消せません。",
             resetConfirm: "リセット",
         },
     },
