@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: ScheduleSettingsPanel.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュール設定パネル コンポーネント
+// ===================================================
+
 import React from "react";
 import { Settings, Info } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";

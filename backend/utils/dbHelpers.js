@@ -6,7 +6,7 @@
 // ===================================================
 
 
-import db from "../config/databasdase.js";
+import db from "../config/database.js";
 
 /**
  * INSERT/UPDATE/DELETE. Returns { lastID, changes } to match sqlite3's

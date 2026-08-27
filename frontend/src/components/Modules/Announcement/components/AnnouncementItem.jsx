@@ -1,4 +1,11 @@
-import React from "react";
+
+// ===================================================
+// ファイル名: AnnouncementItem.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせアイテムコンポーネント
+// ===================================================
+
 import { Pin, User, Calendar, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 import {

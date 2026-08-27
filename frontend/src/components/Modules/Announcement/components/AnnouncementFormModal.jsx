@@ -1,4 +1,11 @@
-import React from "react";
+
+// ===================================================
+// ファイル名: AnnouncementFormModal.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせフォームモーダルコンポーネント
+// ===================================================
+
 import { Megaphone, X, Pin } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 import { CATEGORY_CONFIG } from "../../../../constants/modules/announcementConstants";

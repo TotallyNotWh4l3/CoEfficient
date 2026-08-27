@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: ScheduleDetailModal.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュール詳細モーダル コンポーネント
+// ===================================================
+
 import { X, Clock, User, Pencil, Trash2 } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 import { canModify } from "../utils/scheduleHelpers";

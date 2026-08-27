@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: ScheduleModule.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールモジュール コンポーネント
+// ===================================================
+
 import React, { useState, useMemo } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import useSchedule from "../../../hooks/useSchedule";

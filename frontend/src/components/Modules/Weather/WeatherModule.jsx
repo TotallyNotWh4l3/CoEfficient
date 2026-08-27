@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: WeatherModule.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気モジュール コンポーネント
+// ===================================================
+
 import React, { useState, useEffect } from "react";
 import WeatherHeader from "./components/WeatherHeader";
 import WeatherCurrentSummary from "./components/WeatherCurrentSummary";

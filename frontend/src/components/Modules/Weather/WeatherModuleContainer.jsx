@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: WeatherModuleContainer.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気モジュール コンテナ コンポーネント
+// ===================================================
+
 import React, { useState, useEffect } from "react";
 import WeatherModule from "./WeatherModule";
 import useWeather from "../../../hooks/useWeather";

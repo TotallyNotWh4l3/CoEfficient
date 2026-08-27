@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: WeatherCurrentSummary.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気モジュール 現在の天気概要 コンポーネント
+// ===================================================
+
+
 import React from "react";
 import { WeatherVisualIcon, getWeatherDescText } from "../utils/weatherHelpers.jsx";
 import { useLanguage } from "../../../../hooks/useLanguage";

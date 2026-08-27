@@ -1,4 +1,11 @@
-// frontend/src/components/Modules/Announcement/AnnouncementArchiveModal.jsx
+
+// ===================================================
+// ファイル名: AnnouncementArchiveModal.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: アーカイブされたお知らせモーダルコンポーネント
+// ===================================================
+
 import React, { useEffect, useState } from "react";
 import { Archive, RotateCcw, X } from "lucide-react";
 import announcementService from "../../../services/announcementService";

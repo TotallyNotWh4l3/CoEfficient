@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: WeatherDailyGrid.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気日付グリッド コンポーネント
+// ===================================================
+
 import React from "react";
 import { WeatherVisualIcon } from "../utils/weatherHelpers.jsx";
 import "../weather.css";

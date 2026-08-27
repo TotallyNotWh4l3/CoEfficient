@@ -1,4 +1,10 @@
-import React from "react";
+// ===================================================
+// ファイル名: AnnouncementFooter.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせフッター コンポーネント
+// ===================================================
+
 import { useLanguage } from "../../../../hooks/useLanguage";
 
 export default function AnnouncementFooter() {

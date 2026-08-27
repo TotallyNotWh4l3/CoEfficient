@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: WeatherForecastSection.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気予報セクション コンポーネント
+// ===================================================
+
 import React from "react";
 import { Clock } from "lucide-react";
 import WeatherMetricSelector from "./WeatherMetricSelector";

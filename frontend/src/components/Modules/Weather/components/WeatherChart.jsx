@@ -1,16 +1,16 @@
+// ===================================================
+// ファイル名: WeatherChart.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気チャート コンポーネント
+// ===================================================
+
+
 import React, { useState, useRef } from "react";
 import "../weather.css";
 
 import { useLanguage } from "../../../../hooks/useLanguage";
-// ...add near top of component body:
-// ── Easy-to-tweak visual knobs ──────────────────────────────────────────
-// How "curvy" the line is. 0 = straight lines between points.
-// 0.333 (1/3) = the original bezier smoothness. 0.5 = max smooth/rounded.
-// Keep it between 0 and 0.5 — going higher starts creating loops/overshoot.
 const CURVE_SMOOTHNESS = 0;
-
-// Extra breathing room added above/below the min/max, in the metric's own
-// units (e.g. 1 = 1°C of padding above the hottest point, 1 below the coldest).
 const AXIS_PADDING = 1;
 // ─────────────────────────────────────────────────────────────────────────
 
