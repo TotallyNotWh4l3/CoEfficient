@@ -30,13 +30,13 @@ export default function WeatherTabsBar({ activeTab, onChangeTab }) {
                 </button>
             </div>
 
-            <div className="weather-tabs__hint">
+            {/* <div className="weather-tabs__hint">
                 {activeTab === "hourly" ? (
                     <span className="weather-tabs__hint--cyan">{t.hourlyHint}</span>
                 ) : (
                     <span className="weather-tabs__hint--white">{t.dailyHint}</span>
                 )}
-            </div>
+            </div> */}
         </div>
     );
 }
