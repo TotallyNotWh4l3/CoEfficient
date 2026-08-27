@@ -5,6 +5,7 @@
 // 概要: お知らせモジュールコンポーネント
 // ===================================================
 
+import { useState } from "react";
 import useAnnouncements from "../../../hooks/useAnnouncements";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { useSettings } from "../../../hooks/useSettings";

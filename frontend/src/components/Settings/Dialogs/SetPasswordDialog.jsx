@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: SetPasswordDialog.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: パスワード設定ダイアログ コンポーネント
+// ===================================================
+
 import { useState } from "react";
 import Settings from "../Components/SettingsComponents";
 import { useLanguage } from "../../../hooks/useLanguage";
