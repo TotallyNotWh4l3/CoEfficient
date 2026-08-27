@@ -61,7 +61,7 @@ export default function WeatherSettingsPanel({ layoutMode, onLayoutModeChange, o
                     </div>
                 </div>
 
-                <div className="weather-settings__tip">💡 {t.tip}</div>
+                {/* <div className="weather-settings__tip">💡 {t.tip}</div> */}
             </div>
         </div>
     );
