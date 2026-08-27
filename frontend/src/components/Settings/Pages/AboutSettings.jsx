@@ -22,7 +22,7 @@ const TECH_STACK = [
     { name: "React", role: "frontend" },
     { name: "Express", role: "backend" },
     { name: "Node.js", role: "runtime" },
-    { name: "libSQL", role: "database" },
+    { name: "libSQL / SQLite", role: "database" },
     { name: "Vercel", role: "hosting" },
     { name: "Turso", role: "database hosting" },
 ];
