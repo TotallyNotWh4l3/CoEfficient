@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: settingsPages.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 設定ページオプション
+// ===================================================
+
 import { Monitor, Blocks, LayoutDashboard, CircleHelp, Users } from "lucide-react";
 
 export const SETTINGS_PAGES = [

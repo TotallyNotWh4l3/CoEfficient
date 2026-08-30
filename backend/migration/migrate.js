@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: migrate.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: データベースのマイグレーションを実行するスクリプト。
+// ===================================================
+
 import db from "../config/database.js";
 
 import createUsersTable from "./001_create_users.js";
@@ -13,7 +20,8 @@ import createDashboardModulesTable from "./010_create_dashboard_modules.js";
 import createScheduleTagsTable from "./011_create_schedule_tags.js";
 import addScheduleSubtitleAndTags from "./012_add_schedule_subtitle_and_tags_column.js";
 import createThemesTable from "./013_create_themes.js";
-
+import addWeatherFetchClaimColumn from "./014_create_weather_fetch_claim_column.js";
+import fixUserForeignKeys from "./015_fix_foreign_keys.js";
 
 const migrations = [
     { name: "001_create_users", up: createUsersTable },
@@ -29,6 +37,8 @@ const migrations = [
     { name: "011_create_schedule_tags", up: createScheduleTagsTable },
     { name: "012_add_schedule_subtitle_and_tags_column", up: addScheduleSubtitleAndTags },
     { name: "013_create_themes", up: createThemesTable },
+    { name: "014_add_weather_fetch_claim", up: addWeatherFetchClaimColumn },
+    { name: "015_fix_user_foreign_keys", up: fixUserForeignKeys },
 ];
 
 async function runMigrations() {

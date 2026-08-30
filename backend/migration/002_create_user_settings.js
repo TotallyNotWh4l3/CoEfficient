@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: 002_create_user_settings.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ユーザー設定テーブルを作成するマイグレーション
+// ===================================================
+
 import userSettingsSchema from "../database/schema/userSettings.js";
 
 export default function createUserSettingsTable(db) {

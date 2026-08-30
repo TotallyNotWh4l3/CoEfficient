@@ -1,4 +1,11 @@
-// backend/routes/dashboardRoutes.js
+
+// ===================================================
+// ファイル名: dashboardRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボードルート — CRUD、ダッシュボード管理
+// ===================================================
+
 import express from "express";
 import dashboardController from "../controllers/dashboardController.js";
 import authenticate from "../middleware/authMiddleware.js";

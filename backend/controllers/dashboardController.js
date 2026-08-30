@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: dashboardController.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボードの管理を行うAPIコントローラー。ユーザーのダッシュボード状態の取得、モジュールの追加・削除・設定更新などの機能を提供します。
+// ===================================================
+
+
 // backend/controllers/dashboardController.js
 import Dashboard from "../models/Dashboard.js";
 import { broadcast, subscribe } from "../services/dashboardSyncService.js";

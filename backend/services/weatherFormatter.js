@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: weatherFormatter.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気情報フォーマッタ
+// ===================================================
+
 import { WEATHER_CODES, DEFAULT_WEATHER } from "../../shared/constants/weather/weatherCodes.js";
 
 function getWeatherInfo(code, isDay) {

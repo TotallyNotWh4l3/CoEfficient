@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: ScheduleEventFormModal.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールイベントフォームモーダル コンポーネント
+// ===================================================
+
 import { useState } from "react";
 import { X, Trash2, Clock } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";

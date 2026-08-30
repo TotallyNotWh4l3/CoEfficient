@@ -1,9 +1,11 @@
-// backend/controllers/announcementController.js
-//
-// NOTE: assumes req.user is set by authMiddleware.js to an object shaped
-// like { id, name, role } (whatever JWT.verifyToken()/authService.js puts
-// in the token payload). If your token payload uses different field names
-// (e.g. userId / username), adjust the req.user.* references below.
+// ===================================================
+// ファイル名: announcementController.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせの管理を行うAPIコントローラー。お知らせの作成、更新、削除、およびお知らせとそのログの取得などの機能を提供します。
+// また、ロール（管理者、マネージャーなど）に基づいて各種アクションに対するユーザーの権限を処理し、
+// お知らせを既読にマークしたり、未読数を取得したりするためのエンドポイントも提供します。
+// ===================================================
 
 import Announcement from "../models/Announcement.js";
 import AnnouncementLog from "../models/AnnouncementLog.js";

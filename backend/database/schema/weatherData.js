@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: weatherData.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 
+// ===================================================
+
+
 export default `
 CREATE TABLE IF NOT EXISTS weather_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

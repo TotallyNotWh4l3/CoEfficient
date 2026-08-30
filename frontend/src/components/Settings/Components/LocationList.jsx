@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: LocationList.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ロケーションリスト コンポーネント
+// ===================================================
+
+
 import { Pencil, Trash2, MapPin, Lock } from "lucide-react";
 
 import Settings from "./SettingsComponents";

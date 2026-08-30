@@ -1,6 +1,13 @@
-// backend/routes/geocodingRoutes.js
+
+// ===================================================
+// ファイル名: geocodingRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ジオコーディングルート — CRUD、ジオコーディング管理
+// ===================================================
+
 import express from "express";
-import geocodingController from "../controllers/geocodingCotroller.js";
+import geocodingController from "../controllers/geocodingController.js";
 import authenticate from "../middleware/authMiddleware.js";
 
 const router = express.Router();

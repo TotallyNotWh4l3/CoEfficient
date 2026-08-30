@@ -1,4 +1,12 @@
+// ===================================================
+// ファイル名: ConfirmDialog.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 確認ダイアログ コンポーネント
+// ===================================================
+
 import Settings from "../Components/SettingsComponents";
+import "./confirm-dialog.css";
 
 export default function ConfirmDialog({
     title,

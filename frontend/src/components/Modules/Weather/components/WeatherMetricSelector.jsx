@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: WeatherMetricSelector.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気メトリックセレクター コンポーネント
+// ===================================================
+
 import React from "react";
 import { METRIC_DEFS } from "../utils/weatherHelpers.jsx";
 import "../weather.css";

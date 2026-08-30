@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: WeatherHeader.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気ヘッダー コンポーネント
+// ===================================================
+
 import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MapPin, Settings, ChevronDown, Check } from "lucide-react";

@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: 012_add_schedule_subtitle_and_tags_column.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュール項目テーブルにサブタイトルとタグ列を追加するマイグレーション
+// ===================================================
+
+
 export default function addScheduleSubtitleAndTags(db) {
     return new Promise((resolve, reject) => {
         db.serialize(() => {

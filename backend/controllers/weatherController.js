@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: weatherController.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気情報の管理を行うAPIコントローラー。ユーザーの位置情報に基づいた天気情報の取得などの機能を提供します。
+// ===================================================
+
+
 import Location from "../models/Location.js";
 import UserSettings from "../models/UserSettings.js";
 import { getWeather } from "../services/weatherService.js";

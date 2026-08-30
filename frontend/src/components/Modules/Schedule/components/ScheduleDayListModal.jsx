@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: ScheduleDayListModal.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュール日付リストモーダル コンポーネント
+// ===================================================
+
 import { X, Plus, ChevronRight } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 import { formatDisplayDate, getEventColor } from "../utils/scheduleHelpers";

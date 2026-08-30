@@ -1,3 +1,10 @@
+
+// ===================================================
+// ファイル名: announcementReads.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: アナウンスメントの既読情報を記録するためのデータベーススキーマ。ユーザーがアナウンスメントを既読したかどうかの情報を保持します。
+// ===================================================
 export default `
 CREATE TABLE IF NOT EXISTS announcement_reads (
   id                INTEGER PRIMARY KEY AUTOINCREMENT,

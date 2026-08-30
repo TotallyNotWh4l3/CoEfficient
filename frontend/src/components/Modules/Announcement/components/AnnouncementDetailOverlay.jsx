@@ -1,4 +1,11 @@
-import React from "react";
+
+// ===================================================
+// ファイル名: AnnouncementDetailOverlay.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせ詳細オーバーレイ コンポーネント
+// ===================================================
+
 import { X, Pin, User, Calendar } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 import {

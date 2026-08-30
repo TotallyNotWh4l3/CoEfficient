@@ -1,4 +1,10 @@
-// frontend/src/constants/modules/announcementConstants.js
+// ===================================================
+// ファイル名: announcementConstants.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせモジュール定数
+// ===================================================
+
 import { AlertTriangle, Wrench, Star, Bell, Clipboard, Info } from "lucide-react";
 
 export const CATEGORY_PRIORITY = [

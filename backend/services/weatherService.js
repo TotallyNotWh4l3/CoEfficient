@@ -1,12 +1,24 @@
+// ===================================================
+// ファイル名: weatherService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気情報サービス
+// ===================================================
+
 import { fetchWeather } from "./openMeteoService.js";
 import {
     getCachedWeatherRow,
     setCachedWeather,
     getLatestWeatherTimestamp,
+    claimFetch,
+    releaseFetchClaim,
 } from "./weatherDataStore.js";
 import { formatWeather } from "./weatherFormatter.js";
 
 const FIFTEEN_MIN_MS = 15 * 60 * 1000;
+
+
+const inFlightFetches = new Map();
 
 /**
  * @param {{ id: string, latitude: number, longitude: number, timezone?: string }} location
@@ -17,8 +29,6 @@ export async function getWeather(location) {
     const latitude = Number(location.latitude);
     const longitude = Number(location.longitude);
 
-    // Still nothing — fall back to the user's built-in default, then
-    // to whatever's first. If the table is empty, sync from settings.
     if (!location) {
         let locations = await Location.findAllByUserId(req.user.id);
 
@@ -48,34 +58,72 @@ export async function getWeather(location) {
         throw new Error("Invalid coordinates.");
     }
 
-    // 1. Check cache
     const row = await getCachedWeatherRow(locationId);
 
-    if (row?.payload?.current?.time) {
-        // Age the cache off the data's own timestamp (Open-Meteo's
-        // current.time), not off when we happened to store it — this is
-        // what actually reflects how current the weather reading is.
-        const dataAgeMs = Date.now() - new Date(row.payload.current.time).getTime();
+    if (row?.payload?._dataTimestampUtc) {
+        const dataAgeMs = Date.now() - new Date(row.payload._dataTimestampUtc).getTime();
 
-        if (dataAgeMs <= FIFTEEN_MIN_MS) {
+        if (dataAgeMs >= 0 && dataAgeMs <= FIFTEEN_MIN_MS) {
             console.log("[Weather] Cache hit.");
-            return row.payload;
+            return stripInternalFields(row.payload);
         }
 
-        console.log("[Weather] Cached data older than 15min, refetching...");
+        console.log("[Weather] Cached data older than 15min (or clock skew), refetching...");
     } else {
         console.log("[Weather] No cache, fetching Open-Meteo...");
     }
 
-    // 2. Fetch raw weather
-    const raw = await fetchWeather(latitude, longitude, timezone);
+    if (inFlightFetches.has(locationId)) {
+        console.log("[Weather] Refetch already in flight on this instance, joining it.");
+        return inFlightFetches.get(locationId);
+    }
 
-    // 3. Format response
-    const formatted = formatWeather(raw);
+    const fetchPromise = refetchAndCache(locationId, latitude, longitude, timezone).finally(() => {
+        inFlightFetches.delete(locationId);
+    });
 
-    // 4. Store cache
-    await setCachedWeather(locationId, getLatestWeatherTimestamp(), formatted);
+    inFlightFetches.set(locationId, fetchPromise);
+    return fetchPromise;
+}
 
-    // 5. Return formatted weather
-    return formatted;
+async function refetchAndCache(locationId, latitude, longitude, timezone) {
+    const wonClaim = await claimFetch(locationId);
+
+    if (!wonClaim) {
+        const existing = await getCachedWeatherRow(locationId);
+        const hasUsableCache = existing?.payload && Object.keys(existing.payload).length > 0;
+
+        if (hasUsableCache) {
+            console.log("[Weather] Lost the cross-instance fetch race, serving existing cache.");
+            return stripInternalFields(existing.payload);
+        }
+
+        console.log("[Weather] Lost the claim but no usable cache exists yet — fetching anyway.");
+    }
+
+    try {
+        const raw = await fetchWeather(latitude, longitude, timezone);
+        const formatted = formatWeather(raw);
+
+        const utcOffsetSeconds = raw.utc_offset_seconds ?? 0;
+        const dataTimestampMs = Date.parse(`${raw.current.time}Z`) - utcOffsetSeconds * 1000;
+        formatted._dataTimestampUtc = new Date(dataTimestampMs).toISOString();
+
+        // 4. Store cache (this also clears the claim on success)
+        await setCachedWeather(locationId, getLatestWeatherTimestamp(), formatted);
+
+        return stripInternalFields(formatted);
+    } catch (error) {
+        // Only release if we actually held the claim — never clear a
+        // claim we don't own.
+        if (wonClaim) {
+            await releaseFetchClaim(locationId);
+        }
+        throw error;
+    }
+}
+
+function stripInternalFields(payload) {
+    const { _dataTimestampUtc, ...rest } = payload;
+    return rest;
 }

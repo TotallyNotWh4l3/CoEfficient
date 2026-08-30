@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: scheduleRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールルート — CRUD、スケジュール管理
+// ===================================================
+
 import express from "express";
 import scheduleController from "../controllers/scheduleController.js";
 import authenticate from "../middleware/authMiddleware.js";

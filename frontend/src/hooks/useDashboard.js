@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: useDashboard.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボード情報を取得・管理するカスタムフック
+// ===================================================
+
 import { useState, useEffect, useCallback } from "react";
 import { useDashboardContext } from "../context/DashboardContext";
 import dashboardService from "../services/dashboardService";

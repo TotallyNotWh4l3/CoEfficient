@@ -1,4 +1,11 @@
-// backend/models/AnnouncementLog.js
+
+// ===================================================
+// ファイル名: AnnouncementLog.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせログモデル — CRUD、変更履歴管理
+// ===================================================
+
 import { run, all } from "../utils/dbHelpers.js";
 
 const AnnouncementLog = {

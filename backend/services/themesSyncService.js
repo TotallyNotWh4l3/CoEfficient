@@ -1,5 +1,9 @@
-// backend/services/themesSyncService.js
-// SSE pub/sub for real-time theme updates — mirrors locationsSyncService.js.
+// ===================================================
+// ファイル名: themesSyncService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: テーマ同期サービス
+// ===================================================
 
 const clients = new Set();
 

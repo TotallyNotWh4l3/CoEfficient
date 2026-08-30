@@ -1,6 +1,10 @@
-// DashboardHeader.jsx
+// ===================================================
+// ファイル名: DashboardHeader.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボードヘッダーコンポーネント
+// ===================================================
 
-import React, { useState } from "react";
 import { Layers } from "lucide-react";
 import LinearGradient from "../common/LinearGradient";
 

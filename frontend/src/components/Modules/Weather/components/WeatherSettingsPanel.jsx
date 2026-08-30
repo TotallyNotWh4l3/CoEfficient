@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: WeatherSettingsPanel.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気設定パネル コンポーネント
+// ===================================================
+
 import React from "react";
 import { Settings } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
@@ -54,7 +61,7 @@ export default function WeatherSettingsPanel({ layoutMode, onLayoutModeChange, o
                     </div>
                 </div>
 
-                <div className="weather-settings__tip">💡 {t.tip}</div>
+                {/* <div className="weather-settings__tip">💡 {t.tip}</div> */}
             </div>
         </div>
     );

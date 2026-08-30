@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: ScheduleTagManagerModal.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールタグマネージャーモーダル コンポーネント
+// ===================================================
+
 import { useState } from "react";
 import { X, Trash2 } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";

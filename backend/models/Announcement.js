@@ -1,7 +1,10 @@
-// backend/models/Announcement.js
-// Data-access layer for announcements, built on the async sqlite3 helpers
-// in backend/utils/dbHelpers.js (backend/config/database.js uses the
-// callback-based `sqlite3` package, not better-sqlite3).
+// ===================================================
+// ファイル名: Announcement.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: アナウンスメントモデル — CRUD、アーカイブ、ソフト削除、ログ記録
+// ===================================================
+
 
 import { run, get, all } from "../utils/dbHelpers.js";
 import AnnouncementLog from "./AnnouncementLog.js";

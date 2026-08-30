@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: WeatherModule.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気モジュール コンポーネント
+// ===================================================
+
 import React, { useState, useEffect } from "react";
 import WeatherHeader from "./components/WeatherHeader";
 import WeatherCurrentSummary from "./components/WeatherCurrentSummary";
@@ -46,20 +53,35 @@ export default function WeatherModule({
 
     const gradient = getWeatherGradient(weatherCode, isDay);
 
+    const mapHourlyDay = (items) =>
+        (items || []).map((item) => ({
+            label: item.time,
+            value: item[activeMetric],
+            valueMax: item.maxTemp,
+            valueMin: item.minTemp,
+        }));
+
     const chartDataset =
         activeTab === "hourly"
-            ? (hourlyByDay[selectedDayIdx] || []).map((item) => ({
-                  label: item.time,
-                  value: item[activeMetric],
-                  valueMax: item.maxTemp,
-                  valueMin: item.minTemp,
-              }))
+            ? mapHourlyDay(hourlyByDay[selectedDayIdx])
             : dailyList.map((item) => ({
                   label: item.dayLabel,
                   value: item[activeMetric],
                   valueMax: item.maxTemp,
                   valueMin: item.minTemp,
               }));
+
+    // Same shape as chartDataset, but one array per day across the whole
+    // week — lets WeatherChart scale its axis to the week's min/max on the
+    // hourly view instead of just whichever day is currently selected.
+    // Object.keys/hourlyByDay ordering matches selectedDayIdx (0, 1, 2, ...)
+    // since that's how it's indexed elsewhere in this component.
+    const allDaysHourlyDataset =
+        activeTab === "hourly"
+            ? Object.keys(hourlyByDay)
+                  .sort((a, b) => Number(a) - Number(b))
+                  .map((dayIdx) => mapHourlyDay(hourlyByDay[dayIdx]))
+            : undefined;
 
     const handleLayoutModeChange = (mode) => {
         setLocalLayoutMode(mode);
@@ -109,6 +131,7 @@ export default function WeatherModule({
                     selectedDayIdx={selectedDayIdx}
                     onSelectDay={setSelectedDayIdx}
                     chartDataset={chartDataset}
+                    allDaysHourlyDataset={allDaysHourlyDataset}
                     timeString={time}
                 />
             )}

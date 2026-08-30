@@ -1,4 +1,11 @@
-// backend/models/Dashboard.js
+
+// ===================================================
+// ファイル名: Dashboard.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボードモデル — CRUD、レイアウト管理
+// ===================================================
+
 import { run, get, all } from "../utils/dbHelpers.js";
 import { DEFAULT_DASHBOARD } from "../../shared/constants/defaults/defaultDashboard.js";
 

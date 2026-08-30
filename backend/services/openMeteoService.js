@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: openMeteoService.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: Open-Meteo API サービス
+// ===================================================
+
+
 const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
 const DEFAULT_TIMEZONE = "Asia/Tokyo";

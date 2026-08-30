@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: ScheduleLayoutToggle.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールレイアウトトグル コンポーネント
+// ===================================================
+
 import { useLanguage } from "../../../../hooks/useLanguage";
 
 export default function ScheduleLayoutToggle({ layout, onChange }) {

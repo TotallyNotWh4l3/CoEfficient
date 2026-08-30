@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: useUsers.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ユーザー情報を取得するカスタムフック
+// ===================================================
+
 import { useState, useEffect, useCallback } from "react";
 import userService from "../services/userService";
 

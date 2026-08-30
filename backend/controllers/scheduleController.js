@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: scheduleController.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールの管理を行うAPIコントローラー。スケジュールイベントの作成、更新、削除、および取得などの機能を提供します。
+// ===================================================
+
+
 // backend/controllers/scheduleController.js
 import Schedule from "../models/Schedule.js";
 import ScheduleTag from "../models/ScheduleTag.js";

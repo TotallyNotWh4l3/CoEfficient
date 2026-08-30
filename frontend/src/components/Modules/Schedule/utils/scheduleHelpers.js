@@ -1,4 +1,9 @@
-// frontend/src/components/Modules/Schedule/utils/scheduleHelpers.js
+// ===================================================
+// ファイル名: scheduleHelpers.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールヘルパー関数
+// ===================================================
 
 export const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

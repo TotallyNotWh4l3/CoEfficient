@@ -1,4 +1,11 @@
-import React, { useState } from "react";
+// ===================================================
+// ファイル名: AnnouncementModule.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせモジュールコンポーネント
+// ===================================================
+
+import { useState } from "react";
 import useAnnouncements from "../../../hooks/useAnnouncements";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { useSettings } from "../../../hooks/useSettings";

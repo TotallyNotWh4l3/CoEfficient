@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: useAnnouncements.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせフック
+// ===================================================
+
+
 import { useState, useEffect, useCallback } from "react";
 import announcementService from "../services/announcementService";
 

@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: useTheme.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: テーマを適用するカスタムフック
+// ===================================================
+
 import { useEffect } from "react";
 import { useSettings } from "./useSettings";
 import { useThemes } from "./useThemes";

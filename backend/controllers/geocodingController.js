@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: geocodingCotroller.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ジオコーディング関連のAPIコントローラー。住所検索（フォワードジオコーディング）および座標から住所を取得する（リバースジオコーディング）機能を提供します。
+// ===================================================
+
+
 // backend/controllers/geocodingController.js
 import { forwardGeocode, reverseGeocode } from "../services/geocodingService.js";
 

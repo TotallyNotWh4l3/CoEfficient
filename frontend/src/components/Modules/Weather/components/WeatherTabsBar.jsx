@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: WeatherTabsBar.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気タブバー コンポーネント   
+// ===================================================
+
 import React from "react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 import "../weather.css";
@@ -23,13 +30,13 @@ export default function WeatherTabsBar({ activeTab, onChangeTab }) {
                 </button>
             </div>
 
-            <div className="weather-tabs__hint">
+            {/* <div className="weather-tabs__hint">
                 {activeTab === "hourly" ? (
                     <span className="weather-tabs__hint--cyan">{t.hourlyHint}</span>
                 ) : (
                     <span className="weather-tabs__hint--white">{t.dailyHint}</span>
                 )}
-            </div>
+            </div> */}
         </div>
     );
 }

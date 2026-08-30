@@ -1,4 +1,10 @@
-// backend/routes/announcementRoutes.js
+// ===================================================
+// ファイル名: announcementRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせルート — CRUD、アーカイブ、既読管理、SSEストリーム
+// ===================================================
+
 import express from "express";
 import announcementController from "../controllers/announcementController.js";
 import authenticate from "../middleware/authMiddleware.js";

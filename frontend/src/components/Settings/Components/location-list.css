@@ -16,7 +16,7 @@
 }
 
 .location-list .settings__row:hover {
-    background: var(--color-hover);
+    background: var(--color-element-hover);
 }
 
 .location-list .settings__row-label {

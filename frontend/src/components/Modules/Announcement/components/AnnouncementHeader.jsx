@@ -1,4 +1,11 @@
-import React from "react";
+
+// ===================================================
+// ファイル名: AnnouncementHeader.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: お知らせヘッダー コンポーネント
+// ===================================================
+
 import { Megaphone, Plus, Lock, Archive, Maximize2, Minimize2, X } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";
 

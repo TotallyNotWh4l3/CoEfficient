@@ -1,7 +1,10 @@
-// backend/utils/dbHelpers.js
-// Thin compatibility layer over @libsql/client that preserves the
-// sqlite3-style run/get/all/exec interface the models and migration/
-// init scripts were written against — so callers don't need changes.
+// ===================================================
+// ファイル名: dbHelpers.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: データベースヘルパー関数
+// ===================================================
+
 
 import db from "../config/database.js";
 

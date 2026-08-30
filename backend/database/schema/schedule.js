@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: schedule.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュール情報を記録するためのデータベーススキーマ。
+// ===================================================
+
 export default `
 CREATE TABLE IF NOT EXISTS schedule_items (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,

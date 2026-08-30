@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: ModuleEditor.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: モジュールエディタコンポーネント
+// ===================================================
+
 import { useDashboard } from "../../../hooks/useDashboard";
 
 export default function ModuleEditor({ module }) {

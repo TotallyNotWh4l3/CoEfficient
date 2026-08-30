@@ -1,3 +1,11 @@
+
+// ===================================================
+// ファイル名: WeatherStatsRow.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: 天気統計行 コンポーネント
+// ===================================================
+
 import React from "react";
 import { Droplet, Wind, CloudRain } from "lucide-react";
 import { useLanguage } from "../../../../hooks/useLanguage";

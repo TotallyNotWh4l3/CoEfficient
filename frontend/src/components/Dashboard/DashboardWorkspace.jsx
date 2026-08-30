@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: DashboardWorkspace.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ダッシュボードワークスペースコンポーネント
+// ===================================================
+
 import { useDashboard } from "../../hooks/useDashboard";
 import ModuleRenderer from "../Modules/core/ModuleRenderer";
 import "./dashboard-workspace.css";

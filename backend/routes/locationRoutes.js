@@ -1,4 +1,11 @@
-// backend/routes/locationRoutes.js
+
+// ===================================================
+// ファイル名: locationRoutes.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: ロケーションルート — CRUD、ロケーション管理
+// ===================================================
+
 import express from "express";
 import locationsController from "../controllers/locationsController.js";
 import authenticate from "../middleware/authMiddleware.js";

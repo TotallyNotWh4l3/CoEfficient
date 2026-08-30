@@ -1,3 +1,11 @@
+// ===================================================
+// ファイル名: 008_create_schedule.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: スケジュールテーブルを作成するマイグレーション
+// ===================================================
+
+
 import scheduleSchema from "../database/schema/schedule.js";
 
 export default function createScheduleTable(db) {

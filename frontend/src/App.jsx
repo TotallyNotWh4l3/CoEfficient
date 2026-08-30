@@ -1,3 +1,10 @@
+// ===================================================
+// ファイル名: App.jsx
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: アプリケーションコンポーネント
+// ===================================================
+
 import Dashboard from "./components/Dashboard/Dashboard";
 import DialogManager from "./components/Settings/Components/UI/Dialog/DialogManager";
 import Login from "./components/Login/Login";

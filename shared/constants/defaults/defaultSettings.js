@@ -1,3 +1,9 @@
+// ===================================================
+// ファイル名: defaultSettings.js
+// 作成日: 2026/08/27
+// 作成者: ゴンザガ　ウェイン
+// 概要: デフォルトの設定値
+// ===================================================
 import { DARK_DEFAULT_THEME } from "../themes/darkDefault.js";
 import { LIGHT_DEFAULT_THEME } from "../themes/lightDefault.js";
 
